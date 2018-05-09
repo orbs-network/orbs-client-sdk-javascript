@@ -6,6 +6,10 @@ export interface OrbsAPISendTransactionRequest {
     contractAddressBase58: string
   };
   payload: string;
+  signatureData: {
+    publicKeyHex: string;
+    signatureHex: string;
+  };
 }
 
 export interface OrbsAPICallContractRequest {
