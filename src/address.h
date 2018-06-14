@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "crypto-sdk/lib/address.h"
+#include "headers/address.h"
 
 class Address {
 public:

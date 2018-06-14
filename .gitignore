@@ -47,3 +47,8 @@ deps/
 
 # Ignore built ts files
 dist/**/*
+
+native
+
+node_modules
+distTest
