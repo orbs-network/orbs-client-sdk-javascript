@@ -18,7 +18,7 @@
             "conditions": [
                 ["OS=='mac'", {
                     "libraries": [
-                        "-Wl,-rpath,<(module_root_dir)/native/mac/lib/",
+                        "-Wl,-rpath,<(module_root_dir)/native/mac/",
                         "<(module_root_dir)/native/mac/libcryptosdk.dylib"
                     ],
                     "xcode_settings": {
@@ -36,7 +36,7 @@
                 }],
                 ["OS=='linux'", {
                     "libraries": [
-                        "-Wl,-rpath,<(module_root_dir)/native/linux/lib/",
+                        "-Wl,-rpath,<(module_root_dir)/native/linux/",
                         "<(module_root_dir)/native/linux/libcryptosdk.so"
                     ],
                 }]
