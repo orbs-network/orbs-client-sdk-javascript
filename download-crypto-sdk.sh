@@ -10,4 +10,4 @@ rm -rf native
 aws s3 sync $S3_PATH native
 
 mkdir -p native/headers
-tar zxvf native/headers.tgz -C native/headers
+tar xvf native/headers.tgz -C native/headers
