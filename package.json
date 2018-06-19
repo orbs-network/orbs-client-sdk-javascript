@@ -9,7 +9,8 @@
   "license": "MIT",
   "gypfile": true,
   "scripts": {
-    "preinstall": "./download-crypto-sdk.sh && tsc",
+    "preinstall": "./download-crypto-sdk.sh",
+    "postinstall": "tsc",
     "build": "yarn run build-ts && yarn run tslint",
     "build-ts": "tsc",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
