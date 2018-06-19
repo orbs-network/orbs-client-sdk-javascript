@@ -4,7 +4,7 @@ rm -rf deps && mkdir -p deps
 
 yarn install
 
-export PATH=$PATH:./node_modules/.bin
+export PATH=./node_modules/.bin:$PATH
 
 yarn run build
 
