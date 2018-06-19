@@ -10,4 +10,4 @@ WORKDIR /opt/orbs-sdk
 
 RUN apt-get update && apt-get install -y python-pip python-dev
 
-RUN ./build.sh
+RUN export PATH=$PATH:/opt/orbs-sdk/node_modules/.bin && ./build.sh
