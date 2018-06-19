@@ -1,0 +1,3 @@
+#!/bin/bash -xe
+
+docker build --build-arg AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -t orbs:sdk -f Dockerfile .
