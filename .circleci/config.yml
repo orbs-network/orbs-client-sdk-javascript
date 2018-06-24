@@ -4,4 +4,5 @@ jobs:
     machine: true
     steps:
       - checkout
+      - run: ./.circleci/setup-rngd.sh
       - run: ./docker-build.sh
