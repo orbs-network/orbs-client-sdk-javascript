@@ -13,13 +13,13 @@
                 "-stdlib=libc++"
             ],
             "include_dirs": [
-                "<(module_root_dir)/deps/"
+                "<(module_root_dir)/native"
             ],
             "conditions": [
                 ["OS=='mac'", {
                     "libraries": [
-                        "-Wl,-rpath,<(module_root_dir)/deps/crypto-sdk/build/mac/lib/",
-                        "<(module_root_dir)/deps/crypto-sdk/build/mac/lib/libcryptosdk.dylib"
+                        "-Wl,-rpath,<(module_root_dir)/native/mac/",
+                        "<(module_root_dir)/native/mac/libcryptosdk.dylib"
                     ],
                     "xcode_settings": {
                         "OTHER_CPLUSPLUSFLAGS": [
@@ -36,8 +36,8 @@
                 }],
                 ["OS=='linux'", {
                     "libraries": [
-                        "-Wl,-rpath,<(module_root_dir)/deps/crypto-sdk/build/linux/lib/",
-                        "<(module_root_dir)/deps/crypto-sdk/build/linux/lib/libcryptosdk.so"
+                        "-Wl,-rpath,<(module_root_dir)/native/linux/",
+                        "<(module_root_dir)/native/linux/libcryptosdk.so"
                     ],
                 }]
             ]

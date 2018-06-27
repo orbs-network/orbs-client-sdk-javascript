@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "crypto-sdk/lib/ed25519key.h"
+#include "headers/ed25519key.h"
 
 class ED25519Key {
 public:

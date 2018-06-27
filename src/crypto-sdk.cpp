@@ -1,7 +1,7 @@
 #include "address.h"
 #include "ed25519key.h"
 
-#include "crypto-sdk/lib/crypto.h"
+#include "headers/crypto.h"
 
 napi_value Init(napi_env env, napi_value exports) {
     Orbs::CryptoSDK::Init();
