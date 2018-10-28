@@ -1,1 +1,3 @@
-# Client SDK (WIP)
+# JavaScript Client SDK
+
+Alpha release
