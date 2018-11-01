@@ -1,7 +1,7 @@
 module.exports = {
   "roots": [
     "<rootDir>/src",
-    "<rootDir>/e2e/nodejs"
+    "<rootDir>/e2e",
   ],
   "transform": {
     "^.+\\.tsx?$": "ts-jest"
@@ -15,4 +15,5 @@ module.exports = {
     "json",
     "node"
   ],
+  "preset": "jest-puppeteer"
 };

@@ -1,0 +1,12 @@
+<html>
+  <head>
+    <script src="../../dist/orbs-client-sdk.js"></script>
+  </head>
+  <body>
+    <script>
+      const el = document.createElement("h1");
+      el.textContent = "hello" + OrbsClient.double(5);
+      document.body.appendChild(el);
+    </script>
+  </body>
+</html>
