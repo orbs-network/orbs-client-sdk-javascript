@@ -32,7 +32,7 @@ expect.extend({
   toBeEqualToUint8Array(received, other) {
     if (received.byteLength != other.byteLength) {
       return {
-        message: () => `expected arrayBuffer length ${received.byteLength} to be equal ${other.byteLength}`,
+        message: () => `expected arrayBuffer length ${received.byteLength} to be equal ${other.byteLength}\n${uint8ArrayToHex(received)}\n${uint8ArrayToHex(other)}`,
         pass: false,
       };
     }

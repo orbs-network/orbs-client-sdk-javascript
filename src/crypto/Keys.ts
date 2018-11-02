@@ -1,0 +1,2 @@
+export const ED25519_PUBLIC_KEY_SIZE_BYTES  = 32;
+export const ED25519_PRIVATE_KEY_SIZE_BYTES = 64;
