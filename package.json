@@ -15,6 +15,7 @@
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -cw",
+    "test": "jest",
     "lint": "tslint -c tslint.json"
   },
   "devDependencies": {
@@ -28,5 +29,7 @@
     "tslint": "^5.11.0",
     "typescript": "^3.1.5"
   },
-  "dependencies": {}
+  "dependencies": {
+    "text-encoding": "^0.6.4"
+  }
 }
