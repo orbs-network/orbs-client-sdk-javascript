@@ -16,10 +16,14 @@
     "build": "rollup -c",
     "watch": "rollup -cw",
     "test": "jest",
-    "lint": "tslint -c tslint.json"
+    "lint": "tslint -c tslint.json",
+    "prepare": "git clone https://github.com/orbs-network/orbs-client-sdk-go.git ./contract"
   },
   "devDependencies": {
     "@types/jest": "^23.3.9",
+    "@types/node": "^10.12.2",
+    "babel-jest": "^23.6.0",
+    "babel-preset-env": "^1.7.0",
     "jest": "^23.6.0",
     "jest-puppeteer": "^3.4.0",
     "puppeteer": "^1.9.0",
