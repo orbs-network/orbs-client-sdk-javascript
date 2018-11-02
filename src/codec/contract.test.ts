@@ -1,4 +1,5 @@
 import "../membuffers/matcher-extensions";
+import { encodeSendTransactionRequest } from "./OpSendTransaction";
 import { encodeCallMethodRequest } from "./OpCallMethod";
 import { encodeGetTransactionStatusRequest } from "./OpGetTransactionStatus";
 import { MethodArgument, Uint32, Uint64, String, Bytes } from "./MethodArguments";
@@ -18,6 +19,24 @@ describe("Codec contract", () => {
     const inputScenario = contractInput[index];
     const outputScenario = contractOutput[index];
     test(`Test Id: ${inputScenario.Test}`, () => {
+
+      // SendTransactionRequest
+      if (inputScenario.SendTransactionRequest) {
+        const [encoded, txId] = encodeSendTransactionRequest({
+          protocolVersion: numberDecode(inputScenario.SendTransactionRequest.ProtocolVersion),
+          virtualChainId: numberDecode(inputScenario.SendTransactionRequest.VirtualChainId),
+          timestamp: new Date(inputScenario.SendTransactionRequest.Timestamp),
+          networkType: inputScenario.SendTransactionRequest.NetworkType,
+          publicKey: base64Decode(inputScenario.SendTransactionRequest.PublicKey),
+          contractName: inputScenario.SendTransactionRequest.ContractName,
+          methodName: inputScenario.SendTransactionRequest.MethodName,
+          inputArguments: methodArgumentsDecode(inputScenario.SendTransactionRequest.InputArguments, inputScenario.InputArgumentsTypes)
+        }, base64Decode(inputScenario.PrivateKey));
+        const expected = base64Decode(outputScenario.SendTransactionRequest);
+        expect(encoded).toBeEqualToUint8Array(expected);
+        const expectedTxId = base64Decode(outputScenario.TxId);
+        expect(txId).toBeEqualToUint8Array(expectedTxId);
+      }
 
       // CallMethodRequest
       if (inputScenario.CallMethodRequest) {

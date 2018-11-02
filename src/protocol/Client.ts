@@ -1,5 +1,5 @@
 import { BaseBuilder } from "./Base";
-import { TransactionBuilder } from "./Protocol";
+import * as Protocol from "./Protocol";
 
 export class GetTransactionStatusRequestBuilder extends BaseBuilder {
   constructor(private fields: { transactionTimestamp: BigInt, txHash: Uint8Array }) {
@@ -13,11 +13,21 @@ export class GetTransactionStatusRequestBuilder extends BaseBuilder {
 }
 
 export class CallMethodRequestBuilder extends BaseBuilder {
-  constructor(private fields: { transaction: TransactionBuilder }) {
+  constructor(private fields: { transaction: Protocol.TransactionBuilder }) {
     super();
   }
   write(buf: Uint8Array): void {
     this.builder.reset();
     this.builder.writeMessage(buf, this.fields.transaction);
+  }
+}
+
+export class SendTransactionRequestBuilder extends BaseBuilder {
+  constructor(private fields: { signedTransaction: Protocol.SignedTransactionBuilder }) {
+    super();
+  }
+  write(buf: Uint8Array): void {
+    this.builder.reset();
+    this.builder.writeMessage(buf, this.fields.signedTransaction);
   }
 }

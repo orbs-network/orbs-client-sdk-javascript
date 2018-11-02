@@ -93,3 +93,14 @@ export class TransactionBuilder extends BaseBuilder {
     this.builder.writeBytes(buf, this.fields.inputArgumentArray);
   }
 }
+
+export class SignedTransactionBuilder extends BaseBuilder {
+  constructor(private fields: { transaction: TransactionBuilder, signature: Uint8Array }) {
+    super();
+  }
+  write(buf: Uint8Array): void {
+    this.builder.reset();
+    this.builder.writeMessage(buf, this.fields.transaction);
+    this.builder.writeBytes(buf, this.fields.signature);
+  }
+}
