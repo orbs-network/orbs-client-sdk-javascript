@@ -4,9 +4,11 @@
   </head>
   <body>
     <script>
-      const el = document.createElement("h1");
-      el.textContent = "hello" + OrbsClient.double(5);
-      document.body.appendChild(el);
+      if (Orbs.createAccount().publicKey.byteLength == 32) {
+        const el = document.createElement("h1");
+        el.textContent = "success";
+        document.body.appendChild(el);
+      }
     </script>
   </body>
 </html>

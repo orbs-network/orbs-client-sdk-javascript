@@ -1,3 +1,3 @@
-export const greet = () => console.log("Hello, world!");
-
-export const double = (x: number) => x * 2;
+export { createAccount } from "./orbsclient/Account";
+export { Client } from "./orbsclient/Client";
+export { Uint32Arg, Uint64Arg, StringArg, BytesArg } from "./codec/MethodArguments";

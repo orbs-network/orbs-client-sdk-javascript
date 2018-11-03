@@ -15,7 +15,7 @@ export default {
     {
       file: pkg.browser,
       format: 'iife',
-      name: 'OrbsClient'
+      name: 'Orbs'
     },
   ],
   external: [
