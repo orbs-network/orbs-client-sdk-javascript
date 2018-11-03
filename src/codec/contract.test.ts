@@ -2,7 +2,7 @@ import "../membuffers/matcher-extensions";
 import { decodeSendTransactionResponse, encodeSendTransactionRequest } from "./OpSendTransaction";
 import { encodeCallMethodRequest, decodeCallMethodResponse } from "./OpCallMethod";
 import { encodeGetTransactionStatusRequest, decodeGetTransactionStatusResponse } from "./OpGetTransactionStatus";
-import { MethodArgument, Uint32, Uint64, Str, Bytes } from "./MethodArguments";
+import { MethodArgument, Uint32Arg, Uint64Arg, StringArg, BytesArg } from "./MethodArguments";
 
 describe("Codec contract", () => {
 
@@ -144,16 +144,16 @@ function jsonUnmarshalMethodArguments(args: string[], argTypes: string[]): Metho
     const argType = argTypes[i];
     switch (argType) {
       case "uint32":
-        res.push(new Uint32(jsonUnmarshalNumber(arg)));
+        res.push(new Uint32Arg(jsonUnmarshalNumber(arg)));
         break;
       case "uint64":
-        res.push(new Uint64(BigInt(arg)));
+        res.push(new Uint64Arg(BigInt(arg)));
         break;
       case "string":
-        res.push(new Str(arg));
+        res.push(new StringArg(arg));
         break;
       case "bytes":
-        res.push(new Bytes(jsonUnmarshalBase64Bytes(arg)));
+        res.push(new BytesArg(jsonUnmarshalBase64Bytes(arg)));
         break;
       default:
         throw new Error(`unknown argType ${argType}`);
@@ -167,16 +167,16 @@ function jsonMarshalMethodArguments(args: MethodArgument[]): string[] {
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     switch (arg.constructor) {
-      case Uint32:
+      case Uint32Arg:
         res.push(arg.value.toString());
         break;
-      case Uint64:
+      case Uint64Arg:
         res.push(arg.value.toString());
         break;
-      case Str:
+      case StringArg:
         res.push(<string>arg.value);
         break;
-      case Bytes:
+      case BytesArg:
         res.push(jsonMarshalBase64Bytes(<Uint8Array>arg.value));
         break;
       default:
