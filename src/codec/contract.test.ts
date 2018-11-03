@@ -1,8 +1,8 @@
 import "../membuffers/matcher-extensions";
-import { encodeSendTransactionRequest } from "./OpSendTransaction";
+import { decodeSendTransactionResponse, encodeSendTransactionRequest } from "./OpSendTransaction";
 import { encodeCallMethodRequest, decodeCallMethodResponse } from "./OpCallMethod";
-import { encodeGetTransactionStatusRequest } from "./OpGetTransactionStatus";
-import { MethodArgument, Uint32, Uint64, String, Bytes } from "./MethodArguments";
+import { encodeGetTransactionStatusRequest, decodeGetTransactionStatusResponse } from "./OpGetTransactionStatus";
+import { MethodArgument, Uint32, Uint64, Str, Bytes } from "./MethodArguments";
 
 describe("Codec contract", () => {
 
@@ -36,6 +36,7 @@ describe("Codec contract", () => {
         expect(encoded).toBeEqualToUint8Array(expected);
         const expectedTxId = jsonUnmarshalBase64Bytes(outputScenario.TxId);
         expect(txId).toBeEqualToUint8Array(expectedTxId);
+        return;
       }
 
       // CallMethodRequest
@@ -52,6 +53,7 @@ describe("Codec contract", () => {
         });
         const expected = jsonUnmarshalBase64Bytes(outputScenario.CallMethodRequest);
         expect(encoded).toBeEqualToUint8Array(expected);
+        return;
       }
 
       // GetTransactionStatusRequest
@@ -61,6 +63,24 @@ describe("Codec contract", () => {
         });
         const expected = jsonUnmarshalBase64Bytes(outputScenario.GetTransactionStatusRequest);
         expect(encoded).toBeEqualToUint8Array(expected);
+        return;
+      }
+
+      // SendTransactionResponse
+      if (inputScenario.SendTransactionResponse) {
+        const decoded = decodeSendTransactionResponse(jsonUnmarshalBase64Bytes(inputScenario.SendTransactionResponse));
+        const res = {
+          "BlockHeight": decoded.blockHeight.toString(),
+          "OutputArguments": jsonMarshalMethodArguments(decoded.outputArguments),
+          "RequestStatus": decoded.requestStatus,
+          "ExecutionResult": decoded.executionResult,
+          "BlockTimestamp": decoded.blockTimestamp.toISOString(),
+          "TxHash": jsonMarshalBase64Bytes(decoded.txHash),
+          "TransactionStatus": decoded.transactionStatus
+        };
+        const expected = outputScenario.SendTransactionResponse;
+        expect(res).toEqual(expected);
+        return;
       }
 
       // CallMethodResponse
@@ -75,7 +95,27 @@ describe("Codec contract", () => {
         };
         const expected = outputScenario.CallMethodResponse;
         expect(res).toEqual(expected);
+        return;
       }
+
+      // GetTransactionStatusResponse
+      if (inputScenario.GetTransactionStatusResponse) {
+        const decoded = decodeGetTransactionStatusResponse(jsonUnmarshalBase64Bytes(inputScenario.GetTransactionStatusResponse));
+        const res = {
+          "BlockHeight": decoded.blockHeight.toString(),
+          "OutputArguments": jsonMarshalMethodArguments(decoded.outputArguments),
+          "RequestStatus": decoded.requestStatus,
+          "ExecutionResult": decoded.executionResult,
+          "BlockTimestamp": decoded.blockTimestamp.toISOString(),
+          "TxHash": jsonMarshalBase64Bytes(decoded.txHash),
+          "TransactionStatus": decoded.transactionStatus
+        };
+        const expected = outputScenario.GetTransactionStatusResponse;
+        expect(res).toEqual(expected);
+        return;
+      }
+
+      fail(`unhandled input scenario:\n${JSON.stringify(inputScenario)}`);
 
     });
   }
@@ -87,7 +127,7 @@ function jsonUnmarshalNumber(str: string): number {
 }
 
 function jsonUnmarshalBase64Bytes(str: string): Uint8Array {
-  return Buffer.from(str, "base64");
+  return new Uint8Array(Buffer.from(str, "base64"));
 }
 
 function jsonMarshalBase64Bytes(buf: Uint8Array): string {
@@ -110,7 +150,7 @@ function jsonUnmarshalMethodArguments(args: string[], argTypes: string[]): Metho
         res.push(new Uint64(BigInt(arg)));
         break;
       case "string":
-        res.push(new String(arg));
+        res.push(new Str(arg));
         break;
       case "bytes":
         res.push(new Bytes(jsonUnmarshalBase64Bytes(arg)));
@@ -133,8 +173,8 @@ function jsonMarshalMethodArguments(args: MethodArgument[]): string[] {
       case Uint64:
         res.push(arg.value.toString());
         break;
-      case String:
-        res.push(arg.value.toString());
+      case Str:
+        res.push(<string>arg.value);
         break;
       case Bytes:
         res.push(jsonMarshalBase64Bytes(<Uint8Array>arg.value));

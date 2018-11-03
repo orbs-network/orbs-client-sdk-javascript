@@ -115,3 +115,5 @@ export class SignedTransactionBuilder extends BaseBuilder {
     this.builder.writeBytes(buf, this.fields.signature);
   }
 }
+
+export const TransactionReceipt_Scheme = [FieldTypes.TypeBytes, FieldTypes.TypeUint16, FieldTypes.TypeBytes];

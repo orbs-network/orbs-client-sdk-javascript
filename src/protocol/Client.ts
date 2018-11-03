@@ -13,6 +13,8 @@ export class GetTransactionStatusRequestBuilder extends BaseBuilder {
   }
 }
 
+export const GetTransactionStatusResponse_Scheme = [FieldTypes.TypeUint16, FieldTypes.TypeMessage, FieldTypes.TypeUint16, FieldTypes.TypeUint64, FieldTypes.TypeUint64];
+
 export class CallMethodRequestBuilder extends BaseBuilder {
   constructor(private fields: { transaction: Protocol.TransactionBuilder }) {
     super();
@@ -36,3 +38,5 @@ export class SendTransactionRequestBuilder extends BaseBuilder {
     this.builder.writeMessage(buf, this.fields.signedTransaction);
   }
 }
+
+export const SendTransactionResponse_Scheme = [FieldTypes.TypeUint16, FieldTypes.TypeMessage, FieldTypes.TypeUint16, FieldTypes.TypeUint64, FieldTypes.TypeUint64];

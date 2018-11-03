@@ -2,7 +2,7 @@ import * as Protocol from "../protocol/Protocol";
 import { InternalMessage } from "../membuffers/message";
 import { MethodArgumentArray_Scheme } from "../protocol/Protocol";
 
-export type MethodArgument = Uint32 | Uint64 | String | Bytes;
+export type MethodArgument = Uint32 | Uint64 | Str | Bytes;
 
 export class Uint32 {
   constructor(public value: number) {}
@@ -12,7 +12,7 @@ export class Uint64 {
   constructor(public value: BigInt) {}
 }
 
-export class String {
+export class Str {
   constructor(public value: string) {}
 }
 
@@ -31,7 +31,7 @@ function methodArgumentsBuilders(args: MethodArgument[]): Protocol.MethodArgumen
       case Uint64:
         res.push(new Protocol.MethodArgumentBuilder({name: "uint64", type: 1, value: arg.value}));
         break;
-      case String:
+      case Str:
         res.push(new Protocol.MethodArgumentBuilder({name: "string", type: 2, value: arg.value}));
         break;
       case Bytes:
@@ -75,7 +75,7 @@ export function methodArgumentsOpaqueDecode(buf: Uint8Array): MethodArgument[] {
         break;
       case 2:
         const [, stringOff] = methodArgumentMsg.isUnionIndex(1, 0, 2);
-        res.push(new String(methodArgumentMsg.getStringInOffset(stringOff)));
+        res.push(new Str(methodArgumentMsg.getStringInOffset(stringOff)));
         break;
       case 3:
         const [, bytesOff] = methodArgumentMsg.isUnionIndex(1, 0, 3);

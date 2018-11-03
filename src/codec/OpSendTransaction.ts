@@ -1,12 +1,14 @@
 import { NetworkType, networkTypeEncode } from "./NetworkType";
-import { MethodArgument, methodArgumentsOpaqueEncode } from "./MethodArguments";
+import { MethodArgument, methodArgumentsOpaqueDecode, methodArgumentsOpaqueEncode } from "./MethodArguments";
 import * as Client from "../protocol/Client";
 import * as Protocol from "../protocol/Protocol";
 import * as Keys from "../crypto/Keys";
 import * as Signature from "../crypto/Signature";
 import * as Digest from "../crypto/Digest";
 import { InternalMessage } from "../membuffers/message";
-import { FieldTypes } from "../membuffers/types";
+import { RequestStatus, requestStatusDecode } from "./RequestStatus";
+import { ExecutionResult, executionResultDecode } from "./ExecutionResult";
+import { TransactionStatus, transactionStatusDecode } from "./TransactionStatus";
 
 export interface SendTransactionRequest {
   protocolVersion: number;
@@ -17,6 +19,16 @@ export interface SendTransactionRequest {
   contractName: string;
   methodName: string;
   inputArguments: MethodArgument[];
+}
+
+export interface SendTransactionResponse {
+  requestStatus: RequestStatus;
+  txHash: Uint8Array;
+  executionResult: ExecutionResult;
+  outputArguments: MethodArgument[];
+  transactionStatus: TransactionStatus;
+  blockHeight: BigInt;
+  blockTimestamp: Date;
 }
 
 export function encodeSendTransactionRequest(req: SendTransactionRequest, privateKey: Uint8Array): [Uint8Array, Uint8Array] {
@@ -76,4 +88,37 @@ export function encodeSendTransactionRequest(req: SendTransactionRequest, privat
 
   // return
   return [buf, Digest.generateTxId(txHash, timestampNano)];
+}
+
+export function decodeSendTransactionResponse(buf: Uint8Array): SendTransactionResponse {
+  // decode response
+  const sendTransactionResponseMsg = new InternalMessage(buf, buf.byteLength, Client.SendTransactionResponse_Scheme, []);
+  if (!sendTransactionResponseMsg.isValid()) {
+    throw new Error(`response is corrupt and cannot be decoded`);
+  }
+
+  // decode request status
+  const requestStatus = requestStatusDecode(sendTransactionResponseMsg.getUint16(0));
+
+  // decode execution result
+  const transactionReceiptBuf = sendTransactionResponseMsg.getMessage(1);
+  const transactionReceiptMsg = new InternalMessage(transactionReceiptBuf, transactionReceiptBuf.byteLength, Protocol.TransactionReceipt_Scheme, []);
+  const executionResult = executionResultDecode(transactionReceiptMsg.getUint16(1));
+
+  // decode method arguments
+  const outputArgumentArray = methodArgumentsOpaqueDecode(transactionReceiptMsg.rawBufferWithHeaderForField(2, 0));
+
+  // decode transaction status
+  const transactionStatus = transactionStatusDecode(sendTransactionResponseMsg.getUint16(2));
+
+  // return
+  return {
+    requestStatus: requestStatus,
+    txHash: transactionReceiptMsg.getBytes(0),
+    executionResult: executionResult,
+    outputArguments: outputArgumentArray,
+    transactionStatus: transactionStatus,
+    blockHeight: sendTransactionResponseMsg.getUint64(3),
+    blockTimestamp: Protocol.unixNanoToDate(sendTransactionResponseMsg.getUint64(4))
+  };
 }
