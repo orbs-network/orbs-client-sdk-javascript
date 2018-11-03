@@ -64,9 +64,9 @@ export function encodeSendTransactionRequest(req: SendTransactionRequest, privat
 
   // read encoded bytes
   const buf = res.build();
-  const sendTransactionRequestMsg = new InternalMessage(buf, buf.byteLength, [FieldTypes.TypeMessage], []);
+  const sendTransactionRequestMsg = new InternalMessage(buf, buf.byteLength, Client.SendTransactionRequest_Scheme, []);
   const signedTransactionBuf = sendTransactionRequestMsg.getMessage(0);
-  const signedTransactionMsg = new InternalMessage(signedTransactionBuf, signedTransactionBuf.byteLength, [FieldTypes.TypeMessage, FieldTypes.TypeBytes], []);
+  const signedTransactionMsg = new InternalMessage(signedTransactionBuf, signedTransactionBuf.byteLength, Protocol.SignedTransaction_Scheme, []);
   const transactionBuf = signedTransactionMsg.rawBufferForField(0, 0);
 
   // sign

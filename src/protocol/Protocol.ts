@@ -1,9 +1,16 @@
 import { BaseBuilder } from "./Base";
-import { MessageWriter } from "../membuffers/builder";
+import { FieldTypes } from "../membuffers/types";
 
 export function dateToUnixNano(date: Date): BigInt {
   return BigInt(date.getTime()) * BigInt(1000000);
 }
+
+export function unixNanoToDate(timestamp: BigInt): Date {
+  return new Date(Number(timestamp / BigInt(1000000)));
+}
+
+export const MethodArgument_Scheme = [FieldTypes.TypeString, FieldTypes.TypeUnion];
+export const MethodArgument_Unions = [[FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeString, FieldTypes.TypeBytes]];
 
 export class MethodArgumentBuilder extends BaseBuilder {
   constructor(private fields: { name: string, type: number, value: number|BigInt|string|Uint8Array }) {
@@ -31,6 +38,8 @@ export class MethodArgumentBuilder extends BaseBuilder {
     }
   }
 }
+
+export const MethodArgumentArray_Scheme = [FieldTypes.TypeMessageArray];
 
 export class MethodArgumentArrayBuilder extends BaseBuilder {
   constructor(private fields: { arguments: MethodArgumentBuilder[] }) {
@@ -93,6 +102,8 @@ export class TransactionBuilder extends BaseBuilder {
     this.builder.writeBytes(buf, this.fields.inputArgumentArray);
   }
 }
+
+export const SignedTransaction_Scheme = [FieldTypes.TypeMessage, FieldTypes.TypeBytes];
 
 export class SignedTransactionBuilder extends BaseBuilder {
   constructor(private fields: { transaction: TransactionBuilder, signature: Uint8Array }) {

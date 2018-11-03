@@ -17,7 +17,7 @@
     "watch": "rollup -cw",
     "test": "jest",
     "lint": "tslint -c tslint.json",
-    "prepare": "git clone https://github.com/orbs-network/orbs-client-sdk-go.git ./contract"
+    "prepare": "rm -rf ./contract && git clone https://github.com/orbs-network/orbs-client-sdk-go.git ./contract"
   },
   "devDependencies": {
     "@types/jest": "^23.3.9",
