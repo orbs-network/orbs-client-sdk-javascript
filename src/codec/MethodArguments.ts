@@ -9,7 +9,11 @@ export class Uint32Arg {
 }
 
 export class Uint64Arg {
-  constructor(public value: BigInt) {}
+  constructor(public value: BigInt | number) {
+    if (typeof value === "number") {
+      this.value = BigInt(value);
+    }
+  }
 }
 
 export class StringArg {
