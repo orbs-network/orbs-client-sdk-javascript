@@ -1,5 +1,7 @@
-let textEncoder = null;
-export function getTextEncoder() {
+import { TextEncoder, TextDecoder } from "text-encoding";
+
+let textEncoder: TextEncoder = null;
+export function getTextEncoder(): TextEncoder {
   if (textEncoder === null) {
     if (typeof TextEncoder === "undefined") { // node.js does not support TextEncoder
       require("fast-text-encoding");
@@ -9,8 +11,8 @@ export function getTextEncoder() {
   return textEncoder;
 }
 
-let textDecoder = null;
-export function getTextDecoder() {
+let textDecoder: TextDecoder = null;
+export function getTextDecoder(): TextDecoder {
   if (textDecoder === null) {
     if (typeof TextDecoder === "undefined") { // node.js does not support TextDecoder
       require("fast-text-encoding");
@@ -20,6 +22,6 @@ export function getTextDecoder() {
   return textDecoder;
 }
 
-export function ch(char) {
+export function ch(char: string): number {
   return char.charCodeAt(0);
 }

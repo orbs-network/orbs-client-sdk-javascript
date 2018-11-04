@@ -1,3 +1,5 @@
+export type FieldType = number;
+
 export const FieldTypes = Object.freeze({
   TypeMessage: 1,
   TypeBytes: 2,

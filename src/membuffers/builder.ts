@@ -1,35 +1,43 @@
-import {alignOffsetToType, alignDynamicFieldContentOffset} from './message';
-import {FieldTypes, FieldSizes} from './types';
-import {getTextEncoder} from './text';
+import { alignOffsetToType, alignDynamicFieldContentOffset } from "./message";
+import { FieldTypes, FieldSizes } from "./types";
+import { getTextEncoder } from "./text";
+
+interface MessageWriter {
+  write(buf: Uint8Array): void;
+  getSize(): number;
+  calcRequiredSize(): number;
+}
 
 export class InternalBuilder {
+  public size: number;
 
   constructor() {
     this.size = 0;
   }
 
-  reset() {
+  reset(): void {
     this.size = 0;
   }
 
-  calcRequiredSize() {
-    this.write(null);
+  calcRequiredSize(): number {
+    // this.write(null);  // Ask tal, last parameter
     return this.getSize();
   }
 
-  getSize() {
+  getSize(): number {
     return this.size;
   }
 
-  writeUint8(buf, v) {
+  writeUint8(buf: Uint8Array, v: number): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeUint8);
     if (buf) {
-      new DataView(buf.buffer, buf.byteOffset).setUint8(this.size, v, true);
+      // Ask tal, last parameter
+      new DataView(buf.buffer, buf.byteOffset).setUint8(this.size, v);
     }
     this.size += FieldSizes[FieldTypes.TypeUint8];
   }
 
-  writeUint16(buf, v) {
+  writeUint16(buf: Uint8Array, v: number): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeUint16);
     if (buf) {
       new DataView(buf.buffer, buf.byteOffset).setUint16(this.size, v, true);
@@ -37,7 +45,7 @@ export class InternalBuilder {
     this.size += FieldSizes[FieldTypes.TypeUint16];
   }
 
-  writeUint32(buf, v) {
+  writeUint32(buf: Uint8Array, v: number): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeUint32);
     if (buf) {
       new DataView(buf.buffer, buf.byteOffset).setUint32(this.size, v, true);
@@ -45,7 +53,7 @@ export class InternalBuilder {
     this.size += FieldSizes[FieldTypes.TypeUint32];
   }
 
-  writeUint64(buf, v) {
+  writeUint64(buf: Uint8Array, v: BigInt): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeUint64);
     if (buf) {
       new DataView(buf.buffer, buf.byteOffset).setBigUint64(this.size, v, true);
@@ -53,7 +61,7 @@ export class InternalBuilder {
     this.size += FieldSizes[FieldTypes.TypeUint64];
   }
 
-  writeBytes(buf, v) {
+  writeBytes(buf: Uint8Array, v: Uint8Array): void {
     const dataView = (buf) ? new DataView(buf.buffer, buf.byteOffset) : undefined;
     this.size = alignOffsetToType(this.size, FieldTypes.TypeBytes);
     if (buf) {
@@ -73,11 +81,11 @@ export class InternalBuilder {
     }
   }
 
-  writeString(buf, v) {
+  writeString(buf: Uint8Array, v: string): void {
     this.writeBytes(buf, getTextEncoder().encode(v));
   }
 
-  writeUnionIndex(buf, unionIndex) {
+  writeUnionIndex(buf: Uint8Array, unionIndex: number): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeUnion);
     if (buf) {
       new DataView(buf.buffer, buf.byteOffset).setUint16(this.size, unionIndex, true);
@@ -85,7 +93,7 @@ export class InternalBuilder {
     this.size += FieldSizes[FieldTypes.TypeUnion];
   }
 
-  writeUint8Array(buf, v) {
+  writeUint8Array(buf: Uint8Array, v: number[]): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeUint8Array);
     if (buf) {
       new DataView(buf.buffer, buf.byteOffset).setUint32(this.size, v.length * FieldSizes[FieldTypes.TypeUint8], true);
@@ -97,7 +105,7 @@ export class InternalBuilder {
     }
   }
 
-  writeUint16Array(buf, v) {
+  writeUint16Array(buf: Uint8Array, v: number[]): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeUint16Array);
     if (buf) {
       new DataView(buf.buffer, buf.byteOffset).setUint32(this.size, v.length * FieldSizes[FieldTypes.TypeUint16], true);
@@ -109,7 +117,7 @@ export class InternalBuilder {
     }
   }
 
-  writeUint32Array(buf, v) {
+  writeUint32Array(buf: Uint8Array, v: number[]): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeUint32Array);
     if (buf) {
       new DataView(buf.buffer, buf.byteOffset).setUint32(this.size, v.length * FieldSizes[FieldTypes.TypeUint32], true);
@@ -121,7 +129,7 @@ export class InternalBuilder {
     }
   }
 
-  writeUint64Array(buf, v) {
+  writeUint64Array(buf: Uint8Array, v: BigInt[]): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeUint64Array);
     if (buf) {
       new DataView(buf.buffer, buf.byteOffset).setUint32(this.size, v.length * FieldSizes[FieldTypes.TypeUint64], true);
@@ -133,7 +141,7 @@ export class InternalBuilder {
     }
   }
 
-  writeBytesArray(buf, v) {
+  writeBytesArray(buf: Uint8Array, v: Uint8Array[]): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeBytesArray);
     const sizePlaceholderOffset = this.size;
     this.size += FieldSizes[FieldTypes.TypeBytesArray];
@@ -148,7 +156,7 @@ export class InternalBuilder {
     }
   }
 
-  writeStringArray(buf, v) {
+  writeStringArray(buf: Uint8Array, v: string[]): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeStringArray);
     const sizePlaceholderOffset = this.size;
     this.size += FieldSizes[FieldTypes.TypeStringArray];
@@ -163,7 +171,7 @@ export class InternalBuilder {
     }
   }
 
-  writeMessage(buf, v) {
+  writeMessage(buf: Uint8Array, v: MessageWriter): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeMessage);
     const sizePlaceholderOffset = this.size;
     this.size += FieldSizes[FieldTypes.TypeMessage];
@@ -180,7 +188,7 @@ export class InternalBuilder {
     }
   }
 
-  writeMessageArray(buf, v) {
+  writeMessageArray(buf: Uint8Array, v: MessageWriter[]): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeMessageArray);
     const sizePlaceholderOffset = this.size;
     this.size += FieldSizes[FieldTypes.TypeMessageArray];
