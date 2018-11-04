@@ -19,11 +19,6 @@ export class InternalBuilder {
     this.size = 0;
   }
 
-  calcRequiredSize(): number {
-    // this.write(null);  // Ask tal, last parameter
-    return this.getSize();
-  }
-
   getSize(): number {
     return this.size;
   }
@@ -31,7 +26,6 @@ export class InternalBuilder {
   writeUint8(buf: Uint8Array, v: number): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeUint8);
     if (buf) {
-      // Ask tal, last parameter
       new DataView(buf.buffer, buf.byteOffset).setUint8(this.size, v);
     }
     this.size += FieldSizes[FieldTypes.TypeUint8];
