@@ -22,7 +22,6 @@
   "devDependencies": {
     "@types/jest": "^23.3.9",
     "@types/node": "^10.12.2",
-    "@types/text-encoding": "0.0.34",
     "babel-jest": "^23.6.0",
     "babel-preset-env": "^1.7.0",
     "jest": "^23.6.0",
