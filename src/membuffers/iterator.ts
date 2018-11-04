@@ -2,7 +2,7 @@ import { alignDynamicFieldContentOffset, InternalMessage } from "./message";
 import { FieldTypes, FieldSizes, FieldType } from "./types";
 import { getTextDecoder } from "./text";
 
-export class FieldsIterator {
+export class ArrayIterator {
 
   constructor(private cursor: number, private endCursor: number, private fieldType: FieldType, private m: InternalMessage) {
   }

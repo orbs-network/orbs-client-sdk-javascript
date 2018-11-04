@@ -1,5 +1,5 @@
 import { FieldTypes, FieldSizes, FieldAlignment, FieldDynamic, FieldDynamicContentAlignment, FieldType } from "./types";
-import { FieldsIterator } from "./iterator";
+import { ArrayIterator } from "./iterator";
 import { getTextEncoder, getTextDecoder } from "./text";
 
 export function alignOffsetToType(off: number, fieldType: FieldType) {
@@ -16,7 +16,7 @@ export class InternalMessage {
   public bytes: Uint8Array;
 
   private dataView: DataView;
-  private offsets: any;
+  private offsets: { [fieldNum: number]: number };
 
   constructor(buf: Uint8Array, private size: number, private scheme: FieldType[], private unions: FieldType[][]) {
     this.bytes = buf; // buf should be Uint8Array (a view over an ArrayBuffer)
@@ -336,106 +336,106 @@ export class InternalMessage {
     return [unionType == unionIndex, off];
   }
 
-  getUint8ArrayIteratorInOffset(off: number): FieldsIterator {
+  getUint8ArrayIteratorInOffset(off: number): ArrayIterator {
     const contentSize = this.dataView.getUint32(off, true);
     off += FieldSizes[FieldTypes.TypeUint8Array];
     off = alignDynamicFieldContentOffset(off, FieldTypes.TypeUint8Array);
-    return new FieldsIterator(off, off + contentSize, FieldTypes.TypeUint8, this);
+    return new ArrayIterator(off, off + contentSize, FieldTypes.TypeUint8, this);
   }
 
-  getUint8ArrayIterator(fieldNum: number): FieldsIterator {
+  getUint8ArrayIterator(fieldNum: number): ArrayIterator {
     if (!this.lazyCalcOffsets() || fieldNum >= Object.keys(this.offsets).length) {
-      return new FieldsIterator(0, 0, FieldTypes.TypeUint8, this);
+      return new ArrayIterator(0, 0, FieldTypes.TypeUint8, this);
     }
     const off = this.offsets[fieldNum];
     return this.getUint8ArrayIteratorInOffset(off);
   }
 
-  getUint16ArrayIteratorInOffset(off: number): FieldsIterator {
+  getUint16ArrayIteratorInOffset(off: number): ArrayIterator {
     const contentSize = this.dataView.getUint32(off, true);
     off += FieldSizes[FieldTypes.TypeUint32Array];
     off = alignDynamicFieldContentOffset(off, FieldTypes.TypeUint16Array);
-    return new FieldsIterator(off, off + contentSize, FieldTypes.TypeUint16, this);
+    return new ArrayIterator(off, off + contentSize, FieldTypes.TypeUint16, this);
   }
 
-  getUint16ArrayIterator(fieldNum: number): FieldsIterator {
+  getUint16ArrayIterator(fieldNum: number): ArrayIterator {
     if (!this.lazyCalcOffsets() || fieldNum >= Object.keys(this.offsets).length) {
-      return new FieldsIterator(0, 0, FieldTypes.TypeUint16, this);
+      return new ArrayIterator(0, 0, FieldTypes.TypeUint16, this);
     }
     const off = this.offsets[fieldNum];
     return this.getUint16ArrayIteratorInOffset(off);
   }
 
-  getUint32ArrayIteratorInOffset(off: number): FieldsIterator {
+  getUint32ArrayIteratorInOffset(off: number): ArrayIterator {
     const contentSize = this.dataView.getUint32(off, true);
     off += FieldSizes[FieldTypes.TypeUint32Array];
     off = alignDynamicFieldContentOffset(off, FieldTypes.TypeUint32Array);
-    return new FieldsIterator(off, off + contentSize, FieldTypes.TypeUint32, this);
+    return new ArrayIterator(off, off + contentSize, FieldTypes.TypeUint32, this);
   }
 
-  getUint32ArrayIterator(fieldNum: number): FieldsIterator {
+  getUint32ArrayIterator(fieldNum: number): ArrayIterator {
     if (!this.lazyCalcOffsets() || fieldNum >= Object.keys(this.offsets).length) {
-      return new FieldsIterator(0, 0, FieldTypes.TypeUint32, this);
+      return new ArrayIterator(0, 0, FieldTypes.TypeUint32, this);
     }
     const off = this.offsets[fieldNum];
     return this.getUint32ArrayIteratorInOffset(off);
   }
 
-  getUint64ArrayIteratorInOffset(off: number): FieldsIterator {
+  getUint64ArrayIteratorInOffset(off: number): ArrayIterator {
     const contentSize = this.dataView.getUint32(off, true);
     off += FieldSizes[FieldTypes.TypeUint64Array];
     off = alignDynamicFieldContentOffset(off, FieldTypes.TypeUint64Array);
-    return new FieldsIterator(off, off + contentSize, FieldTypes.TypeUint64, this);
+    return new ArrayIterator(off, off + contentSize, FieldTypes.TypeUint64, this);
   }
 
-  getUint64ArrayIterator(fieldNum: number): FieldsIterator {
+  getUint64ArrayIterator(fieldNum: number): ArrayIterator {
     if (!this.lazyCalcOffsets() || fieldNum >= Object.keys(this.offsets).length) {
-      return new FieldsIterator(0, 0, FieldTypes.TypeUint64, this);
+      return new ArrayIterator(0, 0, FieldTypes.TypeUint64, this);
     }
     const off = this.offsets[fieldNum];
     return this.getUint64ArrayIteratorInOffset(off);
   }
 
-  getMessageArrayIteratorInOffset(off: number): FieldsIterator {
+  getMessageArrayIteratorInOffset(off: number): ArrayIterator {
     const contentSize = this.dataView.getUint32(off, true);
     off += FieldSizes[FieldTypes.TypeMessageArray];
     off = alignDynamicFieldContentOffset(off, FieldTypes.TypeMessageArray);
-    return new FieldsIterator(off, off + contentSize, FieldTypes.TypeMessage, this);
+    return new ArrayIterator(off, off + contentSize, FieldTypes.TypeMessage, this);
   }
 
-  getMessageArrayIterator(fieldNum: number): FieldsIterator {
+  getMessageArrayIterator(fieldNum: number): ArrayIterator {
     if (!this.lazyCalcOffsets() || fieldNum >= Object.keys(this.offsets).length) {
-      return new FieldsIterator(0, 0, FieldTypes.TypeMessage, this);
+      return new ArrayIterator(0, 0, FieldTypes.TypeMessage, this);
     }
     const off = this.offsets[fieldNum];
     return this.getMessageArrayIteratorInOffset(off);
   }
 
-  getBytesArrayIteratorInOffset(off: number): FieldsIterator {
+  getBytesArrayIteratorInOffset(off: number): ArrayIterator {
     const contentSize = this.dataView.getUint32(off, true);
     off += FieldSizes[FieldTypes.TypeMessageArray];
     off = alignDynamicFieldContentOffset(off, FieldTypes.TypeBytesArray);
-    return new FieldsIterator(off, off + contentSize, FieldTypes.TypeBytes, this);
+    return new ArrayIterator(off, off + contentSize, FieldTypes.TypeBytes, this);
   }
 
-  getBytesArrayIterator(fieldNum: number): FieldsIterator {
+  getBytesArrayIterator(fieldNum: number): ArrayIterator {
     if (!this.lazyCalcOffsets() || fieldNum >= Object.keys(this.offsets).length) {
-      return new FieldsIterator(0, 0, FieldTypes.TypeBytes, this);
+      return new ArrayIterator(0, 0, FieldTypes.TypeBytes, this);
     }
     const off = this.offsets[fieldNum];
     return this.getBytesArrayIteratorInOffset(off);
   }
 
-  getStringArrayIteratorInOffset(off: number): FieldsIterator {
+  getStringArrayIteratorInOffset(off: number): ArrayIterator {
     const contentSize = this.dataView.getUint32(off, true);
     off += FieldSizes[FieldTypes.TypeStringArray];
     off = alignDynamicFieldContentOffset(off, FieldTypes.TypeStringArray);
-    return new FieldsIterator(off, off + contentSize, FieldTypes.TypeString, this);
+    return new ArrayIterator(off, off + contentSize, FieldTypes.TypeString, this);
   }
 
-  getStringArrayIterator(fieldNum: number): FieldsIterator {
+  getStringArrayIterator(fieldNum: number): ArrayIterator {
     if (!this.lazyCalcOffsets() || fieldNum >= Object.keys(this.offsets).length) {
-      return new FieldsIterator(0, 0, FieldTypes.TypeString, this);
+      return new ArrayIterator(0, 0, FieldTypes.TypeString, this);
     }
     const off = this.offsets[fieldNum];
     return this.getStringArrayIteratorInOffset(off);
