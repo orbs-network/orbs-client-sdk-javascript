@@ -1,5 +1,3 @@
-import { TextEncoder, TextDecoder } from "text-encoding";
-
 let textEncoder: TextEncoder = null;
 export function getTextEncoder(): TextEncoder {
   if (textEncoder === null) {
