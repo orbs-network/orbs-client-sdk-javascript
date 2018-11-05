@@ -7,15 +7,18 @@ export default {
     {
       file: pkg.main,
       format: 'cjs',
+      sourceMap: true,
     },
     {
       file: pkg.module,
       format: 'es',
+      sourceMap: true,
     },
     {
       file: pkg.browser,
       format: 'iife',
-      name: 'Orbs'
+      name: 'Orbs',
+      sourceMap: true,
     },
   ],
   external: [

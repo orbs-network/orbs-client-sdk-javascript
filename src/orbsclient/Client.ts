@@ -70,7 +70,7 @@ export class Client {
       throw new Error(`payload sent by http is empty`);
     }
     const res = await axios.post(this.endpoint + relativeUrl, payload, {
-      headers: { "Content-Type": CONTENT_TYPE }
+      headers: { "Content-Type": CONTENT_TYPE } , responseType: "arraybuffer"
     });
     if (!res.data) {
       throw new Error(`no response data available, http status: ${res.status}, ${res.statusText}`);
