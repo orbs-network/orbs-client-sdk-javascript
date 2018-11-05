@@ -15,16 +15,23 @@ test("E2E nodejs: CreateAccount", () => {
 describe("Using Gamma", async () => {
 
     let gamma;
-    beforeAll( async () => {
+    beforeEach( async () => {
       console.log("launching Gamma on port " + GAMMA_PORT);
       gamma = spawn("gamma-cli", ["start", "-port", GAMMA_PORT]);
       await new Promise(resolve => setTimeout(resolve, 500));
     });
 
-    afterAll( async () => {
+    afterEach( async () => {
         if (gamma) {
-          console.log("shutting down Gamma");
-          gamma.kill()
+          console.log("shutting down Gamma...");
+          gamma.kill();
+          await new Promise(resolve => {
+              gamma.on('exit', () => {
+                  console.log('Gamma exited');
+                  gamma = null;
+                  resolve();
+              })
+          });
         }
     });
 
