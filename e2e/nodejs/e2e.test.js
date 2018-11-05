@@ -18,21 +18,25 @@ describe("Using Gamma", async () => {
     beforeEach( async () => {
       console.log("launching Gamma on port " + GAMMA_PORT);
       gamma = spawn("gamma-cli", ["start", "-port", GAMMA_PORT]);
-      await new Promise(resolve => setTimeout(resolve, 500));
+      if (gamma.pid) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+      } else {
+          console.error("Unable to run E2E, Please install gamma-cli (https://github.com/orbs-network/orbs-contract-sdk/blob/master/Gamma.md)");
+      }
     });
 
     afterEach( async () => {
-        if (gamma) {
+        if (gamma && gamma.pid) {
           console.log("shutting down Gamma...");
           gamma.kill();
           await new Promise(resolve => {
               gamma.on('exit', () => {
                   console.log('Gamma exited');
-                  gamma = null;
                   resolve();
               })
           });
         }
+        gamma = null;
     });
 
     test("E2E nodejs: SimpleTransfer", async () => {
