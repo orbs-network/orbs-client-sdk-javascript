@@ -57,13 +57,14 @@ Coming soon
 
 ## Installation (Node.js)
 
-1. Install the NPM package:
+1. Install Gamma: https://github.com/orbs-network/orbs-contract-sdk
+2. Install the NPM package:
 
     ```sh
     npm install orbs-client-sdk
     ```
     
-2. Import the client in your project:
+3. Import the client in your project:
 
     ```js
     const Orbs = require("orbs-client-sdk");
