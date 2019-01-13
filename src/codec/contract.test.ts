@@ -1,8 +1,10 @@
 import "../membuffers/matcher-extensions";
 import { decodeSendTransactionResponse, encodeSendTransactionRequest } from "./OpSendTransaction";
-import { encodeCallMethodRequest, decodeCallMethodResponse } from "./OpCallMethod";
+import { encodeRunQueryRequest, decodeRunQueryResponse } from "./OpRunQuery";
 import { encodeGetTransactionStatusRequest, decodeGetTransactionStatusResponse } from "./OpGetTransactionStatus";
-import { MethodArgument, Uint32Arg, Uint64Arg, StringArg, BytesArg } from "./MethodArguments";
+import { encodeGetTransactionReceiptProofRequest, decodeGetTransactionReceiptProofResponse } from "./OpGetTransactionReceiptProof";
+import { Argument, ArgUint32, ArgUint64, ArgString, ArgBytes } from "./Arguments";
+import { Event } from "./Events";
 
 describe("Codec contract", () => {
 
@@ -30,7 +32,7 @@ describe("Codec contract", () => {
           publicKey: jsonUnmarshalBase64Bytes(inputScenario.SendTransactionRequest.PublicKey),
           contractName: inputScenario.SendTransactionRequest.ContractName,
           methodName: inputScenario.SendTransactionRequest.MethodName,
-          inputArguments: jsonUnmarshalMethodArguments(inputScenario.SendTransactionRequest.InputArguments, inputScenario.InputArgumentsTypes)
+          inputArguments: jsonUnmarshalArguments(inputScenario.SendTransactionRequest.InputArguments, inputScenario.SendTransactionRequest.InputArgumentsTypes)
         }, jsonUnmarshalBase64Bytes(inputScenario.PrivateKey));
         const expected = jsonUnmarshalBase64Bytes(outputScenario.SendTransactionRequest);
         expect(encoded).toBeEqualToUint8Array(expected);
@@ -39,19 +41,19 @@ describe("Codec contract", () => {
         return;
       }
 
-      // CallMethodRequest
-      if (inputScenario.CallMethodRequest) {
-        const encoded = encodeCallMethodRequest({
-          protocolVersion: jsonUnmarshalNumber(inputScenario.CallMethodRequest.ProtocolVersion),
-          virtualChainId: jsonUnmarshalNumber(inputScenario.CallMethodRequest.VirtualChainId),
-          timestamp: new Date(inputScenario.CallMethodRequest.Timestamp),
-          networkType: inputScenario.CallMethodRequest.NetworkType,
-          publicKey: jsonUnmarshalBase64Bytes(inputScenario.CallMethodRequest.PublicKey),
-          contractName: inputScenario.CallMethodRequest.ContractName,
-          methodName: inputScenario.CallMethodRequest.MethodName,
-          inputArguments: jsonUnmarshalMethodArguments(inputScenario.CallMethodRequest.InputArguments, inputScenario.InputArgumentsTypes)
+      // RunQueryRequest
+      if (inputScenario.RunQueryRequest) {
+        const encoded = encodeRunQueryRequest({
+          protocolVersion: jsonUnmarshalNumber(inputScenario.RunQueryRequest.ProtocolVersion),
+          virtualChainId: jsonUnmarshalNumber(inputScenario.RunQueryRequest.VirtualChainId),
+          timestamp: new Date(inputScenario.RunQueryRequest.Timestamp),
+          networkType: inputScenario.RunQueryRequest.NetworkType,
+          publicKey: jsonUnmarshalBase64Bytes(inputScenario.RunQueryRequest.PublicKey),
+          contractName: inputScenario.RunQueryRequest.ContractName,
+          methodName: inputScenario.RunQueryRequest.MethodName,
+          inputArguments: jsonUnmarshalArguments(inputScenario.RunQueryRequest.InputArguments, inputScenario.RunQueryRequest.InputArgumentsTypes)
         });
-        const expected = jsonUnmarshalBase64Bytes(outputScenario.CallMethodRequest);
+        const expected = jsonUnmarshalBase64Bytes(outputScenario.RunQueryRequest);
         expect(encoded).toBeEqualToUint8Array(expected);
         return;
       }
@@ -59,6 +61,8 @@ describe("Codec contract", () => {
       // GetTransactionStatusRequest
       if (inputScenario.GetTransactionStatusRequest) {
         const encoded = encodeGetTransactionStatusRequest({
+          protocolVersion: jsonUnmarshalNumber(inputScenario.GetTransactionStatusRequest.ProtocolVersion),
+          virtualChainId: jsonUnmarshalNumber(inputScenario.GetTransactionStatusRequest.VirtualChainId),
           txId: jsonUnmarshalBase64Bytes(inputScenario.GetTransactionStatusRequest.TxId)
         });
         const expected = jsonUnmarshalBase64Bytes(outputScenario.GetTransactionStatusRequest);
@@ -66,12 +70,27 @@ describe("Codec contract", () => {
         return;
       }
 
+      // GetTransactionReceiptProofRequest
+      if (inputScenario.GetTransactionReceiptProofRequest) {
+        const encoded = encodeGetTransactionReceiptProofRequest({
+          protocolVersion: jsonUnmarshalNumber(inputScenario.GetTransactionReceiptProofRequest.ProtocolVersion),
+          virtualChainId: jsonUnmarshalNumber(inputScenario.GetTransactionReceiptProofRequest.VirtualChainId),
+          txId: jsonUnmarshalBase64Bytes(inputScenario.GetTransactionReceiptProofRequest.TxId)
+        });
+        const expected = jsonUnmarshalBase64Bytes(outputScenario.GetTransactionReceiptProofRequest);
+        expect(encoded).toBeEqualToUint8Array(expected);
+        return;
+      }
+
       // SendTransactionResponse
       if (inputScenario.SendTransactionResponse) {
         const decoded = decodeSendTransactionResponse(jsonUnmarshalBase64Bytes(inputScenario.SendTransactionResponse));
+        const [args, argsTypes] = jsonMarshalArguments(decoded.outputArguments);
         const res = {
           "BlockHeight": decoded.blockHeight.toString(),
-          "OutputArguments": jsonMarshalMethodArguments(decoded.outputArguments),
+          "OutputArguments": args,
+          "OutputArgumentsTypes": argsTypes,
+          "OutputEvents": jsonMarshalEvents(decoded.outputEvents),
           "RequestStatus": decoded.requestStatus,
           "ExecutionResult": decoded.executionResult,
           "BlockTimestamp": decoded.blockTimestamp.toISOString(),
@@ -83,17 +102,20 @@ describe("Codec contract", () => {
         return;
       }
 
-      // CallMethodResponse
-      if (inputScenario.CallMethodResponse) {
-        const decoded = decodeCallMethodResponse(jsonUnmarshalBase64Bytes(inputScenario.CallMethodResponse));
+      // RunQueryResponse
+      if (inputScenario.RunQueryResponse) {
+        const decoded = decodeRunQueryResponse(jsonUnmarshalBase64Bytes(inputScenario.RunQueryResponse));
+        const [args, argsTypes] = jsonMarshalArguments(decoded.outputArguments);
         const res = {
           "BlockHeight": decoded.blockHeight.toString(),
-          "OutputArguments": jsonMarshalMethodArguments(decoded.outputArguments),
+          "OutputArguments": args,
+          "OutputArgumentsTypes": argsTypes,
+          "OutputEvents": jsonMarshalEvents(decoded.outputEvents),
           "RequestStatus": decoded.requestStatus,
           "ExecutionResult": decoded.executionResult,
           "BlockTimestamp": decoded.blockTimestamp.toISOString()
         };
-        const expected = outputScenario.CallMethodResponse;
+        const expected = outputScenario.RunQueryResponse;
         expect(res).toEqual(expected);
         return;
       }
@@ -101,9 +123,12 @@ describe("Codec contract", () => {
       // GetTransactionStatusResponse
       if (inputScenario.GetTransactionStatusResponse) {
         const decoded = decodeGetTransactionStatusResponse(jsonUnmarshalBase64Bytes(inputScenario.GetTransactionStatusResponse));
+        const [args, argsTypes] = jsonMarshalArguments(decoded.outputArguments);
         const res = {
           "BlockHeight": decoded.blockHeight.toString(),
-          "OutputArguments": jsonMarshalMethodArguments(decoded.outputArguments),
+          "OutputArguments": args,
+          "OutputArgumentsTypes": argsTypes,
+          "OutputEvents": jsonMarshalEvents(decoded.outputEvents),
           "RequestStatus": decoded.requestStatus,
           "ExecutionResult": decoded.executionResult,
           "BlockTimestamp": decoded.blockTimestamp.toISOString(),
@@ -111,6 +136,28 @@ describe("Codec contract", () => {
           "TransactionStatus": decoded.transactionStatus
         };
         const expected = outputScenario.GetTransactionStatusResponse;
+        expect(res).toEqual(expected);
+        return;
+      }
+
+      // GetTransactionReceiptProofResponse
+      if (inputScenario.GetTransactionReceiptProofResponse) {
+        const decoded = decodeGetTransactionReceiptProofResponse(jsonUnmarshalBase64Bytes(inputScenario.GetTransactionReceiptProofResponse));
+        const [args, argsTypes] = jsonMarshalArguments(decoded.outputArguments);
+        const res = {
+          "BlockHeight": decoded.blockHeight.toString(),
+          "OutputArguments": args,
+          "OutputArgumentsTypes": argsTypes,
+          "OutputEvents": jsonMarshalEvents(decoded.outputEvents),
+          "RequestStatus": decoded.requestStatus,
+          "ExecutionResult": decoded.executionResult,
+          "BlockTimestamp": decoded.blockTimestamp.toISOString(),
+          "TxHash": jsonMarshalBase64Bytes(decoded.txHash),
+          "TransactionStatus": decoded.transactionStatus,
+          "PackedProof": jsonMarshalBase64Bytes(decoded.packedProof),
+          "PackedReceipt": jsonMarshalBase64Bytes(decoded.packedReceipt)
+        };
+        const expected = outputScenario.GetTransactionReceiptProofResponse;
         expect(res).toEqual(expected);
         return;
       }
@@ -134,8 +181,8 @@ function jsonMarshalBase64Bytes(buf: Uint8Array): string {
   return Buffer.from(buf).toString("base64");
 }
 
-function jsonUnmarshalMethodArguments(args: string[], argTypes: string[]): MethodArgument[] {
-  const res: MethodArgument[] = [];
+function jsonUnmarshalArguments(args: string[], argTypes: string[]): Argument[] {
+  const res: Argument[] = [];
   if (args.length != argTypes.length) {
     throw new Error(`number of args ${args.length} is different than number of argTypes ${argTypes.length}`);
   }
@@ -144,16 +191,16 @@ function jsonUnmarshalMethodArguments(args: string[], argTypes: string[]): Metho
     const argType = argTypes[i];
     switch (argType) {
       case "uint32":
-        res.push(new Uint32Arg(jsonUnmarshalNumber(arg)));
+        res.push(new ArgUint32(jsonUnmarshalNumber(arg)));
         break;
       case "uint64":
-        res.push(new Uint64Arg(BigInt(arg)));
+        res.push(new ArgUint64(BigInt(arg)));
         break;
       case "string":
-        res.push(new StringArg(arg));
+        res.push(new ArgString(arg));
         break;
       case "bytes":
-        res.push(new BytesArg(jsonUnmarshalBase64Bytes(arg)));
+        res.push(new ArgBytes(jsonUnmarshalBase64Bytes(arg)));
         break;
       default:
         throw new Error(`unknown argType ${argType}`);
@@ -162,26 +209,53 @@ function jsonUnmarshalMethodArguments(args: string[], argTypes: string[]): Metho
   return res;
 }
 
-function jsonMarshalMethodArguments(args: MethodArgument[]): string[] {
+function jsonMarshalArguments(args: Argument[]): [string[], string[]] {
   const res: string[] = [];
+  const resTypes: string[] = [];
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     switch (arg.constructor) {
-      case Uint32Arg:
+      case ArgUint32:
         res.push(arg.value.toString());
+        resTypes.push("uint32");
         break;
-      case Uint64Arg:
+      case ArgUint64:
         res.push(arg.value.toString());
+        resTypes.push("uint64");
         break;
-      case StringArg:
+      case ArgString:
         res.push(<string>arg.value);
+        resTypes.push("string");
         break;
-      case BytesArg:
+      case ArgBytes:
         res.push(jsonMarshalBase64Bytes(<Uint8Array>arg.value));
+        resTypes.push("bytes");
         break;
       default:
         throw new Error(`unsupported type in json marshal of method arguments`);
     }
+  }
+  return [res, resTypes];
+}
+
+interface MarshaledEvent {
+  ContractName: string;
+  EventName: string;
+  Arguments: string[];
+  ArgumentsTypes: string[];
+}
+
+function jsonMarshalEvents(events: Event[]): MarshaledEvent[] {
+  const res: MarshaledEvent[] = [];
+  for (let i = 0; i < events.length; i++) {
+    const event = events[i];
+    const [args, argsTypes] = jsonMarshalArguments(event.arguments);
+    res.push({
+      ContractName: event.contractName,
+      EventName: event.eventName,
+      Arguments: args,
+      ArgumentsTypes: argsTypes
+    });
   }
   return res;
 }

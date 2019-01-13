@@ -8,13 +8,13 @@ import { Argument, packedArgumentsDecode } from "./Arguments";
 import { Event, packedEventsDecode } from "./Events";
 import { TransactionStatus, transactionStatusDecode } from "./TransactionStatus";
 
-export interface GetTransactionStatusRequest {
+export interface GetTransactionReceiptProofRequest {
   protocolVersion: number;
   virtualChainId: number;
   txId: Uint8Array;
 }
 
-export interface GetTransactionStatusResponse {
+export interface GetTransactionReceiptProofResponse {
   requestStatus: RequestStatus;
   txHash: Uint8Array;
   executionResult: ExecutionResult;
@@ -23,9 +23,11 @@ export interface GetTransactionStatusResponse {
   transactionStatus: TransactionStatus;
   blockHeight: BigInt;
   blockTimestamp: Date;
+  packedProof: Uint8Array;
+  packedReceipt: Uint8Array;
 }
 
-export function encodeGetTransactionStatusRequest(req: GetTransactionStatusRequest): Uint8Array {
+export function encodeGetTransactionReceiptProofRequest(req: GetTransactionReceiptProofRequest): Uint8Array {
   // validate
   if (req.protocolVersion != 1) {
     throw new Error(`expected ProtocolVersion 1, ${req.protocolVersion} given`);
@@ -38,7 +40,7 @@ export function encodeGetTransactionStatusRequest(req: GetTransactionStatusReque
   const [txHash, txTimestamp] = Digest.extractTxId(req.txId);
 
   // encode request
-  const res = new Client.GetTransactionStatusRequestBuilder({
+  const res = new Client.GetTransactionReceiptProofRequestBuilder({
     transactionRef: new Client.TransactionRefBuilder({
       protocolVersion: req.protocolVersion,
       virtualChainId: req.virtualChainId,
@@ -51,20 +53,20 @@ export function encodeGetTransactionStatusRequest(req: GetTransactionStatusReque
   return res.build();
 }
 
-export function decodeGetTransactionStatusResponse(buf: Uint8Array): GetTransactionStatusResponse {
+export function decodeGetTransactionReceiptProofResponse(buf: Uint8Array): GetTransactionReceiptProofResponse {
   // decode response
-  const getTransactionStatusResponseMsg = new InternalMessage(buf, buf.byteLength, Client.GetTransactionStatusResponse_Scheme, []);
-  if (!getTransactionStatusResponseMsg.isValid()) {
+  const getTransactionReceiptProofResponseMsg = new InternalMessage(buf, buf.byteLength, Client.GetTransactionReceiptProofResponse_Scheme, []);
+  if (!getTransactionReceiptProofResponseMsg.isValid()) {
     throw new Error(`response is corrupt and cannot be decoded`);
   }
 
   // decode request status
-  const requestResultBuf = getTransactionStatusResponseMsg.getMessage(0);
+  const requestResultBuf = getTransactionReceiptProofResponseMsg.getMessage(0);
   const requestResultMsg = new InternalMessage(requestResultBuf, requestResultBuf.byteLength, Client.RequestResult_Scheme, []);
   const requestStatus = requestStatusDecode(requestResultMsg.getUint16(0));
 
   // decode execution result
-  const transactionReceiptBuf = getTransactionStatusResponseMsg.getMessage(2);
+  const transactionReceiptBuf = getTransactionReceiptProofResponseMsg.getMessage(2);
   const transactionReceiptMsg = new InternalMessage(transactionReceiptBuf, transactionReceiptBuf.byteLength, Protocol.TransactionReceipt_Scheme, []);
   const executionResult = executionResultDecode(transactionReceiptMsg.getUint16(1));
 
@@ -75,7 +77,7 @@ export function decodeGetTransactionStatusResponse(buf: Uint8Array): GetTransact
   const outputEventArray = packedEventsDecode(transactionReceiptMsg.rawBufferWithHeaderForField(3, 0));
 
   // decode transaction status
-  const transactionStatus = transactionStatusDecode(getTransactionStatusResponseMsg.getUint16(1));
+  const transactionStatus = transactionStatusDecode(getTransactionReceiptProofResponseMsg.getUint16(1));
 
   // return
   return {
@@ -86,6 +88,8 @@ export function decodeGetTransactionStatusResponse(buf: Uint8Array): GetTransact
     outputEvents: outputEventArray,
     transactionStatus: transactionStatus,
     blockHeight: requestResultMsg.getUint64(1),
-    blockTimestamp: Protocol.unixNanoToDate(requestResultMsg.getUint64(2))
+    blockTimestamp: Protocol.unixNanoToDate(requestResultMsg.getUint64(2)),
+    packedProof: getTransactionReceiptProofResponseMsg.getBytes(3),
+    packedReceipt: transactionReceiptBuf
   };
 }

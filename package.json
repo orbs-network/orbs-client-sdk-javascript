@@ -36,7 +36,6 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "base-58": "0.0.1",
     "elliptic": "^6.4.1",
     "fast-text-encoding": "^1.0.0",
     "get-random-values": "^1.2.0",

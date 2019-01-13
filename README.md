@@ -22,33 +22,32 @@
 3. Send a transaction:
 
     ```js
-    const [payload, txId] = client.createSendTransactionPayload(
+    const [tx, txId] = client.createTransaction(
       sender.publicKey,
       sender.privateKey,
       "BenchmarkToken",
       "transfer",
-      [ new Orbs.Uint64Arg(10), new Orbs.BytesArg(receiver.rawAddress) ]
+      [ new Orbs.ArgUint64(10), new Orbs.ArgAddress(receiver.address) ]
     );
-    const response = await client.sendTransaction(payload);
+    const response = await client.sendTransaction(tx);
     ```
     
 4. Check the transaction status:
 
     ```js
-    const payload = client.createGetTransactionStatusPayload(txId);
-    const response = await client.getTransactionStatus(payload);
+    const response = await client.getTransactionStatus(txId);
     ```
     
 5. Call a smart contract method:
 
     ```js
-    const payload = client.createCallMethodPayload(
+    const query = client.createQuery(
       receiver.publicKey,
       "BenchmarkToken",
       "getBalance",
-      [ new Orbs.BytesArg(receiver.rawAddress) ]
+      [ new Orbs.ArgAddress(receiver.address) ]
     );
-    const response = await client.callMethod(payload);
+    const response = await client.sendQuery(query);
     ```
 
 ## Usage (browser)
@@ -57,14 +56,13 @@ Coming soon
 
 ## Installation (Node.js)
 
-1. Install Gamma: https://github.com/orbs-network/orbs-contract-sdk
-2. Install the NPM package:
+1. Install the NPM package:
 
     ```sh
     npm install orbs-client-sdk
     ```
     
-3. Import the client in your project:
+2. Import the client in your project:
 
     ```js
     const Orbs = require("orbs-client-sdk");
@@ -80,4 +78,6 @@ Coming soon
 
 2. Build the library with `npm run build`
 
-3. Run all tests with `npm run test`
+3. To run the end-to-end test, install `gamma-cli`: https://github.com/orbs-network/orbs-contract-sdk/blob/master/GAMMA.md
+
+4. Run all tests with `npm run test`

@@ -1,91 +1,75 @@
 const Orbs = require("../../dist/index.js");
-const { spawn } = require('child_process');
+const Gamma = require("./Gamma");
 
-const GAMMA_PORT       = process.env.GAMMA_PORT || 34679;
-const GAMMA_ENDPOINT   = "localhost";
-const VIRTUAL_CHAIN_ID = 42;
+describe("E2E nodejs", async () => {
 
-test("E2E nodejs: CreateAccount", () => {
-  const account = Orbs.createAccount();
-  console.log(account.address);
-  expect(account.publicKey.byteLength).toBe(32);
-  expect(account.privateKey.byteLength).toBe(64);
-});
+  beforeEach(async () => {
+    jest.setTimeout(60000);
+    await Gamma.start();
+  });
 
-describe("Using Gamma", async () => {
+  afterEach(async () => {
+    await Gamma.shutdown();
+  });
 
-    let gamma;
-    beforeEach( async () => {
-      console.log("launching Gamma on port " + GAMMA_PORT);
-      gamma = spawn("gamma-cli", ["start", "-port", GAMMA_PORT]);
-      if (gamma.pid) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-      } else {
-          console.error("Unable to run E2E, Please install gamma-cli (https://github.com/orbs-network/orbs-contract-sdk/blob/master/Gamma.md)");
-      }
-    });
+  test("SimpleTransfer", async () => {
 
-    afterEach( async () => {
-        if (gamma && gamma.pid) {
-          console.log("shutting down Gamma...");
-          gamma.kill();
-          await new Promise(resolve => {
-              gamma.on('exit', () => {
-                  console.log('Gamma exited');
-                  resolve();
-              })
-          });
-        }
-        gamma = null;
-    });
+    // create sender account
+    const sender = Orbs.createAccount();
 
-    test("E2E nodejs: SimpleTransfer", async () => {
-        // create sender account
-        const sender = Orbs.createAccount();
+    // create receiver account
+    const receiver = Orbs.createAccount();
 
-        // create receiver account
-        const receiver = Orbs.createAccount();
+    // create client
+    const endpoint = Gamma.getEndpoint();
+    const client = new Orbs.Client(endpoint, Gamma.VIRTUAL_CHAIN_ID, "TEST_NET");
 
-        // create client
-        const endpoint = `http://${GAMMA_ENDPOINT}:${GAMMA_PORT}`;
-        const client = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET");
+    // create transfer transaction
+    const [tx, txId] = client.createTransaction(
+      sender.publicKey,
+      sender.privateKey,
+      "BenchmarkToken",
+      "transfer",
+      [new Orbs.ArgUint64(10), new Orbs.ArgAddress(receiver.address)]
+    );
 
-        // create transfer transaction payload
-        const [payload1, txId] = client.createSendTransactionPayload(
-            sender.publicKey,
-            sender.privateKey,
-            "BenchmarkToken",
-            "transfer",
-            [new Orbs.Uint64Arg(10), new Orbs.BytesArg(receiver.rawAddress)]
-        );
+    // send the transaction
+    const transferResponse = await client.sendTransaction(tx);
+    console.log(transferResponse);
+    expect(transferResponse.requestStatus).toEqual("COMPLETED");
+    expect(transferResponse.executionResult).toEqual("SUCCESS");
+    expect(transferResponse.transactionStatus).toEqual("COMMITTED");
 
-        // send the payload
-        const transferResponse = await client.sendTransaction(payload1);
-        expect(transferResponse.requestStatus).toEqual("COMPLETED");
-        expect(transferResponse.executionResult).toEqual("SUCCESS");
-        expect(transferResponse.transactionStatus).toEqual("COMMITTED");
+    // check the transaction status
+    const statusResponse = await client.getTransactionStatus(txId);
+    console.log(statusResponse);
+    expect(statusResponse.requestStatus).toEqual("COMPLETED");
+    expect(statusResponse.executionResult).toEqual("SUCCESS");
+    expect(statusResponse.transactionStatus).toEqual("COMMITTED");
 
-        // create get status payload
-        const payload2 = client.createGetTransactionStatusPayload(txId);
+    // check the transaction receipt proof
+    const txProofResponse = await client.getTransactionReceiptProof(txId);
+    console.log(txProofResponse);
+    expect(txProofResponse.requestStatus).toEqual("COMPLETED");
+    expect(txProofResponse.executionResult).toEqual("SUCCESS");
+    expect(txProofResponse.transactionStatus).toEqual("COMMITTED");
+    expect(txProofResponse.packedProof.byteLength).toBeGreaterThan(20);
+    expect(txProofResponse.packedReceipt.byteLength).toBeGreaterThan(10);
 
-        // send the payload
-        const statusResponse = await client.getTransactionStatus(payload2);
-        expect(statusResponse.requestStatus).toEqual("COMPLETED");
-        expect(statusResponse.executionResult).toEqual("SUCCESS");
-        expect(statusResponse.transactionStatus).toEqual("COMMITTED");
+    // create balance query
+    const query = client.createQuery(
+      receiver.publicKey,
+      "BenchmarkToken",
+      "getBalance",
+      [new Orbs.ArgAddress(receiver.address)]
+    );
 
-        // create balance method call payload
-        const payload3 = client.createCallMethodPayload(
-            receiver.publicKey,
-            "BenchmarkToken",
-            "getBalance",
-            [new Orbs.BytesArg(receiver.rawAddress)]
-        );
+    // send the query
+    const balanceResponse = await client.sendQuery(query);
+    console.log(balanceResponse);
+    expect(balanceResponse.requestStatus).toEqual("COMPLETED");
+    expect(balanceResponse.executionResult).toEqual("SUCCESS");
+    expect(balanceResponse.outputArguments[0]).toEqual(new Orbs.ArgUint64(10));
 
-        // send the payload
-        const balanceResponse = await client.callMethod(payload3);
-        expect(balanceResponse.requestStatus).toEqual("COMPLETED");
-        expect(balanceResponse.executionResult).toEqual("SUCCESS");
-        expect(balanceResponse.outputArguments[0]).toEqual(new Orbs.Uint64Arg(10));
     });
 });

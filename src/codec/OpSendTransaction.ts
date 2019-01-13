@@ -1,11 +1,12 @@
 import { NetworkType, networkTypeEncode } from "./NetworkType";
-import { MethodArgument, methodArgumentsOpaqueDecode, methodArgumentsOpaqueEncode } from "./MethodArguments";
 import * as Client from "../protocol/Client";
 import * as Protocol from "../protocol/Protocol";
 import * as Keys from "../crypto/Keys";
 import * as Signature from "../crypto/Signature";
 import * as Digest from "../crypto/Digest";
 import { InternalMessage } from "../membuffers/message";
+import { Argument, packedArgumentsDecode, packedArgumentsEncode } from "./Arguments";
+import { Event, packedEventsDecode } from "./Events";
 import { RequestStatus, requestStatusDecode } from "./RequestStatus";
 import { ExecutionResult, executionResultDecode } from "./ExecutionResult";
 import { TransactionStatus, transactionStatusDecode } from "./TransactionStatus";
@@ -18,14 +19,15 @@ export interface SendTransactionRequest {
   publicKey: Uint8Array;
   contractName: string;
   methodName: string;
-  inputArguments: MethodArgument[];
+  inputArguments: Argument[];
 }
 
 export interface SendTransactionResponse {
   requestStatus: RequestStatus;
   txHash: Uint8Array;
   executionResult: ExecutionResult;
-  outputArguments: MethodArgument[];
+  outputArguments: Argument[];
+  outputEvents: Event[];
   transactionStatus: TransactionStatus;
   blockHeight: BigInt;
   blockTimestamp: Date;
@@ -44,7 +46,7 @@ export function encodeSendTransactionRequest(req: SendTransactionRequest, privat
   }
 
   // encode method arguments
-  const inputArgumentArray = methodArgumentsOpaqueEncode(req.inputArguments);
+  const inputArgumentArray = packedArgumentsEncode(req.inputArguments);
 
   // encode network type
   const networkType = networkTypeEncode(req.networkType);
@@ -98,18 +100,23 @@ export function decodeSendTransactionResponse(buf: Uint8Array): SendTransactionR
   }
 
   // decode request status
-  const requestStatus = requestStatusDecode(sendTransactionResponseMsg.getUint16(0));
+  const requestResultBuf = sendTransactionResponseMsg.getMessage(0);
+  const requestResultMsg = new InternalMessage(requestResultBuf, requestResultBuf.byteLength, Client.RequestResult_Scheme, []);
+  const requestStatus = requestStatusDecode(requestResultMsg.getUint16(0));
 
   // decode execution result
-  const transactionReceiptBuf = sendTransactionResponseMsg.getMessage(1);
+  const transactionReceiptBuf = sendTransactionResponseMsg.getMessage(2);
   const transactionReceiptMsg = new InternalMessage(transactionReceiptBuf, transactionReceiptBuf.byteLength, Protocol.TransactionReceipt_Scheme, []);
   const executionResult = executionResultDecode(transactionReceiptMsg.getUint16(1));
 
   // decode method arguments
-  const outputArgumentArray = methodArgumentsOpaqueDecode(transactionReceiptMsg.rawBufferWithHeaderForField(2, 0));
+  const outputArgumentArray = packedArgumentsDecode(transactionReceiptMsg.rawBufferWithHeaderForField(2, 0));
+
+  // decode events
+  const outputEventArray = packedEventsDecode(transactionReceiptMsg.rawBufferWithHeaderForField(3, 0));
 
   // decode transaction status
-  const transactionStatus = transactionStatusDecode(sendTransactionResponseMsg.getUint16(2));
+  const transactionStatus = transactionStatusDecode(sendTransactionResponseMsg.getUint16(1));
 
   // return
   return {
@@ -117,8 +124,9 @@ export function decodeSendTransactionResponse(buf: Uint8Array): SendTransactionR
     txHash: transactionReceiptMsg.getBytes(0),
     executionResult: executionResult,
     outputArguments: outputArgumentArray,
+    outputEvents: outputEventArray,
     transactionStatus: transactionStatus,
-    blockHeight: sendTransactionResponseMsg.getUint64(3),
-    blockTimestamp: Protocol.unixNanoToDate(sendTransactionResponseMsg.getUint64(4))
+    blockHeight: requestResultMsg.getUint64(1),
+    blockTimestamp: Protocol.unixNanoToDate(requestResultMsg.getUint64(2))
   };
 }

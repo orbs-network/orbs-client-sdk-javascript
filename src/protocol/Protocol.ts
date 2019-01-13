@@ -9,16 +9,18 @@ export function unixNanoToDate(timestamp: BigInt): Date {
   return new Date(Number(timestamp / BigInt(1000000)));
 }
 
-export const MethodArgument_Scheme = [FieldTypes.TypeString, FieldTypes.TypeUnion];
-export const MethodArgument_Unions = [[FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeString, FieldTypes.TypeBytes]];
+export const Argument_Scheme = [FieldTypes.TypeUnion];
+export const Argument_Unions = [[FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeString, FieldTypes.TypeBytes]];
 
-export class MethodArgumentBuilder extends BaseBuilder {
-  constructor(private fields: { name: string, type: number, value: number|BigInt|string|Uint8Array }) {
+export class ArgumentBuilder extends BaseBuilder {
+  constructor(private fields: {
+    type: number,
+    value: number|BigInt|string|Uint8Array
+  }) {
     super();
   }
   write(buf: Uint8Array): void {
     this.builder.reset();
-    this.builder.writeString(buf, this.fields.name);
     this.builder.writeUnionIndex(buf, this.fields.type);
     switch (this.fields.type) {
       case 0:
@@ -34,15 +36,17 @@ export class MethodArgumentBuilder extends BaseBuilder {
         this.builder.writeBytes(buf, <Uint8Array>this.fields.value);
         break;
       default:
-        throw new Error(`unknown MethodArgument type ${this.fields.type}`);
+        throw new Error(`unknown Argument type ${this.fields.type}`);
     }
   }
 }
 
-export const MethodArgumentArray_Scheme = [FieldTypes.TypeMessageArray];
+export const ArgumentArray_Scheme = [FieldTypes.TypeMessageArray];
 
-export class MethodArgumentArrayBuilder extends BaseBuilder {
-  constructor(private fields: { arguments: MethodArgumentBuilder[] }) {
+export class ArgumentArrayBuilder extends BaseBuilder {
+  constructor(private fields: {
+    arguments: ArgumentBuilder[]
+  }) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -51,8 +55,15 @@ export class MethodArgumentArrayBuilder extends BaseBuilder {
   }
 }
 
+export const Event_Scheme = [FieldTypes.TypeString, FieldTypes.TypeString, FieldTypes.TypeBytes];
+
+export const EventsArray_Scheme = [FieldTypes.TypeMessageArray];
+
 export class EdDSA01SignerBuilder extends BaseBuilder {
-  constructor(private fields: { networkType: number, signerPublicKey: Uint8Array }) {
+  constructor(private fields: {
+    networkType: number,
+    signerPublicKey: Uint8Array
+  }) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -63,7 +74,10 @@ export class EdDSA01SignerBuilder extends BaseBuilder {
 }
 
 export class SignerBuilder extends BaseBuilder {
-  constructor(private fields: { scheme: number, eddsa: EdDSA01SignerBuilder }) {
+  constructor(private fields: {
+    scheme: number,
+    eddsa: EdDSA01SignerBuilder
+  }) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -106,7 +120,10 @@ export class TransactionBuilder extends BaseBuilder {
 export const SignedTransaction_Scheme = [FieldTypes.TypeMessage, FieldTypes.TypeBytes];
 
 export class SignedTransactionBuilder extends BaseBuilder {
-  constructor(private fields: { transaction: TransactionBuilder, signature: Uint8Array }) {
+  constructor(private fields: {
+    transaction: TransactionBuilder,
+    signature: Uint8Array
+  }) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -116,4 +133,46 @@ export class SignedTransactionBuilder extends BaseBuilder {
   }
 }
 
-export const TransactionReceipt_Scheme = [FieldTypes.TypeBytes, FieldTypes.TypeUint16, FieldTypes.TypeBytes];
+export const TransactionReceipt_Scheme = [FieldTypes.TypeBytes, FieldTypes.TypeUint16, FieldTypes.TypeBytes, FieldTypes.TypeBytes];
+
+export class QueryBuilder extends BaseBuilder {
+  constructor(private fields: {
+    protocolVersion: number,
+    virtualChainId: number,
+    timestamp: BigInt,
+    signer: SignerBuilder,
+    contractName: string,
+    methodName: string,
+    inputArgumentArray: Uint8Array
+  }) {
+    super();
+  }
+  write(buf: Uint8Array): void {
+    this.builder.reset();
+    this.builder.writeUint32(buf, this.fields.protocolVersion);
+    this.builder.writeUint32(buf, this.fields.virtualChainId);
+    this.builder.writeUint64(buf, this.fields.timestamp);
+    this.builder.writeMessage(buf, this.fields.signer);
+    this.builder.writeString(buf, this.fields.contractName);
+    this.builder.writeString(buf, this.fields.methodName);
+    this.builder.writeBytes(buf, this.fields.inputArgumentArray);
+  }
+}
+
+export const SignedQuery_Scheme = [FieldTypes.TypeMessage, FieldTypes.TypeBytes];
+
+export class SignedQueryBuilder extends BaseBuilder {
+  constructor(private fields: {
+    query: QueryBuilder,
+    signature: Uint8Array
+  }) {
+    super();
+  }
+  write(buf: Uint8Array): void {
+    this.builder.reset();
+    this.builder.writeMessage(buf, this.fields.query);
+    this.builder.writeBytes(buf, this.fields.signature);
+  }
+}
+
+export const QueryResult_Scheme = [FieldTypes.TypeUint16, FieldTypes.TypeBytes, FieldTypes.TypeBytes];
