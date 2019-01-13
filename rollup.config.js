@@ -19,6 +19,9 @@ export default {
       format: 'iife',
       name: 'Orbs',
       sourceMap: true,
+      globals: {
+        axios: 'axios'
+      },
     },
   ],
   external: [
