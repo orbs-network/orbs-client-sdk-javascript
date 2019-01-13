@@ -1,7 +1,7 @@
 const Orbs = require("../../dist/index.js");
 const Gamma = require("./Gamma");
 
-describe("E2E nodejs", async () => {
+describe("E2E nodejs", () => {
 
   beforeEach(async () => {
     jest.setTimeout(60000);
