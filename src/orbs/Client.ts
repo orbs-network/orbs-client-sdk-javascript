@@ -6,6 +6,7 @@ import { RunQueryResponse, decodeRunQueryResponse, encodeRunQueryRequest } from 
 import { decodeGetTransactionStatusResponse, encodeGetTransactionStatusRequest, GetTransactionStatusResponse } from "../codec/OpGetTransactionStatus";
 import { decodeGetTransactionReceiptProofResponse, encodeGetTransactionReceiptProofRequest, GetTransactionReceiptProofResponse } from "../codec/OpGetTransactionReceiptProof";
 import axios, { AxiosResponse } from "axios";
+import { getTextDecoder } from "../membuffers/text";
 
 const PROTOCOL_VERSION = 1;
 const CONTENT_TYPE_MEMBUFFERS = "application/membuffers";
@@ -89,11 +90,27 @@ export class Client {
     if (!payload || payload.byteLength == 0) {
       throw new Error(`payload sent by http is empty`);
     }
+
     const res = await axios.post(this.endpoint + relativeUrl, payload, {
-      headers: { "Content-Type": CONTENT_TYPE_MEMBUFFERS } , responseType: "arraybuffer"
+      headers: { "content-type": CONTENT_TYPE_MEMBUFFERS },
+      responseType: "arraybuffer",
+      validateStatus: (status) => true
     });
+
+    // check if we have the content type response we expect
+    const contentType = res.headers["content-type"];
+    if (contentType != CONTENT_TYPE_MEMBUFFERS) {
+
+      if (contentType == "text/plain" || contentType == "application/json") {
+        throw new Error(`http request failed: ${getTextDecoder().decode(res.data)}`);
+      } else {
+        throw new Error(`http request failed with Content-Type '${contentType}': ${Buffer.from(res.data).toString("hex")}`);
+      }
+
+    }
+
     if (!res.data) {
-      throw new Error(`no response data available, http status: ${res.status}, ${res.statusText}`);
+      throw new Error(`no response data available, http status: ${res.status} ${res.statusText}`);
     }
     return res;
   }

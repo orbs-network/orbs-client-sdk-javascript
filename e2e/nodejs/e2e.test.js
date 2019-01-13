@@ -71,5 +71,23 @@ describe("E2E nodejs", async () => {
     expect(balanceResponse.executionResult).toEqual("SUCCESS");
     expect(balanceResponse.outputArguments[0]).toEqual(new Orbs.ArgUint64(10));
 
-    });
+  });
+
+  test("TextualError", async () => {
+
+    // create client
+    const endpoint = Gamma.getEndpoint();
+    const client = new Orbs.Client(endpoint, Gamma.VIRTUAL_CHAIN_ID, "TEST_NET");
+
+    // send a corrupt transaction
+    let error;
+    try {
+      const transferResponse = await client.sendTransaction(new Uint8Array([0x01, 0x02, 0x03]));
+    } catch (e) {
+      error = e;
+    }
+    expect(error.toString()).toMatch("http request is not a valid membuffer");
+
+  });
+
 });
