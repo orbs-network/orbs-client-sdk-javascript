@@ -4,10 +4,14 @@ const execFile = util.promisify(require("child_process").execFile);
 const GAMMA_PORT       = 8080;
 const GAMMA_ENDPOINT   = "localhost";
 const VIRTUAL_CHAIN_ID = 42; // gamma-cli config default
+const EXPERIMENTAL     = true;
 
 async function gammaCliRun(args) {
   try {
     args.push("-port", GAMMA_PORT);
+    if (EXPERIMENTAL) {
+      args.push("-env", "experimental");
+    }
     const { stdout, stderr } = await execFile("gamma-cli", args);
     console.log(stdout);
     if (stderr) {
