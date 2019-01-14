@@ -12,6 +12,7 @@ async function gammaCliRun(args) {
     if (EXPERIMENTAL) {
       args.push("-env", "experimental");
     }
+    console.log("RUNNING: gamma-cli " + args.join(" "));
     const { stdout, stderr } = await execFile("gamma-cli", args);
     console.log(stdout);
     if (stderr) {
