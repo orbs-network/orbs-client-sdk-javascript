@@ -19,7 +19,7 @@ async function gammaCliRun(args) {
       console.error(stderr);
     }
   } catch (e) {
-    console.error("Unable to run E2E, please install gamma-cli (https://github.com/orbs-network/orbs-contract-sdk/blob/master/GAMMA.md)");
+    console.error("Unable to run E2E, please install gamma-cli (https://github.com/orbs-network/gamma-cli)");
   }
 }
 

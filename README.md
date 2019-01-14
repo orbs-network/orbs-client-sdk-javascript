@@ -78,6 +78,6 @@ Coming soon
 
 2. Build the library with `npm run build`
 
-3. To run the end-to-end test, install `gamma-cli`: https://github.com/orbs-network/orbs-contract-sdk/blob/master/GAMMA.md
+3. To run the end-to-end test, install [`gamma-cli`](https://github.com/orbs-network/gamma-cli)
 
 4. Run all tests with `npm run test`
