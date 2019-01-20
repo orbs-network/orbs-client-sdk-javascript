@@ -19,6 +19,13 @@
     "lint": "tslint -c tslint.json",
     "prepare": "rm -rf ./contract && git clone https://github.com/orbs-network/orbs-client-sdk-go.git ./contract"
   },
+  "prettier": {
+    "trailingComma": "all",
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": false,
+    "printWidth": 120
+  },
   "devDependencies": {
     "@types/jest": "^23.3.9",
     "@types/node": "^10.12.2",
