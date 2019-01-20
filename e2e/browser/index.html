@@ -1,14 +1,56 @@
 <html>
   <head>
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      table,
+      tr,
+      td {
+        border: 1px solid black;
+        padding: 10px;
+      }
+      #results-row {
+        width: 100%;
+      }
+    </style>
     <script src="../../dist/orbs-client-sdk.js"></script>
-  </head>
-  <body>
     <script>
-      if (Orbs.createAccount().publicKey.byteLength == 32) {
-        const el = document.createElement("h1");
-        el.textContent = "success";
-        document.body.appendChild(el);
+      function Step1() {
+        const account = Orbs.createAccount();
+        document.querySelector("#step1 .result").innerText = account.publicKey;
+      }
+
+      function Step2() {
+        const account = Orbs.createAccount();
+        document.querySelector("#step2 .result").innerText = account.publicKey;
       }
     </script>
+  </head>
+  <body>
+    <div id="create-account-container">
+      <table>
+        <thead>
+          <tr>
+            <td>Step</td>
+            <td>Action</td>
+            <td id="results-row">Result</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="step1">
+            <td>1</td>
+            <td><button class="action-button" onclick="Step1()">Create Account</button></td>
+            <td class="result"></td>
+          </tr>
+          <tr id="step2">
+            <td>2</td>
+            <td><button class="action-button" onclick="Step2()">Create Account 2</button></td>
+            <td class="result"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </body>
 </html>
