@@ -1,4 +1,6 @@
-export const ED25519_PUBLIC_KEY_SIZE_BYTES  = 32;
+import elliptic from "elliptic";
+
+export const ED25519_PUBLIC_KEY_SIZE_BYTES = 32;
 export const ED25519_PRIVATE_KEY_SIZE_BYTES = 64;
 
 export interface Ed25519KeyPair {
@@ -13,8 +15,7 @@ export function generateEd25519Key(): Ed25519KeyPair {
   getRandomValues(secureRandom);
 
   // generate key
-  const eddsa = require("elliptic").eddsa;
-  const ec = new eddsa("ed25519");
+  const ec = new elliptic.eddsa("ed25519");
   const key = ec.keyFromSecret(uint8ArrayToHexString(secureRandom));
   // console.log(key.getPublic("hex"));
   // console.log(key.getSecret("hex"));
