@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-sudo nvm
-exit 1
+wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+nvm
