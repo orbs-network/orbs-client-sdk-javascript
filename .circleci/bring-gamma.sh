@@ -7,7 +7,7 @@ GAMMA_CLI_URL="https://github.com/orbs-network/gamma-cli/releases/download/$GAMM
 echo "Downloading pre-built gamma-cli ($GAMMA_CLI_VERSION) from it's official GitHub release repository.."
 wget $GAMMA_CLI_URL
 tar -zxvf gammacli*.tar.gz
-mv _bin/gamma-cli /usr/bin/gamma-cli
+sudo mv _bin/gamma-cli /usr/bin/gamma-cli
 
 echo "gamma-cli successfully installed"
 
