@@ -72,6 +72,15 @@
           document.querySelector("#proof-response-packedreceipt-bytelength").innerText = txProofResponse.packedReceipt.byteLength;
         });
       }
+
+      function SendQuery() {
+        const query = window.orbsClient.createQuery(window.account2.publicKey, "BenchmarkToken", "getBalance", [new Orbs.ArgAddress(window.account2.address)]);
+        window.orbsClient.sendQuery(query).then(balanceResponse => {
+          document.querySelector("#balance-response-request-status").innerText = balanceResponse.requestStatus;
+          document.querySelector("#balance-response-execution-result").innerText = balanceResponse.executionResult;
+          document.querySelector("#balance-response-value").innerText = balanceResponse.outputArguments[0].value;
+        });
+      }
     </script>
   </head>
   <body>
@@ -127,7 +136,7 @@
           </td>
         </tr>
         <tr>
-          <td>6</td>
+          <td>7</td>
           <td><button id="get-tx-receipt-proof" onclick="GetTxReceiptProof()">Get Tx receipt proof</button></td>
           <td>
             <div><span>Proof Response request status:</span> <span id="proof-response-request-status"></span></div>
@@ -135,6 +144,15 @@
             <div><span>Proof Response transaction status:</span> <span id="proof-response-transaction-status"></span></div>
             <div><span>Proof Response packed proof byteLength:</span> <span id="proof-response-packedproof-bytelength"></span></div>
             <div><span>Proof Response packed receipt byteLength:</span> <span id="proof-response-packedreceipt-bytelength"></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><button id="send-query" onclick="SendQuery()">Send query</button></td>
+          <td>
+            <div><span>Balance Response request status:</span> <span id="balance-response-request-status"></span></div>
+            <div><span>Balance Response execution result:</span> <span id="balance-response-execution-result"></span></div>
+            <div><span>Balance Response value:</span> <span id="balance-response-value"></span></div>
           </td>
         </tr>
       </tbody>

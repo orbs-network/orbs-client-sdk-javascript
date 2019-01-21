@@ -76,50 +76,34 @@ describe("E2E browser", () => {
 
   it("should send the transaction", async () => {
     await clickOnElement("#send-tx");
-    await expect(page).toMatchElement("#transfer-response-request-status", { text: "COMPLETED", timeout: 2000 });
-    await expect(page).toMatchElement("#transfer-response-execution-result", { text: "SUCCESS", timeout: 2000 });
-    await expect(page).toMatchElement("#transfer-response-transaction-status", { text: "COMMITTED", timeout: 2000 });
+    await expect(page).toMatchElement("#transfer-response-request-status", { text: "COMPLETED" });
+    await expect(page).toMatchElement("#transfer-response-execution-result", { text: "SUCCESS" });
+    await expect(page).toMatchElement("#transfer-response-transaction-status", { text: "COMMITTED" });
   });
 
   it("should verify the transaction status", async () => {
     await clickOnElement("#get-tx-status");
-    await expect(page).toMatchElement("#status-response-request-status", { text: "COMPLETED", timeout: 2000 });
-    await expect(page).toMatchElement("#status-response-execution-result", { text: "SUCCESS", timeout: 2000 });
-    await expect(page).toMatchElement("#status-response-transaction-status", { text: "COMMITTED", timeout: 2000 });
+    await expect(page).toMatchElement("#status-response-request-status", { text: "COMPLETED" });
+    await expect(page).toMatchElement("#status-response-execution-result", { text: "SUCCESS" });
+    await expect(page).toMatchElement("#status-response-transaction-status", { text: "COMMITTED" });
   });
 
   it("should verify the transaction receipt proof", async () => {
     await clickOnElement("#get-tx-receipt-proof");
-    await expect(page).toMatchElement("#proof-response-request-status", { text: "COMPLETED", timeout: 2000 });
-    await expect(page).toMatchElement("#proof-response-execution-result", { text: "SUCCESS", timeout: 2000 });
-    await expect(page).toMatchElement("#proof-response-transaction-status", { text: "COMMITTED", timeout: 2000 });
+    await expect(page).toMatchElement("#proof-response-request-status", { text: "COMPLETED" });
+    await expect(page).toMatchElement("#proof-response-execution-result", { text: "SUCCESS" });
+    await expect(page).toMatchElement("#proof-response-transaction-status", { text: "COMMITTED" });
     const packedProofByteLength = await getElementText("#proof-response-packedproof-bytelength");
     const packedReceiptByteLength = await getElementText("#proof-response-packedreceipt-bytelength");
     expect(parseInt(packedProofByteLength)).toBeGreaterThan(20);
     expect(parseInt(packedReceiptByteLength)).toBeGreaterThan(20);
-    // await page.waitFor(200000);
   });
 
-  // test("SimpleTransfer", async () => {
-  //   // check the transaction receipt proof
-  //   const txProofResponse = await client.getTransactionReceiptProof(txId);
-  //   console.log(txProofResponse);
-  //   expect(txProofResponse.requestStatus).toEqual("COMPLETED");
-  //   expect(txProofResponse.executionResult).toEqual("SUCCESS");
-  //   expect(txProofResponse.transactionStatus).toEqual("COMMITTED");
-  //   expect(txProofResponse.packedProof.byteLength).toBeGreaterThan(20);
-  //   expect(txProofResponse.packedReceipt.byteLength).toBeGreaterThan(10);
-
-  //   // create balance query
-  //   const query = client.createQuery(receiver.publicKey, "BenchmarkToken", "getBalance", [
-  //     new Orbs.ArgAddress(receiver.address),
-  //   ]);
-
-  //   // send the query
-  //   const balanceResponse = await client.sendQuery(query);
-  //   console.log(balanceResponse);
-  //   expect(balanceResponse.requestStatus).toEqual("COMPLETED");
-  //   expect(balanceResponse.executionResult).toEqual("SUCCESS");
-  //   expect(balanceResponse.outputArguments[0]).toEqual(new Orbs.ArgUint64(10));
-  // });
+  it("should send a query", async () => {
+    await clickOnElement("#send-query");
+    await expect(page).toMatchElement("#balance-response-request-status", { text: "COMPLETED" });
+    await expect(page).toMatchElement("#balance-response-execution-result", { text: "SUCCESS" });
+    await expect(page).toMatchElement("#balance-response-value", { text: "10" });
+    // await page.waitFor(200000);
+  });
 });
