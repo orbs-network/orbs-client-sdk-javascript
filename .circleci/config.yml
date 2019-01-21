@@ -5,7 +5,7 @@ jobs:
     steps:
       - checkout
       - run: sudo apt-get update && sudo apt-get install -y `node ~/repo/.circleci/list-chrome-deps.js`
-      - run: yarn install
+      - run: npm install
       - run: ./.circleci/bring-gamma.sh
       - run: ./test.sh
       
