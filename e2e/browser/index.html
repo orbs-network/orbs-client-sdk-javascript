@@ -68,6 +68,8 @@
           document.querySelector("#proof-response-request-status").innerText = txProofResponse.requestStatus;
           document.querySelector("#proof-response-execution-result").innerText = txProofResponse.executionResult;
           document.querySelector("#proof-response-transaction-status").innerText = txProofResponse.transactionStatus;
+          document.querySelector("#proof-response-packedproof-bytelength").innerText = txProofResponse.packedProof.byteLength;
+          document.querySelector("#proof-response-packedreceipt-bytelength").innerText = txProofResponse.packedReceipt.byteLength;
         });
       }
     </script>
@@ -131,6 +133,8 @@
             <div><span>Proof Response request status:</span> <span id="proof-response-request-status"></span></div>
             <div><span>Proof Response execution result:</span> <span id="proof-response-execution-result"></span></div>
             <div><span>Proof Response transaction status:</span> <span id="proof-response-transaction-status"></span></div>
+            <div><span>Proof Response packed proof byteLength:</span> <span id="proof-response-packedproof-bytelength"></span></div>
+            <div><span>Proof Response packed receipt byteLength:</span> <span id="proof-response-packedreceipt-bytelength"></span></div>
           </td>
         </tr>
       </tbody>

@@ -93,10 +93,23 @@ describe("E2E browser", () => {
     await expect(page).toMatchElement("#proof-response-request-status", { text: "COMPLETED", timeout: 2000 });
     await expect(page).toMatchElement("#proof-response-execution-result", { text: "SUCCESS", timeout: 2000 });
     await expect(page).toMatchElement("#proof-response-transaction-status", { text: "COMMITTED", timeout: 2000 });
+    const packedProofByteLength = await getElementText("#proof-response-packedproof-bytelength");
+    const packedReceiptByteLength = await getElementText("#proof-response-packedreceipt-bytelength");
+    expect(parseInt(packedProofByteLength)).toBeGreaterThan(20);
+    expect(parseInt(packedReceiptByteLength)).toBeGreaterThan(20);
     // await page.waitFor(200000);
   });
 
   // test("SimpleTransfer", async () => {
+  //   // check the transaction receipt proof
+  //   const txProofResponse = await client.getTransactionReceiptProof(txId);
+  //   console.log(txProofResponse);
+  //   expect(txProofResponse.requestStatus).toEqual("COMPLETED");
+  //   expect(txProofResponse.executionResult).toEqual("SUCCESS");
+  //   expect(txProofResponse.transactionStatus).toEqual("COMMITTED");
+  //   expect(txProofResponse.packedProof.byteLength).toBeGreaterThan(20);
+  //   expect(txProofResponse.packedReceipt.byteLength).toBeGreaterThan(10);
+
   //   // create balance query
   //   const query = client.createQuery(receiver.publicKey, "BenchmarkToken", "getBalance", [
   //     new Orbs.ArgAddress(receiver.address),
