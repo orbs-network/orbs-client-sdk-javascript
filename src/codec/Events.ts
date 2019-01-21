@@ -19,7 +19,7 @@ export function packedEventsDecode(buf: Uint8Array): Event[] {
     res.push({
       contractName: eventMsg.getString(0),
       eventName: eventMsg.getString(1),
-      arguments: packedArgumentsDecode(eventMsg.rawBufferWithHeaderForField(2, 0))
+      arguments: packedArgumentsDecode(eventMsg.rawBufferWithHeaderForField(2, 0)),
     });
     index++;
   }

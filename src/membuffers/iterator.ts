@@ -3,9 +3,7 @@ import { FieldTypes, FieldSizes, FieldType } from "./types";
 import { getTextDecoder } from "./text";
 
 export class ArrayIterator {
-
-  constructor(private cursor: number, private endCursor: number, private fieldType: FieldType, private m: InternalMessage) {
-  }
+  constructor(private cursor: number, private endCursor: number, private fieldType: FieldType, private m: InternalMessage) {}
 
   hasNext(): boolean {
     return this.cursor < this.endCursor;
@@ -121,8 +119,7 @@ export class ArrayIterator {
         } else {
           return { done: true, value: undefined };
         }
-      }
+      },
     };
   }
-
 }

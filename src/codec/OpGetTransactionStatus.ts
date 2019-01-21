@@ -44,7 +44,7 @@ export function encodeGetTransactionStatusRequest(req: GetTransactionStatusReque
       virtualChainId: req.virtualChainId,
       transactionTimestamp: txTimestamp,
       txHash: txHash,
-    })
+    }),
   });
 
   // return
@@ -86,6 +86,6 @@ export function decodeGetTransactionStatusResponse(buf: Uint8Array): GetTransact
     outputEvents: outputEventArray,
     transactionStatus: transactionStatus,
     blockHeight: requestResultMsg.getUint64(1),
-    blockTimestamp: Protocol.unixNanoToDate(requestResultMsg.getUint64(2))
+    blockTimestamp: Protocol.unixNanoToDate(requestResultMsg.getUint64(2)),
   };
 }

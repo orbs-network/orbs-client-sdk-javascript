@@ -1,6 +1,6 @@
 export enum NetworkType {
   NETWORK_TYPE_MAIN_NET = "MAIN_NET",
-  NETWORK_TYPE_TEST_NET = "TEST_NET"
+  NETWORK_TYPE_TEST_NET = "TEST_NET",
 }
 
 export function networkTypeEncode(networkType: NetworkType): number {

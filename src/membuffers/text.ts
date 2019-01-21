@@ -1,7 +1,8 @@
 let textEncoder: TextEncoder = null;
 export function getTextEncoder(): TextEncoder {
   if (textEncoder === null) {
-    if (typeof TextEncoder === "undefined") { // node.js does not support TextEncoder
+    if (typeof TextEncoder === "undefined") {
+      // node.js does not support TextEncoder
       require("fast-text-encoding");
     }
     textEncoder = new TextEncoder();
@@ -12,7 +13,8 @@ export function getTextEncoder(): TextEncoder {
 let textDecoder: TextDecoder = null;
 export function getTextDecoder(): TextDecoder {
   if (textDecoder === null) {
-    if (typeof TextDecoder === "undefined") { // node.js does not support TextDecoder
+    if (typeof TextDecoder === "undefined") {
+      // node.js does not support TextDecoder
       require("fast-text-encoding");
     }
     textDecoder = new TextDecoder("utf-8");

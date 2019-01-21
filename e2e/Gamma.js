@@ -1,10 +1,10 @@
 const util = require("util");
 const execFile = util.promisify(require("child_process").execFile);
 
-const GAMMA_PORT       = 8080;
-const GAMMA_ENDPOINT   = "localhost";
+const GAMMA_PORT = 8080;
+const GAMMA_ENDPOINT = "localhost";
 const VIRTUAL_CHAIN_ID = 42; // gamma-cli config default
-const EXPERIMENTAL     = true;
+const EXPERIMENTAL = true;
 
 async function gammaCliRun(args) {
   try {
@@ -43,5 +43,5 @@ module.exports = {
   VIRTUAL_CHAIN_ID,
   start,
   shutdown,
-  getEndpoint
+  getEndpoint,
 };

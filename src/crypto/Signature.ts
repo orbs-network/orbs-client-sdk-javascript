@@ -8,9 +8,7 @@ export function signEd25519(privateKey: Uint8Array, data: Uint8Array): Uint8Arra
     throw new Error(`cannot sign with ed25519, private key invalid with length ${privateKey.byteLength}`);
   }
   const ec = new elliptic.eddsa("ed25519");
-  const privateKeyString = uint8ArrayToHexString(
-    privateKey.subarray(0, Keys.ED25519_PRIVATE_KEY_SIZE_BYTES - Keys.ED25519_PUBLIC_KEY_SIZE_BYTES),
-  );
+  const privateKeyString = uint8ArrayToHexString(privateKey.subarray(0, Keys.ED25519_PRIVATE_KEY_SIZE_BYTES - Keys.ED25519_PUBLIC_KEY_SIZE_BYTES));
   const key = ec.keyFromSecret(privateKeyString);
   // console.log(key.getPublic("hex"));
   // console.log(key.getSecret("hex"));

@@ -7,33 +7,36 @@ import { Argument, ArgUint32, ArgUint64, ArgString, ArgBytes } from "./Arguments
 import { Event } from "./Events";
 
 describe("Codec contract", () => {
-
   let contractInput: any;
   let contractOutput: any;
   try {
     contractInput = require("../../contract/test/codec/input.json");
     contractOutput = require("../../contract/test/codec/output.json");
   } catch (e) {
-    throw new Error(`Contract spec input.json and output.json not found in ROOT/contract/test/codec\nThese files are cloned from the reference implementation found at\nhttps://github.com/orbs-network/orbs-client-sdk-go.git during the prepare step of this package`);
+    throw new Error(
+      `Contract spec input.json and output.json not found in ROOT/contract/test/codec\nThese files are cloned from the reference implementation found at\nhttps://github.com/orbs-network/orbs-client-sdk-go.git during the prepare step of this package`,
+    );
   }
 
   for (let index = 0; index < contractInput.length; index++) {
     const inputScenario = contractInput[index];
     const outputScenario = contractOutput[index];
     test(`Test Id: ${inputScenario.Test}`, () => {
-
       // SendTransactionRequest
       if (inputScenario.SendTransactionRequest) {
-        const [encoded, txId] = encodeSendTransactionRequest({
-          protocolVersion: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.ProtocolVersion),
-          virtualChainId: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.VirtualChainId),
-          timestamp: new Date(inputScenario.SendTransactionRequest.Timestamp),
-          networkType: inputScenario.SendTransactionRequest.NetworkType,
-          publicKey: jsonUnmarshalBase64Bytes(inputScenario.SendTransactionRequest.PublicKey),
-          contractName: inputScenario.SendTransactionRequest.ContractName,
-          methodName: inputScenario.SendTransactionRequest.MethodName,
-          inputArguments: jsonUnmarshalArguments(inputScenario.SendTransactionRequest.InputArguments, inputScenario.SendTransactionRequest.InputArgumentsTypes)
-        }, jsonUnmarshalBase64Bytes(inputScenario.PrivateKey));
+        const [encoded, txId] = encodeSendTransactionRequest(
+          {
+            protocolVersion: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.ProtocolVersion),
+            virtualChainId: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.VirtualChainId),
+            timestamp: new Date(inputScenario.SendTransactionRequest.Timestamp),
+            networkType: inputScenario.SendTransactionRequest.NetworkType,
+            publicKey: jsonUnmarshalBase64Bytes(inputScenario.SendTransactionRequest.PublicKey),
+            contractName: inputScenario.SendTransactionRequest.ContractName,
+            methodName: inputScenario.SendTransactionRequest.MethodName,
+            inputArguments: jsonUnmarshalArguments(inputScenario.SendTransactionRequest.InputArguments, inputScenario.SendTransactionRequest.InputArgumentsTypes),
+          },
+          jsonUnmarshalBase64Bytes(inputScenario.PrivateKey),
+        );
         const expected = jsonUnmarshalBase64Bytes(outputScenario.SendTransactionRequest);
         expect(encoded).toBeEqualToUint8Array(expected);
         const expectedTxId = jsonUnmarshalBase64Bytes(outputScenario.TxId);
@@ -51,7 +54,7 @@ describe("Codec contract", () => {
           publicKey: jsonUnmarshalBase64Bytes(inputScenario.RunQueryRequest.PublicKey),
           contractName: inputScenario.RunQueryRequest.ContractName,
           methodName: inputScenario.RunQueryRequest.MethodName,
-          inputArguments: jsonUnmarshalArguments(inputScenario.RunQueryRequest.InputArguments, inputScenario.RunQueryRequest.InputArgumentsTypes)
+          inputArguments: jsonUnmarshalArguments(inputScenario.RunQueryRequest.InputArguments, inputScenario.RunQueryRequest.InputArgumentsTypes),
         });
         const expected = jsonUnmarshalBase64Bytes(outputScenario.RunQueryRequest);
         expect(encoded).toBeEqualToUint8Array(expected);
@@ -63,7 +66,7 @@ describe("Codec contract", () => {
         const encoded = encodeGetTransactionStatusRequest({
           protocolVersion: jsonUnmarshalNumber(inputScenario.GetTransactionStatusRequest.ProtocolVersion),
           virtualChainId: jsonUnmarshalNumber(inputScenario.GetTransactionStatusRequest.VirtualChainId),
-          txId: jsonUnmarshalBase64Bytes(inputScenario.GetTransactionStatusRequest.TxId)
+          txId: jsonUnmarshalBase64Bytes(inputScenario.GetTransactionStatusRequest.TxId),
         });
         const expected = jsonUnmarshalBase64Bytes(outputScenario.GetTransactionStatusRequest);
         expect(encoded).toBeEqualToUint8Array(expected);
@@ -75,7 +78,7 @@ describe("Codec contract", () => {
         const encoded = encodeGetTransactionReceiptProofRequest({
           protocolVersion: jsonUnmarshalNumber(inputScenario.GetTransactionReceiptProofRequest.ProtocolVersion),
           virtualChainId: jsonUnmarshalNumber(inputScenario.GetTransactionReceiptProofRequest.VirtualChainId),
-          txId: jsonUnmarshalBase64Bytes(inputScenario.GetTransactionReceiptProofRequest.TxId)
+          txId: jsonUnmarshalBase64Bytes(inputScenario.GetTransactionReceiptProofRequest.TxId),
         });
         const expected = jsonUnmarshalBase64Bytes(outputScenario.GetTransactionReceiptProofRequest);
         expect(encoded).toBeEqualToUint8Array(expected);
@@ -87,15 +90,15 @@ describe("Codec contract", () => {
         const decoded = decodeSendTransactionResponse(jsonUnmarshalBase64Bytes(inputScenario.SendTransactionResponse));
         const [args, argsTypes] = jsonMarshalArguments(decoded.outputArguments);
         const res = {
-          "BlockHeight": decoded.blockHeight.toString(),
-          "OutputArguments": args,
-          "OutputArgumentsTypes": argsTypes,
-          "OutputEvents": jsonMarshalEvents(decoded.outputEvents),
-          "RequestStatus": decoded.requestStatus,
-          "ExecutionResult": decoded.executionResult,
-          "BlockTimestamp": decoded.blockTimestamp.toISOString(),
-          "TxHash": jsonMarshalBase64Bytes(decoded.txHash),
-          "TransactionStatus": decoded.transactionStatus
+          BlockHeight: decoded.blockHeight.toString(),
+          OutputArguments: args,
+          OutputArgumentsTypes: argsTypes,
+          OutputEvents: jsonMarshalEvents(decoded.outputEvents),
+          RequestStatus: decoded.requestStatus,
+          ExecutionResult: decoded.executionResult,
+          BlockTimestamp: decoded.blockTimestamp.toISOString(),
+          TxHash: jsonMarshalBase64Bytes(decoded.txHash),
+          TransactionStatus: decoded.transactionStatus,
         };
         const expected = outputScenario.SendTransactionResponse;
         expect(res).toEqual(expected);
@@ -107,13 +110,13 @@ describe("Codec contract", () => {
         const decoded = decodeRunQueryResponse(jsonUnmarshalBase64Bytes(inputScenario.RunQueryResponse));
         const [args, argsTypes] = jsonMarshalArguments(decoded.outputArguments);
         const res = {
-          "BlockHeight": decoded.blockHeight.toString(),
-          "OutputArguments": args,
-          "OutputArgumentsTypes": argsTypes,
-          "OutputEvents": jsonMarshalEvents(decoded.outputEvents),
-          "RequestStatus": decoded.requestStatus,
-          "ExecutionResult": decoded.executionResult,
-          "BlockTimestamp": decoded.blockTimestamp.toISOString()
+          BlockHeight: decoded.blockHeight.toString(),
+          OutputArguments: args,
+          OutputArgumentsTypes: argsTypes,
+          OutputEvents: jsonMarshalEvents(decoded.outputEvents),
+          RequestStatus: decoded.requestStatus,
+          ExecutionResult: decoded.executionResult,
+          BlockTimestamp: decoded.blockTimestamp.toISOString(),
         };
         const expected = outputScenario.RunQueryResponse;
         expect(res).toEqual(expected);
@@ -125,15 +128,15 @@ describe("Codec contract", () => {
         const decoded = decodeGetTransactionStatusResponse(jsonUnmarshalBase64Bytes(inputScenario.GetTransactionStatusResponse));
         const [args, argsTypes] = jsonMarshalArguments(decoded.outputArguments);
         const res = {
-          "BlockHeight": decoded.blockHeight.toString(),
-          "OutputArguments": args,
-          "OutputArgumentsTypes": argsTypes,
-          "OutputEvents": jsonMarshalEvents(decoded.outputEvents),
-          "RequestStatus": decoded.requestStatus,
-          "ExecutionResult": decoded.executionResult,
-          "BlockTimestamp": decoded.blockTimestamp.toISOString(),
-          "TxHash": jsonMarshalBase64Bytes(decoded.txHash),
-          "TransactionStatus": decoded.transactionStatus
+          BlockHeight: decoded.blockHeight.toString(),
+          OutputArguments: args,
+          OutputArgumentsTypes: argsTypes,
+          OutputEvents: jsonMarshalEvents(decoded.outputEvents),
+          RequestStatus: decoded.requestStatus,
+          ExecutionResult: decoded.executionResult,
+          BlockTimestamp: decoded.blockTimestamp.toISOString(),
+          TxHash: jsonMarshalBase64Bytes(decoded.txHash),
+          TransactionStatus: decoded.transactionStatus,
         };
         const expected = outputScenario.GetTransactionStatusResponse;
         expect(res).toEqual(expected);
@@ -145,17 +148,17 @@ describe("Codec contract", () => {
         const decoded = decodeGetTransactionReceiptProofResponse(jsonUnmarshalBase64Bytes(inputScenario.GetTransactionReceiptProofResponse));
         const [args, argsTypes] = jsonMarshalArguments(decoded.outputArguments);
         const res = {
-          "BlockHeight": decoded.blockHeight.toString(),
-          "OutputArguments": args,
-          "OutputArgumentsTypes": argsTypes,
-          "OutputEvents": jsonMarshalEvents(decoded.outputEvents),
-          "RequestStatus": decoded.requestStatus,
-          "ExecutionResult": decoded.executionResult,
-          "BlockTimestamp": decoded.blockTimestamp.toISOString(),
-          "TxHash": jsonMarshalBase64Bytes(decoded.txHash),
-          "TransactionStatus": decoded.transactionStatus,
-          "PackedProof": jsonMarshalBase64Bytes(decoded.packedProof),
-          "PackedReceipt": jsonMarshalBase64Bytes(decoded.packedReceipt)
+          BlockHeight: decoded.blockHeight.toString(),
+          OutputArguments: args,
+          OutputArgumentsTypes: argsTypes,
+          OutputEvents: jsonMarshalEvents(decoded.outputEvents),
+          RequestStatus: decoded.requestStatus,
+          ExecutionResult: decoded.executionResult,
+          BlockTimestamp: decoded.blockTimestamp.toISOString(),
+          TxHash: jsonMarshalBase64Bytes(decoded.txHash),
+          TransactionStatus: decoded.transactionStatus,
+          PackedProof: jsonMarshalBase64Bytes(decoded.packedProof),
+          PackedReceipt: jsonMarshalBase64Bytes(decoded.packedReceipt),
         };
         const expected = outputScenario.GetTransactionReceiptProofResponse;
         expect(res).toEqual(expected);
@@ -163,10 +166,8 @@ describe("Codec contract", () => {
       }
 
       fail(`unhandled input scenario:\n${JSON.stringify(inputScenario)}`);
-
     });
   }
-
 });
 
 function jsonUnmarshalNumber(str: string): number {
@@ -254,7 +255,7 @@ function jsonMarshalEvents(events: Event[]): MarshaledEvent[] {
       ContractName: event.contractName,
       EventName: event.eventName,
       Arguments: args,
-      ArgumentsTypes: argsTypes
+      ArgumentsTypes: argsTypes,
     });
   }
   return res;

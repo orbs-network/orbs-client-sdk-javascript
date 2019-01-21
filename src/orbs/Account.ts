@@ -14,7 +14,7 @@ export function createAccount(): Account {
   return {
     publicKey: keyPair.publicKey,
     privateKey: keyPair.privateKey,
-    address: bytesToAddress(rawAddress)
+    address: bytesToAddress(rawAddress),
   };
 }
 

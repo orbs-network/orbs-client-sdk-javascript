@@ -6,12 +6,14 @@ import { SignerBuilder } from "./Protocol";
 export const RequestResult_Scheme = [FieldTypes.TypeUint16, FieldTypes.TypeUint64, FieldTypes.TypeUint64];
 
 export class TransactionRefBuilder extends BaseBuilder {
-  constructor(private fields: {
-    protocolVersion: number,
-    virtualChainId: number,
-    transactionTimestamp: BigInt,
-    txHash: Uint8Array
-  }) {
+  constructor(
+    private fields: {
+      protocolVersion: number;
+      virtualChainId: number;
+      transactionTimestamp: BigInt;
+      txHash: Uint8Array;
+    },
+  ) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -26,9 +28,11 @@ export class TransactionRefBuilder extends BaseBuilder {
 export const SendTransactionRequest_Scheme = [FieldTypes.TypeMessage];
 
 export class SendTransactionRequestBuilder extends BaseBuilder {
-  constructor(private fields: {
-    signedTransaction: Protocol.SignedTransactionBuilder
-  }) {
+  constructor(
+    private fields: {
+      signedTransaction: Protocol.SignedTransactionBuilder;
+    },
+  ) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -40,9 +44,11 @@ export class SendTransactionRequestBuilder extends BaseBuilder {
 export const SendTransactionResponse_Scheme = [FieldTypes.TypeMessage, FieldTypes.TypeUint16, FieldTypes.TypeMessage];
 
 export class RunQueryRequestBuilder extends BaseBuilder {
-  constructor(private fields: {
-    signedQuery: Protocol.SignedQueryBuilder
-  }) {
+  constructor(
+    private fields: {
+      signedQuery: Protocol.SignedQueryBuilder;
+    },
+  ) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -54,9 +60,11 @@ export class RunQueryRequestBuilder extends BaseBuilder {
 export const RunQueryResponse_Scheme = [FieldTypes.TypeMessage, FieldTypes.TypeMessage];
 
 export class GetTransactionStatusRequestBuilder extends BaseBuilder {
-  constructor(private fields: {
-    transactionRef: TransactionRefBuilder
-  }) {
+  constructor(
+    private fields: {
+      transactionRef: TransactionRefBuilder;
+    },
+  ) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -68,9 +76,11 @@ export class GetTransactionStatusRequestBuilder extends BaseBuilder {
 export const GetTransactionStatusResponse_Scheme = [FieldTypes.TypeMessage, FieldTypes.TypeUint16, FieldTypes.TypeMessage];
 
 export class GetTransactionReceiptProofRequestBuilder extends BaseBuilder {
-  constructor(private fields: {
-    transactionRef: TransactionRefBuilder
-  }) {
+  constructor(
+    private fields: {
+      transactionRef: TransactionRefBuilder;
+    },
+  ) {
     super();
   }
   write(buf: Uint8Array): void {

@@ -2,7 +2,6 @@ const Orbs = require("../../dist/index.js");
 const Gamma = require("./../Gamma");
 
 describe("E2E nodejs", () => {
-
   beforeEach(async () => {
     jest.setTimeout(60000);
     await Gamma.start();
@@ -13,7 +12,6 @@ describe("E2E nodejs", () => {
   });
 
   test("SimpleTransfer", async () => {
-
     // create sender account
     const sender = Orbs.createAccount();
 
@@ -25,13 +23,7 @@ describe("E2E nodejs", () => {
     const client = new Orbs.Client(endpoint, Gamma.VIRTUAL_CHAIN_ID, "TEST_NET");
 
     // create transfer transaction
-    const [tx, txId] = client.createTransaction(
-      sender.publicKey,
-      sender.privateKey,
-      "BenchmarkToken",
-      "transfer",
-      [new Orbs.ArgUint64(10), new Orbs.ArgAddress(receiver.address)]
-    );
+    const [tx, txId] = client.createTransaction(sender.publicKey, sender.privateKey, "BenchmarkToken", "transfer", [new Orbs.ArgUint64(10), new Orbs.ArgAddress(receiver.address)]);
 
     // send the transaction
     const transferResponse = await client.sendTransaction(tx);
@@ -57,12 +49,7 @@ describe("E2E nodejs", () => {
     expect(txProofResponse.packedReceipt.byteLength).toBeGreaterThan(10);
 
     // create balance query
-    const query = client.createQuery(
-      receiver.publicKey,
-      "BenchmarkToken",
-      "getBalance",
-      [new Orbs.ArgAddress(receiver.address)]
-    );
+    const query = client.createQuery(receiver.publicKey, "BenchmarkToken", "getBalance", [new Orbs.ArgAddress(receiver.address)]);
 
     // send the query
     const balanceResponse = await client.sendQuery(query);
@@ -70,11 +57,9 @@ describe("E2E nodejs", () => {
     expect(balanceResponse.requestStatus).toEqual("COMPLETED");
     expect(balanceResponse.executionResult).toEqual("SUCCESS");
     expect(balanceResponse.outputArguments[0]).toEqual(new Orbs.ArgUint64(10));
-
   });
 
   test("TextualError", async () => {
-
     // create client
     const endpoint = Gamma.getEndpoint();
     const client = new Orbs.Client(endpoint, Gamma.VIRTUAL_CHAIN_ID, "TEST_NET");
@@ -87,7 +72,5 @@ describe("E2E nodejs", () => {
       error = e;
     }
     expect(error.toString()).toMatch("http request is not a valid membuffer");
-
   });
-
 });

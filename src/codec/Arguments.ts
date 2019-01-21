@@ -36,16 +36,16 @@ function argumentsBuilders(args: Argument[]): Protocol.ArgumentBuilder[] {
     const arg = args[i];
     switch (arg.type) {
       case "uint32":
-        res.push(new Protocol.ArgumentBuilder({type: 0, value: arg.value}));
+        res.push(new Protocol.ArgumentBuilder({ type: 0, value: arg.value }));
         break;
       case "uint64":
-        res.push(new Protocol.ArgumentBuilder({type: 1, value: arg.value}));
+        res.push(new Protocol.ArgumentBuilder({ type: 1, value: arg.value }));
         break;
       case "string":
-        res.push(new Protocol.ArgumentBuilder({type: 2, value: arg.value}));
+        res.push(new Protocol.ArgumentBuilder({ type: 2, value: arg.value }));
         break;
       case "bytes":
-        res.push(new Protocol.ArgumentBuilder({type: 3, value: arg.value}));
+        res.push(new Protocol.ArgumentBuilder({ type: 3, value: arg.value }));
         break;
       default:
         throw new Error(`Argument unknown type: ${arg}`);
@@ -56,7 +56,7 @@ function argumentsBuilders(args: Argument[]): Protocol.ArgumentBuilder[] {
 
 function argumentsArray(args: Argument[]): InternalMessage {
   const builders = argumentsBuilders(args);
-  const buf = new Protocol.ArgumentArrayBuilder({arguments: builders}).build();
+  const buf = new Protocol.ArgumentArrayBuilder({ arguments: builders }).build();
   return new InternalMessage(buf, buf.byteLength, Protocol.ArgumentArray_Scheme, []);
 }
 

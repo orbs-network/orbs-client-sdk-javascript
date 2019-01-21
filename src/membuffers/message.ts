@@ -440,5 +440,4 @@ export class InternalMessage {
     const off = this.offsets[fieldNum];
     return this.getStringArrayIteratorInOffset(off);
   }
-
 }

@@ -46,7 +46,7 @@ export function encodeGetTransactionReceiptProofRequest(req: GetTransactionRecei
       virtualChainId: req.virtualChainId,
       transactionTimestamp: txTimestamp,
       txHash: txHash,
-    })
+    }),
   });
 
   // return
@@ -90,6 +90,6 @@ export function decodeGetTransactionReceiptProofResponse(buf: Uint8Array): GetTr
     blockHeight: requestResultMsg.getUint64(1),
     blockTimestamp: Protocol.unixNanoToDate(requestResultMsg.getUint64(2)),
     packedProof: getTransactionReceiptProofResponseMsg.getBytes(3),
-    packedReceipt: transactionReceiptBuf
+    packedReceipt: transactionReceiptBuf,
   };
 }

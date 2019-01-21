@@ -13,10 +13,12 @@ export const Argument_Scheme = [FieldTypes.TypeUnion];
 export const Argument_Unions = [[FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeString, FieldTypes.TypeBytes]];
 
 export class ArgumentBuilder extends BaseBuilder {
-  constructor(private fields: {
-    type: number,
-    value: number|BigInt|string|Uint8Array
-  }) {
+  constructor(
+    private fields: {
+      type: number;
+      value: number | BigInt | string | Uint8Array;
+    },
+  ) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -44,9 +46,11 @@ export class ArgumentBuilder extends BaseBuilder {
 export const ArgumentArray_Scheme = [FieldTypes.TypeMessageArray];
 
 export class ArgumentArrayBuilder extends BaseBuilder {
-  constructor(private fields: {
-    arguments: ArgumentBuilder[]
-  }) {
+  constructor(
+    private fields: {
+      arguments: ArgumentBuilder[];
+    },
+  ) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -60,10 +64,12 @@ export const Event_Scheme = [FieldTypes.TypeString, FieldTypes.TypeString, Field
 export const EventsArray_Scheme = [FieldTypes.TypeMessageArray];
 
 export class EdDSA01SignerBuilder extends BaseBuilder {
-  constructor(private fields: {
-    networkType: number,
-    signerPublicKey: Uint8Array
-  }) {
+  constructor(
+    private fields: {
+      networkType: number;
+      signerPublicKey: Uint8Array;
+    },
+  ) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -74,10 +80,12 @@ export class EdDSA01SignerBuilder extends BaseBuilder {
 }
 
 export class SignerBuilder extends BaseBuilder {
-  constructor(private fields: {
-    scheme: number,
-    eddsa: EdDSA01SignerBuilder
-  }) {
+  constructor(
+    private fields: {
+      scheme: number;
+      eddsa: EdDSA01SignerBuilder;
+    },
+  ) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -94,15 +102,17 @@ export class SignerBuilder extends BaseBuilder {
 }
 
 export class TransactionBuilder extends BaseBuilder {
-  constructor(private fields: {
-    protocolVersion: number,
-    virtualChainId: number,
-    timestamp: BigInt,
-    signer: SignerBuilder,
-    contractName: string,
-    methodName: string,
-    inputArgumentArray: Uint8Array
-  }) {
+  constructor(
+    private fields: {
+      protocolVersion: number;
+      virtualChainId: number;
+      timestamp: BigInt;
+      signer: SignerBuilder;
+      contractName: string;
+      methodName: string;
+      inputArgumentArray: Uint8Array;
+    },
+  ) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -120,10 +130,12 @@ export class TransactionBuilder extends BaseBuilder {
 export const SignedTransaction_Scheme = [FieldTypes.TypeMessage, FieldTypes.TypeBytes];
 
 export class SignedTransactionBuilder extends BaseBuilder {
-  constructor(private fields: {
-    transaction: TransactionBuilder,
-    signature: Uint8Array
-  }) {
+  constructor(
+    private fields: {
+      transaction: TransactionBuilder;
+      signature: Uint8Array;
+    },
+  ) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -136,15 +148,17 @@ export class SignedTransactionBuilder extends BaseBuilder {
 export const TransactionReceipt_Scheme = [FieldTypes.TypeBytes, FieldTypes.TypeUint16, FieldTypes.TypeBytes, FieldTypes.TypeBytes];
 
 export class QueryBuilder extends BaseBuilder {
-  constructor(private fields: {
-    protocolVersion: number,
-    virtualChainId: number,
-    timestamp: BigInt,
-    signer: SignerBuilder,
-    contractName: string,
-    methodName: string,
-    inputArgumentArray: Uint8Array
-  }) {
+  constructor(
+    private fields: {
+      protocolVersion: number;
+      virtualChainId: number;
+      timestamp: BigInt;
+      signer: SignerBuilder;
+      contractName: string;
+      methodName: string;
+      inputArgumentArray: Uint8Array;
+    },
+  ) {
     super();
   }
   write(buf: Uint8Array): void {
@@ -162,10 +176,12 @@ export class QueryBuilder extends BaseBuilder {
 export const SignedQuery_Scheme = [FieldTypes.TypeMessage, FieldTypes.TypeBytes];
 
 export class SignedQueryBuilder extends BaseBuilder {
-  constructor(private fields: {
-    query: QueryBuilder,
-    signature: Uint8Array
-  }) {
+  constructor(
+    private fields: {
+      query: QueryBuilder;
+      signature: Uint8Array;
+    },
+  ) {
     super();
   }
   write(buf: Uint8Array): void {

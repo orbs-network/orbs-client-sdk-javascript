@@ -42,7 +42,7 @@ export function encodeHex(data: Uint8Array): string {
     }
 
     // 57 = "9"
-    if (result[i] >  57 && hashByte > 7) {
+    if (result[i] > 57 && hashByte > 7) {
       result[i] -= 32;
     }
   }

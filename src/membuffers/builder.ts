@@ -56,7 +56,7 @@ export class InternalBuilder {
   }
 
   writeBytes(buf: Uint8Array, v: Uint8Array): void {
-    const dataView = (buf) ? new DataView(buf.buffer, buf.byteOffset) : undefined;
+    const dataView = buf ? new DataView(buf.buffer, buf.byteOffset) : undefined;
     this.size = alignOffsetToType(this.size, FieldTypes.TypeBytes);
     if (buf) {
       if (v) {
@@ -196,5 +196,4 @@ export class InternalBuilder {
       new DataView(buf.buffer, buf.byteOffset).setUint32(sizePlaceholderOffset, contentSize, true);
     }
   }
-
 }

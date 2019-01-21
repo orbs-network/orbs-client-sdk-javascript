@@ -55,15 +55,15 @@ export function encodeRunQueryRequest(req: RunQueryRequest): Uint8Array {
           scheme: 0,
           eddsa: new Protocol.EdDSA01SignerBuilder({
             networkType: networkType,
-            signerPublicKey: req.publicKey
-          })
+            signerPublicKey: req.publicKey,
+          }),
         }),
         contractName: req.contractName,
         methodName: req.methodName,
-        inputArgumentArray: inputArgumentArray
+        inputArgumentArray: inputArgumentArray,
       }),
-      signature: null
-    })
+      signature: null,
+    }),
   });
 
   // return
@@ -100,6 +100,6 @@ export function decodeRunQueryResponse(buf: Uint8Array): RunQueryResponse {
     outputArguments: outputArgumentArray,
     outputEvents: outputEventArray,
     blockHeight: requestResultMsg.getUint64(1),
-    blockTimestamp: Protocol.unixNanoToDate(requestResultMsg.getUint64(2))
+    blockTimestamp: Protocol.unixNanoToDate(requestResultMsg.getUint64(2)),
   };
 }

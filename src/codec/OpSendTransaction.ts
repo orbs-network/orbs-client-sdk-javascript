@@ -65,15 +65,15 @@ export function encodeSendTransactionRequest(req: SendTransactionRequest, privat
           scheme: 0,
           eddsa: new Protocol.EdDSA01SignerBuilder({
             networkType: networkType,
-            signerPublicKey: req.publicKey
-          })
+            signerPublicKey: req.publicKey,
+          }),
         }),
         contractName: req.contractName,
         methodName: req.methodName,
-        inputArgumentArray: inputArgumentArray
+        inputArgumentArray: inputArgumentArray,
       }),
-      signature: new Uint8Array(Signature.ED25519_SIGNATURE_SIZE_BYTES)
-    })
+      signature: new Uint8Array(Signature.ED25519_SIGNATURE_SIZE_BYTES),
+    }),
   });
 
   // read encoded bytes
@@ -127,6 +127,6 @@ export function decodeSendTransactionResponse(buf: Uint8Array): SendTransactionR
     outputEvents: outputEventArray,
     transactionStatus: transactionStatus,
     blockHeight: requestResultMsg.getUint64(1),
-    blockTimestamp: Protocol.unixNanoToDate(requestResultMsg.getUint64(2))
+    blockTimestamp: Protocol.unixNanoToDate(requestResultMsg.getUint64(2)),
   };
 }

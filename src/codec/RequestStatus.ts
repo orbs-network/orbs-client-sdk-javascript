@@ -4,7 +4,7 @@ export enum RequestStatus {
   REQUEST_STATUS_BAD_REQUEST = "BAD_REQUEST",
   REQUEST_STATUS_CONGESTION = "CONGESTION",
   REQUEST_STATUS_SYSTEM_ERROR = "SYSTEM_ERROR",
-  REQUEST_STATUS_OUT_OF_SYNC = "OUT_OF_SYNC"
+  REQUEST_STATUS_OUT_OF_SYNC = "OUT_OF_SYNC",
 }
 
 export function requestStatusDecode(requestStatus: number): RequestStatus {
