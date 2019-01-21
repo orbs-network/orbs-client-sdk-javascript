@@ -17,40 +17,82 @@
     </style>
     <script src="../../dist/orbs-client-sdk.js"></script>
     <script>
-      function Step1() {
-        const account = Orbs.createAccount();
-        document.querySelector("#step1 .result").innerText = account.publicKey;
+      function CreateOrbsClient() {
+        let result;
+        try {
+          const endpoint = document.querySelector("#endpoint").value;
+          const virtualChainId = document.querySelector("#virtual-chain-id").value;
+          window.orbsClient = new Orbs.Client(endpoint, virtualChainId, "TEST_NET");
+          result = "Created";
+        } catch (e) {
+          result = "Failed";
+        }
+        document.querySelector("#orbs-client-result").innerText = result;
       }
 
-      function Step2() {
-        const account = Orbs.createAccount();
-        document.querySelector("#step2 .result").innerText = account.publicKey;
+      function CreateAccount1() {
+        window.account1 = Orbs.createAccount();
+        document.querySelector("#account-1-id").innerText = window.account1.publicKey;
+      }
+
+      function CreateAccount2() {
+        window.account2 = Orbs.createAccount();
+        document.querySelector("#account-2-id").innerText = window.account2.publicKey;
+      }
+
+      function CreateTx() {
+        const [tx, txId] = window.orbsClient.createTransaction(
+          window.account1.publicKey,
+          window.account1.privateKey,
+          "BenchmarkToken",
+          "transfer",
+          [new Orbs.ArgUint64(10), new Orbs.ArgAddress(window.account2.address)],
+        );
+        document.querySelector("#tx-id").innerText = txId;
       }
     </script>
   </head>
   <body>
-    <div id="create-account-container">
-      <table>
-        <thead>
-          <tr>
-            <td>Step</td>
-            <td>Action</td>
-            <td id="results-row">Result</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr id="step1">
-            <td>1</td>
-            <td><button class="action-button" onclick="Step1()">Create Account</button></td>
-            <td class="result"></td>
-          </tr>
-          <tr id="step2">
-            <td>2</td>
-            <td><button class="action-button" onclick="Step2()">Create Account 2</button></td>
-            <td class="result"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <form>
+      <div>
+        <label for="endpoint">Gamma url:</label>
+        <input id="endpoint" name="endpoint" type="text" placeholder="endpoint" value="http://localhost:8080" />
+      </div>
+      <div>
+        <label for="virtual-chain-id">Virtual Chain Id:</label>
+        <input id="virtual-chain-id" name="virtual-chain-id" type="text" placeholder="virtual chain id" value="42" />
+      </div>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <td>Step</td>
+          <td>Action</td>
+          <td id="results-row">Result</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><button id="create-orbs-client" onclick="CreateOrbsClient()">Create Orbs.Client</button></td>
+          <td id="orbs-client-result"></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><button id="create-account-1" onclick="CreateAccount1()">Create Account 1</button></td>
+          <td id="account-1-id"></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><button id="create-account-2" onclick="CreateAccount2()">Create Account 2</button></td>
+          <td id="account-2-id"></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><button id="create-tx" onclick="CreateTx()">Create Tx</button></td>
+          <td id="tx-id"></td>
+        </tr>
+      </tbody>
+    </table>
   </body>
 </html>
