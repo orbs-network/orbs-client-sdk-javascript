@@ -1,5 +1,5 @@
 const Orbs = require("../../dist/index.js");
-const Gamma = require("./Gamma");
+const Gamma = require("./../Gamma");
 
 describe("E2E nodejs", () => {
 

@@ -13,7 +13,8 @@ export enum TransactionStatus {
   TRANSACTION_STATUS_REJECTED_VIRTUAL_CHAIN_PRE_ORDER = "REJECTED_VIRTUAL_CHAIN_PRE_ORDER",
   TRANSACTION_STATUS_REJECTED_SMART_CONTRACT_PRE_ORDER = "REJECTED_SMART_CONTRACT_PRE_ORDER",
   TRANSACTION_STATUS_REJECTED_TIMESTAMP_AHEAD_OF_NODE_TIME = "REJECTED_TIMESTAMP_AHEAD_OF_NODE_TIME",
-  TRANSACTION_STATUS_REJECTED_CONGESTION = "REJECTED_CONGESTION"
+  TRANSACTION_STATUS_REJECTED_CONGESTION = "REJECTED_CONGESTION",
+  TRANSACTION_STATUS_REJECTED_NODE_OUT_OF_SYNC = "REJECTED_NODE_OUT_OF_SYNC"
 }
 
 export function transactionStatusDecode(transactionStatus: number): TransactionStatus {
@@ -50,6 +51,8 @@ export function transactionStatusDecode(transactionStatus: number): TransactionS
       return TransactionStatus.TRANSACTION_STATUS_REJECTED_TIMESTAMP_AHEAD_OF_NODE_TIME;
     case 16:
       return TransactionStatus.TRANSACTION_STATUS_REJECTED_CONGESTION;
+    case 17:
+      return TransactionStatus.TRANSACTION_STATUS_REJECTED_NODE_OUT_OF_SYNC;
     default:
       throw new Error(`unsupported TransactionStatus received: ${transactionStatus}`);
   }

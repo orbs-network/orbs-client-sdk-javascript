@@ -1,0 +1,11 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    steps:
+      - checkout
+      - run: ./.circleci/install-current-node.sh
+      - run: sudo apt-get update && sudo apt-get install -y `node ~/repo/.circleci/list-chrome-deps.js`
+      - run: ./.circleci/bring-gamma.sh
+      - run: ./.circleci/main.sh
+      
