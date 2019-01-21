@@ -18,7 +18,7 @@
     "build-webpack": "webpack -p",
     "build-rollup": "rollup -c",
     "watch": "rollup -cw",
-    "test": "jest",
+    "test": "./test.sh",
     "lint": "tslint -c tslint.json",
     "prepare": "rimraf ./contract && git clone https://github.com/orbs-network/orbs-client-sdk-go.git ./contract"
   },
