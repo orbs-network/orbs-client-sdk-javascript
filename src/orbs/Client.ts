@@ -16,20 +16,22 @@ const GET_TRANSACTION_STATUS_URL = "/api/v1/get-transaction-status";
 const GET_TRANSACTION_RECEIPT_PROOF_URL = "/api/v1/get-transaction-receipt-proof";
 
 export class Client {
-
   constructor(private endpoint: string, private virtualChainId: number, private networkType: NetworkType) {}
 
   createTransaction(publicKey: Uint8Array, privateKey: Uint8Array, contractName: string, methodName: string, inputArguments: Argument[]): [Uint8Array, string] {
-    const [req, rawTxId] = encodeSendTransactionRequest({
-      protocolVersion: PROTOCOL_VERSION,
-      virtualChainId: this.virtualChainId,
-      timestamp: new Date(),
-      networkType: this.networkType,
-      publicKey: publicKey,
-      contractName: contractName,
-      methodName: methodName,
-      inputArguments: inputArguments
-    }, privateKey);
+    const [req, rawTxId] = encodeSendTransactionRequest(
+      {
+        protocolVersion: PROTOCOL_VERSION,
+        virtualChainId: this.virtualChainId,
+        timestamp: new Date(),
+        networkType: this.networkType,
+        publicKey: publicKey,
+        contractName: contractName,
+        methodName: methodName,
+        inputArguments: inputArguments,
+      },
+      privateKey,
+    );
     return [req, Encoding.encodeHex(rawTxId)];
   }
 
@@ -42,7 +44,7 @@ export class Client {
       publicKey: publicKey,
       contractName: contractName,
       methodName: methodName,
-      inputArguments: inputArguments
+      inputArguments: inputArguments,
     });
   }
 
@@ -51,7 +53,7 @@ export class Client {
     return encodeGetTransactionStatusRequest({
       protocolVersion: PROTOCOL_VERSION,
       virtualChainId: this.virtualChainId,
-      txId: rawTxId
+      txId: rawTxId,
     });
   }
 
@@ -60,59 +62,61 @@ export class Client {
     return encodeGetTransactionReceiptProofRequest({
       protocolVersion: PROTOCOL_VERSION,
       virtualChainId: this.virtualChainId,
-      txId: rawTxId
+      txId: rawTxId,
     });
   }
 
   async sendTransaction(rawTransaction: Uint8Array): Promise<SendTransactionResponse> {
     const res = await this.sendHttpPost(SEND_TRANSACTION_URL, rawTransaction);
-    return decodeSendTransactionResponse(res.data);
+    return decodeSendTransactionResponse(res);
   }
 
   async sendQuery(rawQuery: Uint8Array): Promise<RunQueryResponse> {
     const res = await this.sendHttpPost(RUN_QUERY_URL, rawQuery);
-    return decodeRunQueryResponse(res.data);
+    return decodeRunQueryResponse(res);
   }
 
   async getTransactionStatus(txId: string): Promise<GetTransactionStatusResponse> {
     const payload = this.createGetTransactionStatusPayload(txId);
     const res = await this.sendHttpPost(GET_TRANSACTION_STATUS_URL, payload);
-    return decodeGetTransactionStatusResponse(res.data);
+    return decodeGetTransactionStatusResponse(res);
   }
 
   async getTransactionReceiptProof(txId: string): Promise<GetTransactionReceiptProofResponse> {
     const payload = this.createGetTransactionReceiptProofPayload(txId);
     const res = await this.sendHttpPost(GET_TRANSACTION_RECEIPT_PROOF_URL, payload);
-    return decodeGetTransactionReceiptProofResponse(res.data);
+    return decodeGetTransactionReceiptProofResponse(res);
   }
 
-  private async sendHttpPost(relativeUrl: string, payload: Uint8Array): Promise<AxiosResponse> {
+  private async sendHttpPost(relativeUrl: string, payload: Uint8Array): Promise<Uint8Array> {
     if (!payload || payload.byteLength == 0) {
       throw new Error(`payload sent by http is empty`);
     }
 
-    const res = await axios.post(this.endpoint + relativeUrl, payload, {
+    const res = await axios.post<Uint8Array>(this.endpoint + relativeUrl, payload, {
       headers: { "content-type": CONTENT_TYPE_MEMBUFFERS },
       responseType: "arraybuffer",
-      validateStatus: (status) => true
+      validateStatus: status => true,
     });
 
     // check if we have the content type response we expect
     const contentType = res.headers["content-type"];
     if (contentType != CONTENT_TYPE_MEMBUFFERS) {
-
       if (contentType == "text/plain" || contentType == "application/json") {
         throw new Error(`http request failed: ${getTextDecoder().decode(res.data)}`);
       } else {
-        throw new Error(`http request failed with Content-Type '${contentType}': ${Buffer.from(res.data).toString("hex")}`);
+        throw new Error(`http request failed with unexpected Content-Type '${contentType}'`);
       }
-
     }
 
     if (!res.data) {
       throw new Error(`no response data available, http status: ${res.status} ${res.statusText}`);
     }
-    return res;
-  }
 
+    if (res.data.constructor === ArrayBuffer) {
+      return new Uint8Array(res.data);
+    }
+
+    return res.data;
+  }
 }
