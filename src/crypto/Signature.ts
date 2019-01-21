@@ -1,5 +1,5 @@
 import * as Keys from "./Keys";
-const eddsa = require("elliptic").eddsa;
+import elliptic from "elliptic";
 
 export const ED25519_SIGNATURE_SIZE_BYTES = 64;
 
@@ -7,8 +7,10 @@ export function signEd25519(privateKey: Uint8Array, data: Uint8Array): Uint8Arra
   if (privateKey.byteLength != Keys.ED25519_PRIVATE_KEY_SIZE_BYTES) {
     throw new Error(`cannot sign with ed25519, private key invalid with length ${privateKey.byteLength}`);
   }
-  const ec = new eddsa("ed25519");
-  const privateKeyString = uint8ArrayToHexString(privateKey.subarray(0, Keys.ED25519_PRIVATE_KEY_SIZE_BYTES - Keys.ED25519_PUBLIC_KEY_SIZE_BYTES));
+  const ec = new elliptic.eddsa("ed25519");
+  const privateKeyString = uint8ArrayToHexString(
+    privateKey.subarray(0, Keys.ED25519_PRIVATE_KEY_SIZE_BYTES - Keys.ED25519_PUBLIC_KEY_SIZE_BYTES),
+  );
   const key = ec.keyFromSecret(privateKeyString);
   // console.log(key.getPublic("hex"));
   // console.log(key.getSecret("hex"));
@@ -19,7 +21,7 @@ export function verifyEd25519(publicKey: Uint8Array, data: Uint8Array, signature
   if (publicKey.byteLength != Keys.ED25519_PUBLIC_KEY_SIZE_BYTES) {
     throw new Error(`cannot verify with ed25519, public key invalid with length ${publicKey.byteLength}`);
   }
-  const ec = new eddsa("ed25519");
+  const ec = new elliptic.eddsa("ed25519");
   const publicKeyString = uint8ArrayToHexString(publicKey);
   const key = ec.keyFromPublic(publicKeyString);
   // console.log(key.getPublic("hex"));

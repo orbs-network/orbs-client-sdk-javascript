@@ -17,6 +17,7 @@ contract
 
 # Build
 public/css/main.css
+.rpt2_cache
 
 # Coverage reports
 coverage
