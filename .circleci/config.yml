@@ -17,7 +17,6 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      - run: ./.circleci/bring-gamma.sh
       - run: yarn install
 
       - save_cache:
@@ -26,5 +25,5 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
         
       # run tests!
-      - run: ./test.sh
+      - run: ./.circleci/bring-gamma.sh && ./test.sh
       
