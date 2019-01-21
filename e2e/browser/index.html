@@ -15,7 +15,7 @@
         width: 100%;
       }
     </style>
-    <script src="../../dist/orbs-client-sdk.js"></script>
+    <script src="/dist/orbs-client-sdk.js"></script>
     <script>
       function CreateOrbsClient() {
         let result;
@@ -41,27 +41,25 @@
       }
 
       function CreateTx() {
-        const [tx, txId] = window.orbsClient.createTransaction(
-          window.account1.publicKey,
-          window.account1.privateKey,
-          "BenchmarkToken",
-          "transfer",
-          [new Orbs.ArgUint64(10), new Orbs.ArgAddress(window.account2.address)],
-        );
+        const [tx, txId] = window.orbsClient.createTransaction(window.account1.publicKey, window.account1.privateKey, "BenchmarkToken", "transfer", [new Orbs.ArgUint64(10), new Orbs.ArgAddress(window.account2.address)]);
+        window.tx = tx;
+        window.txId = txId;
         document.querySelector("#tx-id").innerText = txId;
+      }
+
+      function SendTx() {
+        window.orbsClient.sendTransaction(window.tx).then(transferResponse => {
+          document.querySelector("#transfer-response-request-status").innerText = transferResponse.requestStatus;
+          document.querySelector("#transfer-response-execution-result").innerText = transferResponse.executionResult;
+          document.querySelector("#transfer-response-transaction-status").innerText = transferResponse.transactionStatus;
+        });
       }
     </script>
   </head>
   <body>
     <form>
-      <div>
-        <label for="endpoint">Gamma url:</label>
-        <input id="endpoint" name="endpoint" type="text" placeholder="endpoint" value="http://localhost:8080" />
-      </div>
-      <div>
-        <label for="virtual-chain-id">Virtual Chain Id:</label>
-        <input id="virtual-chain-id" name="virtual-chain-id" type="text" placeholder="virtual chain id" value="42" />
-      </div>
+      <div><label for="endpoint">Gamma url:</label> <input id="endpoint" name="endpoint" type="text" placeholder="endpoint" value="http://localhost:8081" /></div>
+      <div><label for="virtual-chain-id">Virtual Chain Id:</label> <input id="virtual-chain-id" name="virtual-chain-id" type="text" placeholder="virtual chain id" value="42" /></div>
     </form>
     <table>
       <thead>
@@ -88,9 +86,18 @@
           <td id="account-2-id"></td>
         </tr>
         <tr>
-          <td>3</td>
+          <td>4</td>
           <td><button id="create-tx" onclick="CreateTx()">Create Tx</button></td>
           <td id="tx-id"></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><button id="send-tx" onclick="SendTx()">Send Tx</button></td>
+          <td id="tx-id">
+            <div><span>Response request status:</span> <span id="transfer-response-request-status"></span></div>
+            <div><span>Response execution result:</span> <span id="transfer-response-execution-result"></span></div>
+            <div><span>Response transaction status:</span> <span id="transfer-response-transaction-status"></span></div>
+          </td>
         </tr>
       </tbody>
     </table>

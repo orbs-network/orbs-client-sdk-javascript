@@ -1,24 +1,50 @@
 const path = require("path");
 const Gamma = require("../Gamma");
+const httpServer = require("http-server");
+
+const STATICS_PORT = 8081;
 
 const clickOnElement = async selector => await page.click(`${selector}`);
 const getElementText = async selector => await page.$eval(`${selector}`, el => el.innerText);
-const fillGammaDetails = async (endpoint, virtualChainId) => {
-  await page.focus("#virtual-chain-id");
-  await page.keyboard.type(virtualChainId.toString());
-  await page.focus("#endpoint");
-  await page.keyboard.type(endpoint);
+const clearInputText = async selector => {
+  await page.focus(selector);
+  await page.$eval(selector, el => el.setSelectionRange(0, el.value.length));
+  await page.keyboard.press("Backspace");
+};
+const setInputText = async (selector, value) => {
+  await clearInputText(selector);
+  await page.focus(selector);
+  await page.keyboard.type(value);
+};
+
+const fillServerDetails = async (endpoint, virtualChainId) => {
+  await setInputText("#virtual-chain-id", virtualChainId.toString());
+  await setInputText("#endpoint", endpoint);
+};
+
+const startStaticsServer = (port, proxy) => {
+  return new Promise(resolve => {
+    const server = httpServer.createServer({ proxy });
+    server.listen(port, "localhost", () => resolve(server));
+  });
 };
 
 describe("E2E browser", () => {
+  let staticsServer;
+
   beforeAll(async () => {
     jest.setTimeout(60000);
-    Promise.all[(await Gamma.start(), await page.goto(`file:${path.join(__dirname, "index.html")}`))];
-    const endpoint = Gamma.getEndpoint();
-    await fillGammaDetails(endpoint, Gamma.VIRTUAL_CHAIN_ID);
+    await Gamma.start();
+    const gammaEndpoint = Gamma.getEndpoint();
+    console.log("gammaEndpoint", gammaEndpoint);
+    staticsServer = await startStaticsServer(STATICS_PORT, gammaEndpoint);
+    const staticsServerUrl = `http://localhost:${STATICS_PORT}`;
+    await page.goto(`${staticsServerUrl}/e2e/browser/`);
+    await fillServerDetails(staticsServerUrl, Gamma.VIRTUAL_CHAIN_ID);
   });
 
   afterAll(async () => {
+    staticsServer.close();
     await Gamma.shutdown();
   });
 
@@ -49,9 +75,11 @@ describe("E2E browser", () => {
   });
 
   it("should send the transaction", async () => {
-    await clickOnElement("#create-tx");
-    const txId = await getElementText("#tx-id");
-    expect(txId.length).toEqual(82);
+    await clickOnElement("#send-tx");
+    await expect(page).toMatchElement("#transfer-response-request-status", { text: "COMPLETED", timeout: 2000 });
+    await expect(page).toMatchElement("#transfer-response-execution-result", { text: "SUCCESS", timeout: 2000 });
+    await expect(page).toMatchElement("#transfer-response-transaction-status", { text: "COMMITTED", timeout: 2000 });
+    await page.waitFor(200000);
   });
   // test("SimpleTransfer", async () => {
   //   // send the transaction
