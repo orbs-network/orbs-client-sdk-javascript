@@ -4,7 +4,7 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: nvm use 11.7
+      - run: ./.circleci/install-current-node.sh
       - run: sudo apt-get update && sudo apt-get install -y `node ~/repo/.circleci/list-chrome-deps.js`
       - run: npm install
       - run: ./.circleci/bring-gamma.sh
