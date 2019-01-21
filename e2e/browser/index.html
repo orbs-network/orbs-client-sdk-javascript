@@ -62,6 +62,14 @@
           document.querySelector("#status-response-transaction-status").innerText = statusResponse.transactionStatus;
         });
       }
+
+      function GetTxReceiptProof() {
+        window.orbsClient.getTransactionReceiptProof(window.txId).then(txProofResponse => {
+          document.querySelector("#proof-response-request-status").innerText = txProofResponse.requestStatus;
+          document.querySelector("#proof-response-execution-result").innerText = txProofResponse.executionResult;
+          document.querySelector("#proof-response-transaction-status").innerText = txProofResponse.transactionStatus;
+        });
+      }
     </script>
   </head>
   <body>
@@ -114,6 +122,15 @@
             <div><span>Status Response request status:</span> <span id="status-response-request-status"></span></div>
             <div><span>Status Response execution result:</span> <span id="status-response-execution-result"></span></div>
             <div><span>Status Response transaction status:</span> <span id="status-response-transaction-status"></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><button id="get-tx-receipt-proof" onclick="GetTxReceiptProof()">Get Tx receipt proof</button></td>
+          <td>
+            <div><span>Proof Response request status:</span> <span id="proof-response-request-status"></span></div>
+            <div><span>Proof Response execution result:</span> <span id="proof-response-execution-result"></span></div>
+            <div><span>Proof Response transaction status:</span> <span id="proof-response-transaction-status"></span></div>
           </td>
         </tr>
       </tbody>

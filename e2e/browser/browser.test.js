@@ -83,21 +83,20 @@ describe("E2E browser", () => {
 
   it("should verify the transaction status", async () => {
     await clickOnElement("#get-tx-status");
-    await expect(page).toMatchElement("#transfer-response-request-status", { text: "COMPLETED", timeout: 2000 });
-    await expect(page).toMatchElement("#transfer-response-execution-result", { text: "SUCCESS", timeout: 2000 });
-    await expect(page).toMatchElement("#transfer-response-transaction-status", { text: "COMMITTED", timeout: 2000 });
-    await page.waitFor(200000);
+    await expect(page).toMatchElement("#status-response-request-status", { text: "COMPLETED", timeout: 2000 });
+    await expect(page).toMatchElement("#status-response-execution-result", { text: "SUCCESS", timeout: 2000 });
+    await expect(page).toMatchElement("#status-response-transaction-status", { text: "COMMITTED", timeout: 2000 });
   });
-  // test("SimpleTransfer", async () => {
-  //   // check the transaction receipt proof
-  //   const txProofResponse = await client.getTransactionReceiptProof(txId);
-  //   console.log(txProofResponse);
-  //   expect(txProofResponse.requestStatus).toEqual("COMPLETED");
-  //   expect(txProofResponse.executionResult).toEqual("SUCCESS");
-  //   expect(txProofResponse.transactionStatus).toEqual("COMMITTED");
-  //   expect(txProofResponse.packedProof.byteLength).toBeGreaterThan(20);
-  //   expect(txProofResponse.packedReceipt.byteLength).toBeGreaterThan(10);
 
+  it("should verify the transaction receipt proof", async () => {
+    await clickOnElement("#get-tx-receipt-proof");
+    await expect(page).toMatchElement("#proof-response-request-status", { text: "COMPLETED", timeout: 2000 });
+    await expect(page).toMatchElement("#proof-response-execution-result", { text: "SUCCESS", timeout: 2000 });
+    await expect(page).toMatchElement("#proof-response-transaction-status", { text: "COMMITTED", timeout: 2000 });
+    // await page.waitFor(200000);
+  });
+
+  // test("SimpleTransfer", async () => {
   //   // create balance query
   //   const query = client.createQuery(receiver.publicKey, "BenchmarkToken", "getBalance", [
   //     new Orbs.ArgAddress(receiver.address),
