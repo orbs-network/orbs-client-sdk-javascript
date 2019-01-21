@@ -54,17 +54,17 @@ describe("E2E browser", () => {
     expect(orbsClientResult).toEqual("Created");
   });
 
-  it("should create an account 1", async () => {
-    await clickOnElement("#create-account-1");
-    const account1Id = await getElementText("#account-1-id");
-    const accountIdLength = account1Id.split(",").length;
+  it("should create the sender account", async () => {
+    await clickOnElement("#create-sender-account");
+    const senderAccountId = await getElementText("#sender-account-id");
+    const accountIdLength = senderAccountId.split(",").length;
     expect(accountIdLength).toEqual(32);
   });
 
-  it("should create an account 2", async () => {
-    await clickOnElement("#create-account-2");
-    const account2Id = await getElementText("#account-2-id");
-    const accountIdLength = account2Id.split(",").length;
+  it("should create the receiver account", async () => {
+    await clickOnElement("#create-receiver-account");
+    const receiverAccountId = await getElementText("#receiver-account-id");
+    const accountIdLength = receiverAccountId.split(",").length;
     expect(accountIdLength).toEqual(32);
   });
 

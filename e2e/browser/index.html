@@ -30,18 +30,18 @@
         document.querySelector("#orbs-client-result").innerText = result;
       }
 
-      function CreateAccount1() {
-        window.account1 = Orbs.createAccount();
-        document.querySelector("#account-1-id").innerText = window.account1.publicKey;
+      function CreateSenderAccount() {
+        window.senderAccount = Orbs.createAccount();
+        document.querySelector("#sender-account-id").innerText = window.senderAccount.publicKey;
       }
 
-      function CreateAccount2() {
-        window.account2 = Orbs.createAccount();
-        document.querySelector("#account-2-id").innerText = window.account2.publicKey;
+      function CreateReceiverAccount() {
+        window.receiverAccount = Orbs.createAccount();
+        document.querySelector("#receiver-account-id").innerText = window.receiverAccount.publicKey;
       }
 
       function CreateTx() {
-        const [tx, txId] = window.orbsClient.createTransaction(window.account1.publicKey, window.account1.privateKey, "BenchmarkToken", "transfer", [new Orbs.ArgUint64(10), new Orbs.ArgAddress(window.account2.address)]);
+        const [tx, txId] = window.orbsClient.createTransaction(window.senderAccount.publicKey, window.senderAccount.privateKey, "BenchmarkToken", "transfer", [new Orbs.ArgUint64(10), new Orbs.ArgAddress(window.receiverAccount.address)]);
         window.tx = tx;
         window.txId = txId;
         document.querySelector("#tx-id").innerText = txId;
@@ -74,7 +74,7 @@
       }
 
       function SendQuery() {
-        const query = window.orbsClient.createQuery(window.account2.publicKey, "BenchmarkToken", "getBalance", [new Orbs.ArgAddress(window.account2.address)]);
+        const query = window.orbsClient.createQuery(window.receiverAccount.publicKey, "BenchmarkToken", "getBalance", [new Orbs.ArgAddress(window.receiverAccount.address)]);
         window.orbsClient.sendQuery(query).then(balanceResponse => {
           document.querySelector("#balance-response-request-status").innerText = balanceResponse.requestStatus;
           document.querySelector("#balance-response-execution-result").innerText = balanceResponse.executionResult;
@@ -104,13 +104,13 @@
         </tr>
         <tr>
           <td>2</td>
-          <td><button id="create-account-1" onclick="CreateAccount1()">Create Account 1</button></td>
-          <td id="account-1-id"></td>
+          <td><button id="create-sender-account" onclick="CreateSenderAccount()">Create Sender Account</button></td>
+          <td id="sender-account-id"></td>
         </tr>
         <tr>
           <td>3</td>
-          <td><button id="create-account-2" onclick="CreateAccount2()">Create Account 2</button></td>
-          <td id="account-2-id"></td>
+          <td><button id="create-receiver-account" onclick="CreateReceiverAccount()">Create Receiver Account</button></td>
+          <td id="receiver-account-id"></td>
         </tr>
         <tr>
           <td>4</td>
