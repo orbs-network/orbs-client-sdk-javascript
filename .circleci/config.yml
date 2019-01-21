@@ -4,6 +4,8 @@ jobs:
     machine: true
     steps:
       - checkout
+      - run: wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+      - run: nvm install 11.7
       - run: sudo apt-get update && sudo apt-get install -y `node ~/repo/.circleci/list-chrome-deps.js`
       - run: npm install
       - run: ./.circleci/bring-gamma.sh
