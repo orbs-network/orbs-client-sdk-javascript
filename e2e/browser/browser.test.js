@@ -80,21 +80,15 @@ describe("E2E browser", () => {
     await expect(page).toMatchElement("#transfer-response-execution-result", { text: "SUCCESS", timeout: 2000 });
     await expect(page).toMatchElement("#transfer-response-transaction-status", { text: "COMMITTED", timeout: 2000 });
   });
+
+  it("should verify the transaction status", async () => {
+    await clickOnElement("#get-tx-status");
+    await expect(page).toMatchElement("#transfer-response-request-status", { text: "COMPLETED", timeout: 2000 });
+    await expect(page).toMatchElement("#transfer-response-execution-result", { text: "SUCCESS", timeout: 2000 });
+    await expect(page).toMatchElement("#transfer-response-transaction-status", { text: "COMMITTED", timeout: 2000 });
+    await page.waitFor(200000);
+  });
   // test("SimpleTransfer", async () => {
-  //   // send the transaction
-  //   const transferResponse = await client.sendTransaction(tx);
-  //   console.log(transferResponse);
-  //   expect(transferResponse.requestStatus).toEqual("COMPLETED");
-  //   expect(transferResponse.executionResult).toEqual("SUCCESS");
-  //   expect(transferResponse.transactionStatus).toEqual("COMMITTED");
-
-  //   // check the transaction status
-  //   const statusResponse = await client.getTransactionStatus(txId);
-  //   console.log(statusResponse);
-  //   expect(statusResponse.requestStatus).toEqual("COMPLETED");
-  //   expect(statusResponse.executionResult).toEqual("SUCCESS");
-  //   expect(statusResponse.transactionStatus).toEqual("COMMITTED");
-
   //   // check the transaction receipt proof
   //   const txProofResponse = await client.getTransactionReceiptProof(txId);
   //   console.log(txProofResponse);

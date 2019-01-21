@@ -54,6 +54,14 @@
           document.querySelector("#transfer-response-transaction-status").innerText = transferResponse.transactionStatus;
         });
       }
+
+      function GetTxStatus() {
+        window.orbsClient.getTransactionStatus(window.txId).then(statusResponse => {
+          document.querySelector("#status-response-request-status").innerText = statusResponse.requestStatus;
+          document.querySelector("#status-response-execution-result").innerText = statusResponse.executionResult;
+          document.querySelector("#status-response-transaction-status").innerText = statusResponse.transactionStatus;
+        });
+      }
     </script>
   </head>
   <body>
@@ -93,10 +101,19 @@
         <tr>
           <td>5</td>
           <td><button id="send-tx" onclick="SendTx()">Send Tx</button></td>
-          <td id="tx-id">
-            <div><span>Response request status:</span> <span id="transfer-response-request-status"></span></div>
-            <div><span>Response execution result:</span> <span id="transfer-response-execution-result"></span></div>
-            <div><span>Response transaction status:</span> <span id="transfer-response-transaction-status"></span></div>
+          <td>
+            <div><span>Transfer Response request status:</span> <span id="transfer-response-request-status"></span></div>
+            <div><span>Transfer Response execution result:</span> <span id="transfer-response-execution-result"></span></div>
+            <div><span>Transfer Response transaction status:</span> <span id="transfer-response-transaction-status"></span></div>
+          </td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><button id="get-tx-status" onclick="GetTxStatus()">Get Tx status</button></td>
+          <td>
+            <div><span>Status Response request status:</span> <span id="status-response-request-status"></span></div>
+            <div><span>Status Response execution result:</span> <span id="status-response-execution-result"></span></div>
+            <div><span>Status Response transaction status:</span> <span id="status-response-transaction-status"></span></div>
           </td>
         </tr>
       </tbody>
