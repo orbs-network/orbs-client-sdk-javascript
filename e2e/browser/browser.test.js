@@ -79,7 +79,6 @@ describe("E2E browser", () => {
     await expect(page).toMatchElement("#transfer-response-request-status", { text: "COMPLETED", timeout: 2000 });
     await expect(page).toMatchElement("#transfer-response-execution-result", { text: "SUCCESS", timeout: 2000 });
     await expect(page).toMatchElement("#transfer-response-transaction-status", { text: "COMMITTED", timeout: 2000 });
-    await page.waitFor(200000);
   });
   // test("SimpleTransfer", async () => {
   //   // send the transaction
