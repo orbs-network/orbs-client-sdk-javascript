@@ -101,6 +101,11 @@ export class SignerBuilder extends BaseBuilder {
   }
 }
 
+export const Signer_Scheme = [FieldTypes.TypeUnion];
+export const Signer_Unions = [[FieldTypes.TypeMessage, FieldTypes.TypeMessage]];
+
+export const EdDSA01Signer_Scheme = [FieldTypes.TypeUint16, FieldTypes.TypeBytes];
+
 export class TransactionBuilder extends BaseBuilder {
   constructor(
     private fields: {
@@ -126,6 +131,8 @@ export class TransactionBuilder extends BaseBuilder {
     this.builder.writeBytes(buf, this.fields.inputArgumentArray);
   }
 }
+
+export const Transaction_Scheme = [FieldTypes.TypeUint32, FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeMessage, FieldTypes.TypeString, FieldTypes.TypeString, FieldTypes.TypeBytes];
 
 export const SignedTransaction_Scheme = [FieldTypes.TypeMessage, FieldTypes.TypeBytes];
 
@@ -192,3 +199,7 @@ export class SignedQueryBuilder extends BaseBuilder {
 }
 
 export const QueryResult_Scheme = [FieldTypes.TypeUint16, FieldTypes.TypeBytes, FieldTypes.TypeBytes];
+
+export const TransactionsBlockHeader_Scheme = [FieldTypes.TypeUint32, FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeBytes, FieldTypes.TypeUint64, FieldTypes.TypeBytes, FieldTypes.TypeBytes, FieldTypes.TypeUint32];
+
+export const ResultsBlockHeader_Scheme = [FieldTypes.TypeUint32, FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeBytes, FieldTypes.TypeUint64, FieldTypes.TypeBytes, FieldTypes.TypeBytes, FieldTypes.TypeBytes, FieldTypes.TypeBytes, FieldTypes.TypeUint32, FieldTypes.TypeUint32];

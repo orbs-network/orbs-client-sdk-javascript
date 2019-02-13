@@ -27,6 +27,7 @@ describe("E2E nodejs", () => {
 
     // send the transaction
     const transferResponse = await client.sendTransaction(tx);
+    console.log("Transfer response:");
     console.log(transferResponse);
     expect(transferResponse.requestStatus).toEqual("COMPLETED");
     expect(transferResponse.executionResult).toEqual("SUCCESS");
@@ -34,6 +35,7 @@ describe("E2E nodejs", () => {
 
     // check the transaction status
     const statusResponse = await client.getTransactionStatus(txId);
+    console.log("Status response:");
     console.log(statusResponse);
     expect(statusResponse.requestStatus).toEqual("COMPLETED");
     expect(statusResponse.executionResult).toEqual("SUCCESS");
@@ -41,6 +43,7 @@ describe("E2E nodejs", () => {
 
     // check the transaction receipt proof
     const txProofResponse = await client.getTransactionReceiptProof(txId);
+    console.log("Receipt proof response:");
     console.log(txProofResponse);
     expect(txProofResponse.requestStatus).toEqual("COMPLETED");
     expect(txProofResponse.executionResult).toEqual("SUCCESS");
@@ -53,10 +56,26 @@ describe("E2E nodejs", () => {
 
     // send the query
     const balanceResponse = await client.sendQuery(query);
+    console.log("Query response:");
     console.log(balanceResponse);
     expect(balanceResponse.requestStatus).toEqual("COMPLETED");
     expect(balanceResponse.executionResult).toEqual("SUCCESS");
     expect(balanceResponse.outputArguments[0]).toEqual(new Orbs.ArgUint64(10));
+
+    // get the block which contains the transfer transaction
+    const blockResponse = await client.getBlock(transferResponse.blockHeight);
+    console.log("Block response:");
+    console.log(blockResponse);
+    expect(blockResponse.blockHeight).toEqual(transferResponse.blockHeight);
+    expect(blockResponse.transactionsBlockHeader.blockHeight).toEqual(transferResponse.blockHeight);
+    expect(blockResponse.transactionsBlockHeader.numTransactions).toEqual(1);
+    expect(blockResponse.resultsBlockHeader.blockHeight).toEqual(transferResponse.blockHeight);
+    expect(Orbs.bytesToAddress(blockResponse.resultsBlockHeader.transactionsBlockHash)).toEqual(Orbs.bytesToAddress(blockResponse.transactionsBlockHash));
+    expect(blockResponse.resultsBlockHeader.numTransactionReceipts).toEqual(1);
+    expect(blockResponse.transactions[0].contractName).toEqual("BenchmarkToken");
+    expect(blockResponse.transactions[0].methodName).toEqual("transfer");
+    expect(blockResponse.transactions[0].inputArguments[0]).toEqual(new Orbs.ArgUint64(10));
+    expect(Orbs.bytesToAddress(blockResponse.transactions[0].inputArguments[1].value)).toEqual(receiver.address);
   });
 
   test("TextualError", async () => {

@@ -90,3 +90,23 @@ export class GetTransactionReceiptProofRequestBuilder extends BaseBuilder {
 }
 
 export const GetTransactionReceiptProofResponse_Scheme = [FieldTypes.TypeMessage, FieldTypes.TypeUint16, FieldTypes.TypeMessage, FieldTypes.TypeBytes];
+
+export class GetBlockRequestBuilder extends BaseBuilder {
+  constructor(
+    private fields: {
+      protocolVersion: number;
+      virtualChainId: number;
+      blockHeight: BigInt;
+    },
+  ) {
+    super();
+  }
+  write(buf: Uint8Array): void {
+    this.builder.reset();
+    this.builder.writeUint32(buf, this.fields.protocolVersion);
+    this.builder.writeUint32(buf, this.fields.virtualChainId);
+    this.builder.writeUint64(buf, this.fields.blockHeight);
+  }
+}
+
+export const GetBlockResponse_Scheme = [FieldTypes.TypeMessage, FieldTypes.TypeMessage, FieldTypes.TypeMessage, FieldTypes.TypeMessageArray, FieldTypes.TypeMessage, FieldTypes.TypeMessage, FieldTypes.TypeMessageArray, FieldTypes.TypeMessageArray, FieldTypes.TypeMessage];

@@ -3,6 +3,7 @@ import { decodeSendTransactionResponse, encodeSendTransactionRequest } from "./O
 import { encodeRunQueryRequest, decodeRunQueryResponse } from "./OpRunQuery";
 import { encodeGetTransactionStatusRequest, decodeGetTransactionStatusResponse } from "./OpGetTransactionStatus";
 import { encodeGetTransactionReceiptProofRequest, decodeGetTransactionReceiptProofResponse } from "./OpGetTransactionReceiptProof";
+import { encodeGetBlockRequest, decodeGetBlockResponse, BlockTransaction } from "./OpGetBlock";
 import { Argument, ArgUint32, ArgUint64, ArgString, ArgBytes } from "./Arguments";
 import { Event } from "./Events";
 
@@ -22,6 +23,7 @@ describe("Codec contract", () => {
     const inputScenario = contractInput[index];
     const outputScenario = contractOutput[index];
     test(`Test Id: ${inputScenario.Test}`, () => {
+
       // SendTransactionRequest
       if (inputScenario.SendTransactionRequest) {
         const [encoded, txId] = encodeSendTransactionRequest(
@@ -81,6 +83,18 @@ describe("Codec contract", () => {
           txId: jsonUnmarshalBase64Bytes(inputScenario.GetTransactionReceiptProofRequest.TxId),
         });
         const expected = jsonUnmarshalBase64Bytes(outputScenario.GetTransactionReceiptProofRequest);
+        expect(encoded).toBeEqualToUint8Array(expected);
+        return;
+      }
+
+      // GetBlockRequest
+      if (inputScenario.GetBlockRequest) {
+        const encoded = encodeGetBlockRequest({
+          protocolVersion: jsonUnmarshalNumber(inputScenario.GetBlockRequest.ProtocolVersion),
+          virtualChainId: jsonUnmarshalNumber(inputScenario.GetBlockRequest.VirtualChainId),
+          blockHeight: BigInt(inputScenario.GetBlockRequest.BlockHeight),
+        });
+        const expected = jsonUnmarshalBase64Bytes(outputScenario.GetBlockRequest);
         expect(encoded).toBeEqualToUint8Array(expected);
         return;
       }
@@ -161,6 +175,39 @@ describe("Codec contract", () => {
           PackedReceipt: jsonMarshalBase64Bytes(decoded.packedReceipt),
         };
         const expected = outputScenario.GetTransactionReceiptProofResponse;
+        expect(res).toEqual(expected);
+        return;
+      }
+
+      // GetBlockResponse
+      if (inputScenario.GetBlockResponse) {
+        const decoded = decodeGetBlockResponse(jsonUnmarshalBase64Bytes(inputScenario.GetBlockResponse));
+        const res = {
+          BlockHeight: decoded.blockHeight.toString(),
+          BlockTimestamp: decoded.blockTimestamp.toISOString(),
+          RequestStatus: decoded.requestStatus,
+          TransactionsBlockHash: jsonMarshalBase64Bytes(decoded.transactionsBlockHash),
+          TransactionsBlockHeader: {
+            ProtocolVersion: decoded.transactionsBlockHeader.protocolVersion.toString(),
+            VirtualChainId: decoded.transactionsBlockHeader.virtualChainId.toString(),
+            BlockHeight: decoded.transactionsBlockHeader.blockHeight.toString(),
+            Timestamp: decoded.transactionsBlockHeader.timestamp.toISOString(),
+            NumTransactions: decoded.transactionsBlockHeader.numTransactions.toString(),
+            PrevBlockHash: jsonMarshalBase64Bytes(decoded.transactionsBlockHeader.prevBlockHash),
+          },
+          ResultsBlockHash: jsonMarshalBase64Bytes(decoded.resultsBlockHash),
+          ResultsBlockHeader: {
+            ProtocolVersion: decoded.resultsBlockHeader.protocolVersion.toString(),
+            VirtualChainId: decoded.resultsBlockHeader.virtualChainId.toString(),
+            BlockHeight: decoded.resultsBlockHeader.blockHeight.toString(),
+            Timestamp: decoded.resultsBlockHeader.timestamp.toISOString(),
+            NumTransactionReceipts: decoded.resultsBlockHeader.numTransactionReceipts.toString(),
+            PrevBlockHash: jsonMarshalBase64Bytes(decoded.resultsBlockHeader.prevBlockHash),
+            TransactionsBlockHash: jsonMarshalBase64Bytes(decoded.resultsBlockHeader.transactionsBlockHash),
+          },
+          Transactions: jsonMarshalBlockTransactions(decoded.transactions),
+        };
+        const expected = outputScenario.GetBlockResponse;
         expect(res).toEqual(expected);
         return;
       }
@@ -256,6 +303,49 @@ function jsonMarshalEvents(events: Event[]): MarshaledEvent[] {
       EventName: event.eventName,
       Arguments: args,
       ArgumentsTypes: argsTypes,
+    });
+  }
+  return res;
+}
+
+interface MarshaledBlockTransaction {
+  ProtocolVersion: string;
+  VirtualChainId: string;
+  Timestamp: string;
+  InputArguments: string[];
+  InputArgumentsTypes: string[];
+  OutputArguments: string[];
+  OutputArgumentsTypes: string[];
+  OutputEvents: MarshaledEvent[];
+  TxId: string;
+  TxHash: string;
+  SignerPublicKey: string;
+  ContractName: string;
+  MethodName: string;
+  ExecutionResult: string;
+}
+
+function jsonMarshalBlockTransactions(transactions: BlockTransaction[]): MarshaledBlockTransaction[] {
+  const res: MarshaledBlockTransaction[] = [];
+  for (let i = 0; i < transactions.length; i++) {
+    const transaction = transactions[i];
+    const [inArgs, inArgsTypes] = jsonMarshalArguments(transaction.inputArguments);
+    const [outArgs, outArgsTypes] = jsonMarshalArguments(transaction.outputArguments);
+    res.push({
+      ProtocolVersion: transaction.protocolVersion.toString(),
+      VirtualChainId: transaction.virtualChainId.toString(),
+      Timestamp: transaction.timestamp.toISOString(),
+      InputArguments: inArgs,
+      InputArgumentsTypes: inArgsTypes,
+      OutputArguments: outArgs,
+      OutputArgumentsTypes: outArgsTypes,
+      OutputEvents: jsonMarshalEvents(transaction.outputEvents),
+      TxId: jsonMarshalBase64Bytes(transaction.txId),
+      TxHash: jsonMarshalBase64Bytes(transaction.txHash),
+      SignerPublicKey: jsonMarshalBase64Bytes(transaction.signerPublicKey),
+      ContractName: transaction.contractName,
+      MethodName: transaction.methodName,
+      ExecutionResult: transaction.executionResult,
     });
   }
   return res;

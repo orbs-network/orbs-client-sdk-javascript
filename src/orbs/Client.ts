@@ -5,6 +5,7 @@ import { decodeSendTransactionResponse, encodeSendTransactionRequest, SendTransa
 import { RunQueryResponse, decodeRunQueryResponse, encodeRunQueryRequest } from "../codec/OpRunQuery";
 import { decodeGetTransactionStatusResponse, encodeGetTransactionStatusRequest, GetTransactionStatusResponse } from "../codec/OpGetTransactionStatus";
 import { decodeGetTransactionReceiptProofResponse, encodeGetTransactionReceiptProofRequest, GetTransactionReceiptProofResponse } from "../codec/OpGetTransactionReceiptProof";
+import { decodeGetBlockResponse, encodeGetBlockRequest, GetBlockResponse } from "../codec/OpGetBlock";
 import axios, { AxiosResponse } from "axios";
 import { getTextDecoder } from "../membuffers/text";
 
@@ -14,6 +15,7 @@ const SEND_TRANSACTION_URL = "/api/v1/send-transaction";
 const RUN_QUERY_URL = "/api/v1/run-query";
 const GET_TRANSACTION_STATUS_URL = "/api/v1/get-transaction-status";
 const GET_TRANSACTION_RECEIPT_PROOF_URL = "/api/v1/get-transaction-receipt-proof";
+const GET_BLOCK_URL = "/api/v1/get-block";
 
 export class Client {
   constructor(private endpoint: string, private virtualChainId: number, private networkType: NetworkType) {}
@@ -66,6 +68,14 @@ export class Client {
     });
   }
 
+  protected createGetBlockPayload(blockHeight: BigInt): Uint8Array {
+    return encodeGetBlockRequest({
+      protocolVersion: PROTOCOL_VERSION,
+      virtualChainId: this.virtualChainId,
+      blockHeight: blockHeight
+    });
+  }
+
   async sendTransaction(rawTransaction: Uint8Array): Promise<SendTransactionResponse> {
     const res = await this.sendHttpPost(SEND_TRANSACTION_URL, rawTransaction);
     return decodeSendTransactionResponse(res);
@@ -86,6 +96,12 @@ export class Client {
     const payload = this.createGetTransactionReceiptProofPayload(txId);
     const res = await this.sendHttpPost(GET_TRANSACTION_RECEIPT_PROOF_URL, payload);
     return decodeGetTransactionReceiptProofResponse(res);
+  }
+
+  async getBlock(blockHeight: BigInt): Promise<GetBlockResponse> {
+    const payload = this.createGetBlockPayload(blockHeight);
+    const res = await this.sendHttpPost(GET_BLOCK_URL, payload);
+    return decodeGetBlockResponse(res);
   }
 
   private async sendHttpPost(relativeUrl: string, payload: Uint8Array): Promise<Uint8Array> {

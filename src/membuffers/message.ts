@@ -220,7 +220,7 @@ export class InternalMessage {
     return this.dataView.setBigUint64(off, v, true);
   }
 
-  getUint64(fieldNum: number): number {
+  getUint64(fieldNum: number): BigInt {
     if (!this.lazyCalcOffsets() || fieldNum >= Object.keys(this.offsets).length) {
       return BigInt(0);
     }
