@@ -14,8 +14,9 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean && npm run build-rollup && npm run build-webpack",
+    "build": "npm run clean && npm run build-rollup && npm run build-webpack && npm run types",
     "build-webpack": "webpack -p",
+    "types": "tsc --emitDeclarationOnly -p tsconfig.json",
     "build-rollup": "rollup -c",
     "watch": "rollup -cw",
     "test": "jest",
