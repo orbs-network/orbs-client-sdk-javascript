@@ -139,7 +139,7 @@ test("TestIteratorMessage", () => {
 
   for (const tt of tests) {
     const m = new InternalMessage(tt.buf, tt.buf.byteLength, tt.scheme, tt.unions);
-    const iterator = m.getMessageArrayIterator(0);
+    const iterator: any = m.getMessageArrayIterator(0);
     const res = [];
     for (const [_, size] of iterator) {
       res.push(size);

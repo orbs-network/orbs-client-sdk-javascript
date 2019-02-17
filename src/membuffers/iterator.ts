@@ -42,10 +42,10 @@ export class ArrayIterator {
     return res;
   }
 
-  nextUint64(): BigInt {
+  nextUint64(): bigint {
     if (this.cursor + FieldSizes[FieldTypes.TypeUint64] > this.endCursor) {
       this.cursor = this.endCursor;
-      return 0;
+      return BigInt(0);
     }
     const res = this.m.getUint64InOffset(this.cursor);
     this.cursor += FieldSizes[FieldTypes.TypeUint64];
@@ -94,7 +94,7 @@ export class ArrayIterator {
     return getTextDecoder().decode(b);
   }
 
-  [Symbol.iterator](): Iterator<number | BigInt | [Uint8Array, number] | Uint8Array | string> {
+  [Symbol.iterator](): Iterator<number | bigint | [Uint8Array, number] | Uint8Array | string> {
     return {
       next: () => {
         if (this.hasNext()) {

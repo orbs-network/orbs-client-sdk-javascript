@@ -1,6 +1,7 @@
 export { createAccount, addressToBytes, bytesToAddress } from "./orbs/Account";
 export { Client } from "./orbs/Client";
 export { ArgUint32, ArgUint64, ArgString, ArgBytes } from "./codec/Arguments";
+export { NetworkType } from "./codec/NetworkType";
 
 import { addressToBytes } from "./orbs/Account";
 import { ArgBytes } from "./codec/Arguments";

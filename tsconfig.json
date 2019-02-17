@@ -5,11 +5,11 @@
     "module": "es6",
     "noImplicitAny": true,
     "outDir": "./dist",
-    "target": "es5",
+    "target": "esnext",
     "esModuleInterop": true,
     "moduleResolution": "node",
     "downlevelIteration": true,
-    "lib": ["es2017"],
+    "lib": ["esnext", "esnext.bigint"],
     "types": ["node", "jest"]
   },
   "include": ["src/index.ts", "src/types/**/*.ts", "src/**/*.test.ts"]

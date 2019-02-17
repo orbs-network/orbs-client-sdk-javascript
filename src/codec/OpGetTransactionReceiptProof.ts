@@ -21,7 +21,7 @@ export interface GetTransactionReceiptProofResponse {
   outputArguments: Argument[];
   outputEvents: Event[];
   transactionStatus: TransactionStatus;
-  blockHeight: BigInt;
+  blockHeight: bigint;
   blockTimestamp: Date;
   packedProof: Uint8Array;
   packedReceipt: Uint8Array;

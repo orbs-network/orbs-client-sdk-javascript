@@ -25,7 +25,7 @@ export interface RunQueryResponse {
   executionResult: ExecutionResult;
   outputArguments: Argument[];
   outputEvents: Event[];
-  blockHeight: BigInt;
+  blockHeight: bigint;
   blockTimestamp: Date;
 }
 

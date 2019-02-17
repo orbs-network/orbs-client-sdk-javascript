@@ -21,7 +21,7 @@ export interface GetTransactionStatusResponse {
   outputArguments: Argument[];
   outputEvents: Event[];
   transactionStatus: TransactionStatus;
-  blockHeight: BigInt;
+  blockHeight: bigint;
   blockTimestamp: Date;
 }
 

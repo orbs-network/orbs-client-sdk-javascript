@@ -29,7 +29,7 @@ export interface SendTransactionResponse {
   outputArguments: Argument[];
   outputEvents: Event[];
   transactionStatus: TransactionStatus;
-  blockHeight: BigInt;
+  blockHeight: bigint;
   blockTimestamp: Date;
 }
 

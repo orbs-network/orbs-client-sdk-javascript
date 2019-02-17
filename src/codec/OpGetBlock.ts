@@ -11,12 +11,12 @@ import { Event, packedEventsDecode } from "./Events";
 export interface GetBlockRequest {
   protocolVersion: number;
   virtualChainId: number;
-  blockHeight: BigInt;
+  blockHeight: bigint;
 }
 
 export interface GetBlockResponse {
   requestStatus: RequestStatus;
-  blockHeight: BigInt;
+  blockHeight: bigint;
   blockTimestamp: Date;
   transactionsBlockHash: Uint8Array;
   transactionsBlockHeader: TransactionsBlockHeader;
@@ -25,19 +25,19 @@ export interface GetBlockResponse {
   transactions: BlockTransaction[];
 }
 
-export interface  TransactionsBlockHeader {
+export interface TransactionsBlockHeader {
   protocolVersion: number;
   virtualChainId: number;
-  blockHeight: BigInt;
+  blockHeight: bigint;
   prevBlockHash: Uint8Array;
   timestamp: Date;
   numTransactions: number;
 }
 
-export interface  ResultsBlockHeader {
+export interface ResultsBlockHeader {
   protocolVersion: number;
   virtualChainId: number;
-  blockHeight: BigInt;
+  blockHeight: bigint;
   prevBlockHash: Uint8Array;
   timestamp: Date;
   transactionsBlockHash: Uint8Array;
@@ -59,7 +59,6 @@ export interface BlockTransaction {
   outputEvents: Event[];
 }
 
-
 export function encodeGetBlockRequest(req: GetBlockRequest): Uint8Array {
   // validate
   if (req.protocolVersion != 1) {
@@ -70,7 +69,7 @@ export function encodeGetBlockRequest(req: GetBlockRequest): Uint8Array {
   const res = new Client.GetBlockRequestBuilder({
     protocolVersion: req.protocolVersion,
     virtualChainId: req.virtualChainId,
-    blockHeight: req.blockHeight
+    blockHeight: req.blockHeight,
   });
 
   // return
@@ -101,7 +100,6 @@ export function decodeGetBlockResponse(buf: Uint8Array): GetBlockResponse {
   const transactions: BlockTransaction[] = [];
   const txIterator = getBlockResponseMsg.getMessageArrayIterator(3);
   for (const tx of txIterator) {
-
     const [txBuf]: any = tx;
     const txMsg = new InternalMessage(txBuf, txBuf.byteLength, Protocol.SignedTransaction_Scheme, []);
     const transactionBuf = txMsg.getMessage(0);
@@ -136,7 +134,7 @@ export function decodeGetBlockResponse(buf: Uint8Array): GetBlockResponse {
       inputArguments: inputArgumentArray,
       executionResult: undefined,
       outputArguments: undefined,
-      outputEvents: undefined
+      outputEvents: undefined,
     });
   }
 
@@ -148,7 +146,6 @@ export function decodeGetBlockResponse(buf: Uint8Array): GetBlockResponse {
     const receiptTxHash = receiptMsg.getBytes(0);
     for (const transaction of transactions) {
       if (uint8ArrayEquals(transaction.txHash, receiptTxHash)) {
-
         // decode execution result
         const executionResult = executionResultDecode(receiptMsg.getUint16(1));
         transaction.executionResult = executionResult;
@@ -160,7 +157,6 @@ export function decodeGetBlockResponse(buf: Uint8Array): GetBlockResponse {
         // decode events
         const outputEventArray = packedEventsDecode(receiptMsg.rawBufferWithHeaderForField(3, 0));
         transaction.outputEvents = outputEventArray;
-
       }
     }
   }
@@ -177,7 +173,7 @@ export function decodeGetBlockResponse(buf: Uint8Array): GetBlockResponse {
       blockHeight: transactionsBlockHeaderMsg.getUint64(2),
       prevBlockHash: transactionsBlockHeaderMsg.getBytes(3),
       timestamp: Protocol.unixNanoToDate(transactionsBlockHeaderMsg.getUint64(4)),
-      numTransactions: transactionsBlockHeaderMsg.getUint32(7)
+      numTransactions: transactionsBlockHeaderMsg.getUint32(7),
     },
     resultsBlockHash: Hash.calcSha256(resultsBlockHeaderMsg.rawBuffer()),
     resultsBlockHeader: {
@@ -187,9 +183,9 @@ export function decodeGetBlockResponse(buf: Uint8Array): GetBlockResponse {
       prevBlockHash: resultsBlockHeaderMsg.getBytes(3),
       timestamp: Protocol.unixNanoToDate(resultsBlockHeaderMsg.getUint64(4)),
       transactionsBlockHash: resultsBlockHeaderMsg.getBytes(7),
-      numTransactionReceipts: resultsBlockHeaderMsg.getUint32(9)
+      numTransactionReceipts: resultsBlockHeaderMsg.getUint32(9),
     },
-    transactions: transactions
+    transactions: transactions,
   };
 }
 

@@ -18,7 +18,7 @@ export function calcTxHash(transactionBuf: Uint8Array): Uint8Array {
   return Hash.calcSha256(transactionBuf);
 }
 
-export function generateTxId(txHash: Uint8Array, txTimestamp: BigInt): Uint8Array {
+export function generateTxId(txHash: Uint8Array, txTimestamp: bigint): Uint8Array {
   const res = new Uint8Array(TX_ID_SIZE_BYTES);
   const dataView = new DataView(res.buffer, res.byteOffset);
   dataView.setBigUint64(0, txTimestamp, true);
@@ -26,7 +26,7 @@ export function generateTxId(txHash: Uint8Array, txTimestamp: BigInt): Uint8Arra
   return res;
 }
 
-export function extractTxId(txId: Uint8Array): [Uint8Array, BigInt] {
+export function extractTxId(txId: Uint8Array): [Uint8Array, bigint] {
   if (txId.byteLength != TX_ID_SIZE_BYTES) {
     throw new Error(`txid has invalid length ${txId.byteLength}`);
   }

@@ -47,7 +47,7 @@ export class InternalBuilder {
     this.size += FieldSizes[FieldTypes.TypeUint32];
   }
 
-  writeUint64(buf: Uint8Array, v: BigInt): void {
+  writeUint64(buf: Uint8Array, v: bigint): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeUint64);
     if (buf) {
       new DataView(buf.buffer, buf.byteOffset).setBigUint64(this.size, v, true);
@@ -123,7 +123,7 @@ export class InternalBuilder {
     }
   }
 
-  writeUint64Array(buf: Uint8Array, v: BigInt[]): void {
+  writeUint64Array(buf: Uint8Array, v: bigint[]): void {
     this.size = alignOffsetToType(this.size, FieldTypes.TypeUint64Array);
     if (buf) {
       new DataView(buf.buffer, buf.byteOffset).setUint32(this.size, v.length * FieldSizes[FieldTypes.TypeUint64], true);

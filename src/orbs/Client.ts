@@ -68,11 +68,11 @@ export class Client {
     });
   }
 
-  protected createGetBlockPayload(blockHeight: BigInt): Uint8Array {
+  protected createGetBlockPayload(blockHeight: bigint): Uint8Array {
     return encodeGetBlockRequest({
       protocolVersion: PROTOCOL_VERSION,
       virtualChainId: this.virtualChainId,
-      blockHeight: blockHeight
+      blockHeight: blockHeight,
     });
   }
 
@@ -98,7 +98,7 @@ export class Client {
     return decodeGetTransactionReceiptProofResponse(res);
   }
 
-  async getBlock(blockHeight: BigInt): Promise<GetBlockResponse> {
+  async getBlock(blockHeight: bigint): Promise<GetBlockResponse> {
     const payload = this.createGetBlockPayload(blockHeight);
     const res = await this.sendHttpPost(GET_BLOCK_URL, payload);
     return decodeGetBlockResponse(res);

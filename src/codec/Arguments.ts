@@ -10,8 +10,8 @@ export class ArgUint32 {
 
 export class ArgUint64 {
   public type = "uint64";
-  public value: BigInt;
-  constructor(value: BigInt | number) {
+  public value: bigint;
+  constructor(value: bigint | number) {
     if (typeof value === "number") {
       this.value = BigInt(value);
     } else {

@@ -10,7 +10,7 @@ export class TransactionRefBuilder extends BaseBuilder {
     private fields: {
       protocolVersion: number;
       virtualChainId: number;
-      transactionTimestamp: BigInt;
+      transactionTimestamp: bigint;
       txHash: Uint8Array;
     },
   ) {
@@ -96,7 +96,7 @@ export class GetBlockRequestBuilder extends BaseBuilder {
     private fields: {
       protocolVersion: number;
       virtualChainId: number;
-      blockHeight: BigInt;
+      blockHeight: bigint;
     },
   ) {
     super();
@@ -109,4 +109,14 @@ export class GetBlockRequestBuilder extends BaseBuilder {
   }
 }
 
-export const GetBlockResponse_Scheme = [FieldTypes.TypeMessage, FieldTypes.TypeMessage, FieldTypes.TypeMessage, FieldTypes.TypeMessageArray, FieldTypes.TypeMessage, FieldTypes.TypeMessage, FieldTypes.TypeMessageArray, FieldTypes.TypeMessageArray, FieldTypes.TypeMessage];
+export const GetBlockResponse_Scheme = [
+  FieldTypes.TypeMessage,
+  FieldTypes.TypeMessage,
+  FieldTypes.TypeMessage,
+  FieldTypes.TypeMessageArray,
+  FieldTypes.TypeMessage,
+  FieldTypes.TypeMessage,
+  FieldTypes.TypeMessageArray,
+  FieldTypes.TypeMessageArray,
+  FieldTypes.TypeMessage,
+];

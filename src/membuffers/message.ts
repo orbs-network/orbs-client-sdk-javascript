@@ -212,15 +212,15 @@ export class InternalMessage {
     return this.setUint32InOffset(off, v);
   }
 
-  getUint64InOffset(off: number): BigInt {
+  getUint64InOffset(off: number): bigint {
     return this.dataView.getBigUint64(off, true);
   }
 
-  setUint64InOffset(off: number, v: BigInt): void {
+  setUint64InOffset(off: number, v: bigint): void {
     return this.dataView.setBigUint64(off, v, true);
   }
 
-  getUint64(fieldNum: number): BigInt {
+  getUint64(fieldNum: number): bigint {
     if (!this.lazyCalcOffsets() || fieldNum >= Object.keys(this.offsets).length) {
       return BigInt(0);
     }
@@ -228,7 +228,7 @@ export class InternalMessage {
     return this.getUint64InOffset(off);
   }
 
-  setUint64(fieldNum: number, v: BigInt): void {
+  setUint64(fieldNum: number, v: bigint): void {
     if (!this.lazyCalcOffsets() || fieldNum >= Object.keys(this.offsets).length) {
       throw new Error("invalid field");
     }

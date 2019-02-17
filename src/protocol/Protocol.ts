@@ -1,11 +1,11 @@
 import { BaseBuilder } from "./Base";
 import { FieldTypes } from "../membuffers/types";
 
-export function dateToUnixNano(date: Date): BigInt {
+export function dateToUnixNano(date: Date): bigint {
   return BigInt(date.getTime()) * BigInt(1000000);
 }
 
-export function unixNanoToDate(timestamp: BigInt): Date {
+export function unixNanoToDate(timestamp: bigint): Date {
   return new Date(Number(timestamp / BigInt(1000000)));
 }
 
@@ -16,7 +16,7 @@ export class ArgumentBuilder extends BaseBuilder {
   constructor(
     private fields: {
       type: number;
-      value: number | BigInt | string | Uint8Array;
+      value: number | bigint | string | Uint8Array;
     },
   ) {
     super();
@@ -29,7 +29,7 @@ export class ArgumentBuilder extends BaseBuilder {
         this.builder.writeUint32(buf, <number>this.fields.value);
         break;
       case 1:
-        this.builder.writeUint64(buf, <BigInt>this.fields.value);
+        this.builder.writeUint64(buf, <bigint>this.fields.value);
         break;
       case 2:
         this.builder.writeString(buf, <string>this.fields.value);
@@ -111,7 +111,7 @@ export class TransactionBuilder extends BaseBuilder {
     private fields: {
       protocolVersion: number;
       virtualChainId: number;
-      timestamp: BigInt;
+      timestamp: bigint;
       signer: SignerBuilder;
       contractName: string;
       methodName: string;
@@ -159,7 +159,7 @@ export class QueryBuilder extends BaseBuilder {
     private fields: {
       protocolVersion: number;
       virtualChainId: number;
-      timestamp: BigInt;
+      timestamp: bigint;
       signer: SignerBuilder;
       contractName: string;
       methodName: string;
@@ -202,4 +202,16 @@ export const QueryResult_Scheme = [FieldTypes.TypeUint16, FieldTypes.TypeBytes, 
 
 export const TransactionsBlockHeader_Scheme = [FieldTypes.TypeUint32, FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeBytes, FieldTypes.TypeUint64, FieldTypes.TypeBytes, FieldTypes.TypeBytes, FieldTypes.TypeUint32];
 
-export const ResultsBlockHeader_Scheme = [FieldTypes.TypeUint32, FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeBytes, FieldTypes.TypeUint64, FieldTypes.TypeBytes, FieldTypes.TypeBytes, FieldTypes.TypeBytes, FieldTypes.TypeBytes, FieldTypes.TypeUint32, FieldTypes.TypeUint32];
+export const ResultsBlockHeader_Scheme = [
+  FieldTypes.TypeUint32,
+  FieldTypes.TypeUint32,
+  FieldTypes.TypeUint64,
+  FieldTypes.TypeBytes,
+  FieldTypes.TypeUint64,
+  FieldTypes.TypeBytes,
+  FieldTypes.TypeBytes,
+  FieldTypes.TypeBytes,
+  FieldTypes.TypeBytes,
+  FieldTypes.TypeUint32,
+  FieldTypes.TypeUint32,
+];
