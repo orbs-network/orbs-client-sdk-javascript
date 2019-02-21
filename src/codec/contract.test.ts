@@ -1,11 +1,11 @@
 import "../membuffers/matcher-extensions";
-import { decodeSendTransactionResponse, encodeSendTransactionRequest } from "./OpSendTransaction";
-import { encodeRunQueryRequest, decodeRunQueryResponse } from "./OpRunQuery";
-import { encodeGetTransactionStatusRequest, decodeGetTransactionStatusResponse } from "./OpGetTransactionStatus";
-import { encodeGetTransactionReceiptProofRequest, decodeGetTransactionReceiptProofResponse } from "./OpGetTransactionReceiptProof";
-import { encodeGetBlockRequest, decodeGetBlockResponse, BlockTransaction } from "./OpGetBlock";
-import { Argument, ArgUint32, ArgUint64, ArgString, ArgBytes } from "./Arguments";
+import { argBytes, argString, argUint32, argUint64, Argument } from "./Arguments";
 import { Event } from "./Events";
+import { BlockTransaction, decodeGetBlockResponse, encodeGetBlockRequest } from "./OpGetBlock";
+import { decodeGetTransactionReceiptProofResponse, encodeGetTransactionReceiptProofRequest } from "./OpGetTransactionReceiptProof";
+import { decodeGetTransactionStatusResponse, encodeGetTransactionStatusRequest } from "./OpGetTransactionStatus";
+import { decodeRunQueryResponse, encodeRunQueryRequest } from "./OpRunQuery";
+import { decodeSendTransactionResponse, encodeSendTransactionRequest } from "./OpSendTransaction";
 
 describe("Codec contract", () => {
   let contractInput: any;
@@ -23,7 +23,6 @@ describe("Codec contract", () => {
     const inputScenario = contractInput[index];
     const outputScenario = contractOutput[index];
     test(`Test Id: ${inputScenario.Test}`, () => {
-
       // SendTransactionRequest
       if (inputScenario.SendTransactionRequest) {
         const [encoded, txId] = encodeSendTransactionRequest(
@@ -239,16 +238,16 @@ function jsonUnmarshalArguments(args: string[], argTypes: string[]): Argument[] 
     const argType = argTypes[i];
     switch (argType) {
       case "uint32":
-        res.push(new ArgUint32(jsonUnmarshalNumber(arg)));
+        res.push(argUint32(jsonUnmarshalNumber(arg)));
         break;
       case "uint64":
-        res.push(new ArgUint64(BigInt(arg)));
+        res.push(argUint64(BigInt(arg)));
         break;
       case "string":
-        res.push(new ArgString(arg));
+        res.push(argString(arg));
         break;
       case "bytes":
-        res.push(new ArgBytes(jsonUnmarshalBase64Bytes(arg)));
+        res.push(argBytes(jsonUnmarshalBase64Bytes(arg)));
         break;
       default:
         throw new Error(`unknown argType ${argType}`);
@@ -262,20 +261,20 @@ function jsonMarshalArguments(args: Argument[]): [string[], string[]] {
   const resTypes: string[] = [];
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    switch (arg.constructor) {
-      case ArgUint32:
+    switch (arg.type) {
+      case "uint32":
         res.push(arg.value.toString());
         resTypes.push("uint32");
         break;
-      case ArgUint64:
+      case "uint64":
         res.push(arg.value.toString());
         resTypes.push("uint64");
         break;
-      case ArgString:
+      case "string":
         res.push(<string>arg.value);
         resTypes.push("string");
         break;
-      case ArgBytes:
+      case "bytes":
         res.push(jsonMarshalBase64Bytes(<Uint8Array>arg.value));
         resTypes.push("bytes");
         break;

@@ -1,14 +1,17 @@
 const Orbs = require("../../dist/index.js");
-const Gamma = require("./../Gamma");
+const GammaDriver = require("../gamma-driver");
 
+const VIRTUAL_CHAIN_ID = 42; // gamma-cli config default
 describe("E2E nodejs", () => {
+  const gammeDriver = new GammaDriver();
+
   beforeEach(async () => {
     jest.setTimeout(60000);
-    await Gamma.start();
+    await gammeDriver.start();
   });
 
   afterEach(async () => {
-    await Gamma.shutdown();
+    await gammeDriver.stop();
   });
 
   test("SimpleTransfer", async () => {
@@ -19,11 +22,11 @@ describe("E2E nodejs", () => {
     const receiver = Orbs.createAccount();
 
     // create client
-    const endpoint = Gamma.getEndpoint();
-    const client = new Orbs.Client(endpoint, Gamma.VIRTUAL_CHAIN_ID, "TEST_NET");
+    const endpoint = gammeDriver.getEndpoint();
+    const client = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET");
 
     // create transfer transaction
-    const [tx, txId] = client.createTransaction(sender.publicKey, sender.privateKey, "BenchmarkToken", "transfer", [new Orbs.ArgUint64(10), new Orbs.ArgAddress(receiver.address)]);
+    const [tx, txId] = client.createTransaction(sender.publicKey, sender.privateKey, "BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(receiver.address)]);
 
     // send the transaction
     const transferResponse = await client.sendTransaction(tx);
@@ -52,7 +55,7 @@ describe("E2E nodejs", () => {
     expect(txProofResponse.packedReceipt.byteLength).toBeGreaterThan(10);
 
     // create balance query
-    const query = client.createQuery(receiver.publicKey, "BenchmarkToken", "getBalance", [new Orbs.ArgAddress(receiver.address)]);
+    const query = client.createQuery(receiver.publicKey, "BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
 
     // send the query
     const balanceResponse = await client.sendQuery(query);
@@ -60,12 +63,10 @@ describe("E2E nodejs", () => {
     console.log(balanceResponse);
     expect(balanceResponse.requestStatus).toEqual("COMPLETED");
     expect(balanceResponse.executionResult).toEqual("SUCCESS");
-    expect(balanceResponse.outputArguments[0]).toEqual(new Orbs.ArgUint64(10));
+    expect(balanceResponse.outputArguments[0]).toEqual(Orbs.argUint64(10));
 
     // get the block which contains the transfer transaction
     const blockResponse = await client.getBlock(transferResponse.blockHeight);
-    console.log("Block response:");
-    console.log(blockResponse);
     expect(blockResponse.blockHeight).toEqual(transferResponse.blockHeight);
     expect(blockResponse.transactionsBlockHeader.blockHeight).toEqual(transferResponse.blockHeight);
     expect(blockResponse.transactionsBlockHeader.numTransactions).toEqual(1);
@@ -74,14 +75,14 @@ describe("E2E nodejs", () => {
     expect(blockResponse.resultsBlockHeader.numTransactionReceipts).toEqual(1);
     expect(blockResponse.transactions[0].contractName).toEqual("BenchmarkToken");
     expect(blockResponse.transactions[0].methodName).toEqual("transfer");
-    expect(blockResponse.transactions[0].inputArguments[0]).toEqual(new Orbs.ArgUint64(10));
+    expect(blockResponse.transactions[0].inputArguments[0]).toEqual(Orbs.argUint64(10));
     expect(Orbs.bytesToAddress(blockResponse.transactions[0].inputArguments[1].value)).toEqual(receiver.address);
   });
 
   test("TextualError", async () => {
     // create client
-    const endpoint = Gamma.getEndpoint();
-    const client = new Orbs.Client(endpoint, Gamma.VIRTUAL_CHAIN_ID, "TEST_NET");
+    const endpoint = gammeDriver.getEndpoint();
+    const client = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET");
 
     // send a corrupt transaction
     let error;

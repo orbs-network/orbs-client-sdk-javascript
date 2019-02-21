@@ -1,7 +1,7 @@
-const path = require("path");
-const Gamma = require("../Gamma");
+const GammaDriver = require("../gamma-driver");
 const httpServer = require("http-server");
 
+const VIRTUAL_CHAIN_ID = 42; // gamma-cli config default
 const STATICS_PORT = 8081;
 
 const clickOnElement = async selector => await page.click(`${selector}`);
@@ -30,22 +30,23 @@ const startStaticsServer = (port, proxy) => {
 };
 
 describe("E2E browser", () => {
+  const gammeDriver = new GammaDriver();
   let staticsServer;
 
   beforeAll(async () => {
     jest.setTimeout(60000);
-    await Gamma.start();
-    const gammaEndpoint = Gamma.getEndpoint();
+    await gammeDriver.start();
+    const gammaEndpoint = gammeDriver.getEndpoint();
     console.log("gammaEndpoint", gammaEndpoint);
     staticsServer = await startStaticsServer(STATICS_PORT, gammaEndpoint);
     const staticsServerUrl = `http://localhost:${STATICS_PORT}`;
     await page.goto(`${staticsServerUrl}/e2e/browser/`);
-    await fillServerDetails(staticsServerUrl, Gamma.VIRTUAL_CHAIN_ID);
+    await fillServerDetails(staticsServerUrl, VIRTUAL_CHAIN_ID);
   });
 
   afterAll(async () => {
     staticsServer.close();
-    await Gamma.shutdown();
+    await gammeDriver.stop();
   });
 
   it("should create Orbs.Client instance", async () => {

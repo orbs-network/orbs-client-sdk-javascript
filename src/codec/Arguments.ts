@@ -1,34 +1,50 @@
-import * as Protocol from "../protocol/Protocol";
+import { addressToBytes } from "..";
 import { InternalMessage } from "../membuffers/message";
+import * as Protocol from "../protocol/Protocol";
 
 export type Argument = ArgUint32 | ArgUint64 | ArgString | ArgBytes;
 
-export class ArgUint32 {
-  public type = "uint32";
-  constructor(public value: number) {}
-}
+export type ArgUint32 = {
+  type: "uint32";
+  value: number;
+};
 
-export class ArgUint64 {
-  public type = "uint64";
-  public value: bigint;
-  constructor(value: bigint | number) {
-    if (typeof value === "number") {
-      this.value = BigInt(value);
-    } else {
-      this.value = value;
-    }
-  }
-}
+export type ArgUint64 = {
+  type: "uint64";
+  value: bigint;
+};
 
-export class ArgString {
-  public type = "string";
-  constructor(public value: string) {}
-}
+export type ArgString = {
+  type: "string";
+  value: string;
+};
 
-export class ArgBytes {
-  public type = "bytes";
-  constructor(public value: Uint8Array) {}
-}
+export type ArgBytes = {
+  type: "bytes";
+  value: Uint8Array;
+};
+
+export const argUint32 = (value: number): ArgUint32 => ({
+  type: "uint32",
+  value,
+});
+
+export const argUint64 = (value: bigint | number): ArgUint64 => ({
+  type: "uint64",
+  value: typeof value === "number" ? BigInt(value) : value,
+});
+
+export const argString = (value: string): ArgString => ({
+  type: "string",
+  value,
+});
+
+export const argBytes = (value: Uint8Array): ArgBytes => ({
+  type: "bytes",
+  value,
+});
+
+export const argAddress = (address: string) => argBytes(addressToBytes(address));
 
 function argumentsBuilders(args: Argument[]): Protocol.ArgumentBuilder[] {
   const res: Protocol.ArgumentBuilder[] = [];
@@ -77,19 +93,19 @@ export function packedArgumentsDecode(buf: Uint8Array): Argument[] {
     switch (type) {
       case 0:
         const [, uint32Off] = argumentMsg.isUnionIndex(0, 0, 0);
-        res.push(new ArgUint32(argumentMsg.getUint32InOffset(uint32Off)));
+        res.push(argUint32(argumentMsg.getUint32InOffset(uint32Off)));
         break;
       case 1:
         const [, uint64Off] = argumentMsg.isUnionIndex(0, 0, 1);
-        res.push(new ArgUint64(argumentMsg.getUint64InOffset(uint64Off)));
+        res.push(argUint64(argumentMsg.getUint64InOffset(uint64Off)));
         break;
       case 2:
         const [, stringOff] = argumentMsg.isUnionIndex(0, 0, 2);
-        res.push(new ArgString(argumentMsg.getStringInOffset(stringOff)));
+        res.push(argString(argumentMsg.getStringInOffset(stringOff)));
         break;
       case 3:
         const [, bytesOff] = argumentMsg.isUnionIndex(0, 0, 3);
-        res.push(new ArgBytes(argumentMsg.getBytesInOffset(bytesOff)));
+        res.push(argBytes(argumentMsg.getBytesInOffset(bytesOff)));
         break;
       default:
         throw new Error(`received argument ${index} has unknown type: ${type}`);

@@ -1,6 +1,6 @@
 {
   "name": "orbs-client-sdk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "orbs-client-sdk",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -8,7 +8,7 @@
   "files": [
     "dist"
   ],
-  "types": "dist/index.d.ts",
+  "types": "dist/lib.d.ts",
   "repository": "https://github.com/orbs-network/orbs-client-sdk-javascript",
   "author": "Orbs Team",
   "license": "MIT",
@@ -16,10 +16,10 @@
     "clean": "rimraf dist",
     "build": "npm run clean && npm run build-rollup && npm run build-webpack && npm run types",
     "build-webpack": "webpack -p",
-    "types": "tsc --emitDeclarationOnly -p tsconfig.json",
+    "types": "tsc -p tsconfig-for-types.json",
     "build-rollup": "rollup -c",
     "watch": "rollup -cw",
-    "test": "jest",
+    "test": "jest --runInBand",
     "lint": "tslint -c tslint.json",
     "prepare": "rimraf ./contract && git clone https://github.com/orbs-network/orbs-client-sdk-go.git ./contract"
   },

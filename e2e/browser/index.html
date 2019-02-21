@@ -41,7 +41,7 @@
       }
 
       function CreateTx() {
-        const [tx, txId] = window.orbsClient.createTransaction(window.senderAccount.publicKey, window.senderAccount.privateKey, "BenchmarkToken", "transfer", [new Orbs.ArgUint64(10), new Orbs.ArgAddress(window.receiverAccount.address)]);
+        const [tx, txId] = window.orbsClient.createTransaction(window.senderAccount.publicKey, window.senderAccount.privateKey, "BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(window.receiverAccount.address)]);
         window.tx = tx;
         window.txId = txId;
         document.querySelector("#tx-id").innerText = txId;
@@ -74,7 +74,7 @@
       }
 
       function SendQuery() {
-        const query = window.orbsClient.createQuery(window.receiverAccount.publicKey, "BenchmarkToken", "getBalance", [new Orbs.ArgAddress(window.receiverAccount.address)]);
+        const query = window.orbsClient.createQuery(window.receiverAccount.publicKey, "BenchmarkToken", "getBalance", [Orbs.argAddress(window.receiverAccount.address)]);
         window.orbsClient.sendQuery(query).then(balanceResponse => {
           document.querySelector("#balance-response-request-status").innerText = balanceResponse.requestStatus;
           document.querySelector("#balance-response-execution-result").innerText = balanceResponse.executionResult;
