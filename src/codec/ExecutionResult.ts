@@ -4,6 +4,7 @@ export enum ExecutionResult {
   EXECUTION_RESULT_ERROR_INPUT = "ERROR_INPUT",
   EXECUTION_RESULT_ERROR_CONTRACT_NOT_DEPLOYED = "ERROR_CONTRACT_NOT_DEPLOYED",
   EXECUTION_RESULT_ERROR_UNEXPECTED = "ERROR_UNEXPECTED",
+  EXECUTION_RESULT_NOT_EXECUTED = "NOT_EXECUTED",
 }
 
 export function executionResultDecode(executionResult: number): ExecutionResult {
@@ -20,6 +21,8 @@ export function executionResultDecode(executionResult: number): ExecutionResult 
       return ExecutionResult.EXECUTION_RESULT_ERROR_CONTRACT_NOT_DEPLOYED;
     case 5:
       return ExecutionResult.EXECUTION_RESULT_ERROR_UNEXPECTED;
+    case 6:
+      return ExecutionResult.EXECUTION_RESULT_NOT_EXECUTED;
     default:
       throw new Error(`unsupported ExecutionResult received: ${executionResult}`);
   }
