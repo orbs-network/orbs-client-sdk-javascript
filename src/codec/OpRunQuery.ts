@@ -85,7 +85,10 @@ export function decodeRunQueryResponse(buf: Uint8Array): RunQueryResponse {
   // decode execution result
   const queryResultBuf = runQueryResponseMsg.getMessage(1);
   const queryResultMsg = new InternalMessage(queryResultBuf, queryResultBuf.byteLength, Protocol.QueryResult_Scheme, []);
-  const executionResult = executionResultDecode(queryResultMsg.getUint16(0));
+  let executionResult = ExecutionResult.EXECUTION_RESULT_NOT_EXECUTED;
+  if (queryResultBuf.byteLength > 0) {
+    executionResult = executionResultDecode(queryResultMsg.getUint16(0));
+  }
 
   // decode method arguments
   const outputArgumentArray = packedArgumentsDecode(queryResultMsg.rawBufferWithHeaderForField(1, 0));

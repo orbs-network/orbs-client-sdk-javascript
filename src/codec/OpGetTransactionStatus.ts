@@ -66,7 +66,10 @@ export function decodeGetTransactionStatusResponse(buf: Uint8Array): GetTransact
   // decode execution result
   const transactionReceiptBuf = getTransactionStatusResponseMsg.getMessage(2);
   const transactionReceiptMsg = new InternalMessage(transactionReceiptBuf, transactionReceiptBuf.byteLength, Protocol.TransactionReceipt_Scheme, []);
-  const executionResult = executionResultDecode(transactionReceiptMsg.getUint16(1));
+  let executionResult = ExecutionResult.EXECUTION_RESULT_NOT_EXECUTED;
+  if (transactionReceiptBuf.byteLength > 0) {
+    executionResult = executionResultDecode(transactionReceiptMsg.getUint16(1));
+  }
 
   // decode method arguments
   const outputArgumentArray = packedArgumentsDecode(transactionReceiptMsg.rawBufferWithHeaderForField(2, 0));

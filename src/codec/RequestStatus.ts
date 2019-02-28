@@ -5,6 +5,7 @@ export enum RequestStatus {
   REQUEST_STATUS_CONGESTION = "CONGESTION",
   REQUEST_STATUS_SYSTEM_ERROR = "SYSTEM_ERROR",
   REQUEST_STATUS_OUT_OF_SYNC = "OUT_OF_SYNC",
+  REQUEST_STATUS_NOT_FOUND = "NOT_FOUND",
 }
 
 export function requestStatusDecode(requestStatus: number): RequestStatus {
@@ -23,6 +24,8 @@ export function requestStatusDecode(requestStatus: number): RequestStatus {
       return RequestStatus.REQUEST_STATUS_SYSTEM_ERROR;
     case 6:
       return RequestStatus.REQUEST_STATUS_OUT_OF_SYNC;
+    case 7:
+      return RequestStatus.REQUEST_STATUS_NOT_FOUND;
     default:
       throw new Error(`unsupported RequestStatus received: ${requestStatus}`);
   }
