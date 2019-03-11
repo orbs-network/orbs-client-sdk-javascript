@@ -1,6 +1,6 @@
 {
   "name": "orbs-client-sdk",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "orbs-client-sdk",
   "main": "dist/index.js",
   "module": "dist/index.es.js",

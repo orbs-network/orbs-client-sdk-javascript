@@ -10,7 +10,7 @@
     "moduleResolution": "node",
     "downlevelIteration": true,
     "emitDeclarationOnly": true,
-    "lib": ["esnext", "esnext.bigint"],
+    "lib": ["esnext"],
     "types": ["node", "jest"]
   },
   "include": ["src/lib.ts", "src/types/**/*.ts"]
