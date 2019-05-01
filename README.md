@@ -2,8 +2,24 @@
 
 > Client SDK for the Orbs blockchain in JavaScript and TypeScript for Node.js and browsers
 
-## Installation
-`$ npm install orbs-client-sdk`
+## Installation (Node.js)
+
+1. Install the NPM package:
+
+   ```sh
+   npm install orbs-client-sdk
+   ```
+
+2. Import the client in your project
+
+   ```js
+   const Orbs = require("orbs-client-sdk");
+   ```
+
+## Installation (browser)
+
+Coming soon
+
 
 ## Usage (Node.js)
 
@@ -43,24 +59,6 @@
    ```
 
 ## Usage (browser)
-
-Coming soon
-
-## Installation (Node.js)
-
-1. Install the NPM package:
-
-   ```sh
-   npm install orbs-client-sdk
-   ```
-
-2. Import the client in your project:
-
-   ```js
-   const Orbs = require("orbs-client-sdk");
-   ```
-
-## Installation (browser)
 
 Coming soon
 
