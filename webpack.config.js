@@ -9,14 +9,19 @@
 const path = require("path");
 
 const production = process.env.NODE_ENV === "production";
-module.exports = {
+const libraryName = 'Orbs';
+
+const webConfig = {
+  target: 'web',
   mode: production ? "production" : "development",
   devtool: production ? "" : "inline-source-map",
-  entry: ["./src/index.ts"],
+  entry: "./src/index.ts",
   output: {
     path: path.join(__dirname, "dist"),
-    filename: `orbs-client-sdk.js`,
-    library: "Orbs",
+    filename: `orbs-client-sdk-web.js`,
+    library: libraryName,
+    libraryTarget: "umd",
+    umdNamedDefine: true
   },
   resolve: {
     extensions: [".js", ".ts"],
@@ -30,3 +35,30 @@ module.exports = {
     ],
   },
 };
+
+const nodeConfig = {
+  target: 'node',
+  mode: production ? "production" : "development",
+  devtool: production ? "" : "inline-source-map",
+  entry: "./src/index.ts",
+  output: {
+    path: path.join(__dirname, "dist"),
+    filename: `orbs-client-sdk.js`,
+    library: libraryName,
+    libraryTarget: "umd",
+    umdNamedDefine: true
+  },
+  resolve: {
+    extensions: [".js", ".ts"],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        loaders: ["babel-loader"],
+      },
+    ],
+  },
+};
+
+module.exports = [webConfig, nodeConfig];
