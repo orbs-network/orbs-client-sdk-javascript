@@ -19,11 +19,20 @@
 
 ### Browser
 
-Coming soon
+1. Install via NPM package:
 
+
+   ```sh
+   npm install orbs-client-sdk
+   ```
+
+2. Import the client in your project
+
+   ```js
+   import { createAccount, Client } from 'orbs-client-sdk'
+   ```
 
 ## Usage
-### Node.js
 
 1. Create a few end user accounts:
 
@@ -59,10 +68,6 @@ Coming soon
    const query = client.createQuery(receiver.publicKey, "BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
    const response = await client.sendQuery(query);
    ```
-
-### Browser
-
-Coming soon
 
 ## Test
 
