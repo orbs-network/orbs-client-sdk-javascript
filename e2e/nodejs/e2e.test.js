@@ -6,7 +6,7 @@
  * The above notice should be included in all copies or substantial portions of the software.
  */
 
-const Orbs = require("../../dist/index.js");
+const Orbs = require("../../dist/orbs-client-sdk.js");
 const GammaDriver = require("../gamma-driver");
 
 const VIRTUAL_CHAIN_ID = 42; // gamma-cli config default

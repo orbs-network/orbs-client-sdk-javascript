@@ -1,10 +1,9 @@
 {
   "name": "orbs-client-sdk",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "description": "orbs-client-sdk",
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
-  "browser": "dist/orbs-client-sdk.js",
+  "main": "dist/orbs-client-sdk.js",
+  "browser": "dist/orbs-client-sdk-web.js",
   "files": [
     "dist"
   ],
@@ -14,11 +13,10 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean && npm run build-rollup && npm run build-webpack && npm run types",
+    "build": "npm run clean && npm run build-webpack && npm run types",
     "build-webpack": "webpack -p",
     "types": "tsc -p tsconfig-for-types.json",
-    "build-rollup": "rollup -c",
-    "watch": "rollup -cw",
+    "dev": "webpack-dev-server -w",
     "test": "jest --runInBand",
     "lint": "tslint -c tslint.json",
     "prepare": "rimraf ./contract && git clone https://github.com/orbs-network/orbs-client-sdk-go.git ./contract"
@@ -48,14 +46,13 @@
     "jest-puppeteer": "^3.8.0",
     "puppeteer": "^1.9.0",
     "rimraf": "^2.6.3",
-    "rollup": "^0.66.6",
-    "rollup-plugin-typescript": "^1.0.0",
     "ts-jest": "^23.10.4",
     "tslib": "^1.9.3",
     "tslint": "^5.11.0",
     "typescript": "^3.2.4",
     "webpack": "^4.28.4",
-    "webpack-cli": "^3.2.1"
+    "webpack-cli": "^3.2.1",
+    "webpack-dev-server": "^3.7.2"
   },
   "dependencies": {
     "axios": "^0.18.0",
