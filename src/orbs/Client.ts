@@ -8,7 +8,7 @@
 
 import * as Encoding from "../crypto/Encoding";
 import { NetworkType } from "../codec/NetworkType";
-import { Argument } from "../codec/Arguments";
+import { Argument, argString, argUint32, argBytes } from "../codec/Arguments";
 import { decodeSendTransactionResponse, encodeSendTransactionRequest, SendTransactionResponse } from "../codec/OpSendTransaction";
 import { RunQueryResponse, decodeRunQueryResponse, encodeRunQueryRequest } from "../codec/OpRunQuery";
 import { decodeGetTransactionStatusResponse, encodeGetTransactionStatusRequest, GetTransactionStatusResponse } from "../codec/OpGetTransactionStatus";
@@ -24,6 +24,9 @@ const RUN_QUERY_URL = "/api/v1/run-query";
 const GET_TRANSACTION_STATUS_URL = "/api/v1/get-transaction-status";
 const GET_TRANSACTION_RECEIPT_PROOF_URL = "/api/v1/get-transaction-receipt-proof";
 const GET_BLOCK_URL = "/api/v1/get-block";
+
+export const PROCESSOR_TYPE_NATIVE = 1;
+export const PROCESSOR_TYPE_JAVASCRIPT = 2;
 
 export class Client {
   constructor(private endpoint: string, private virtualChainId: number, private networkType: NetworkType) {}
@@ -43,6 +46,19 @@ export class Client {
       privateKey,
     );
     return [req, Encoding.encodeHex(rawTxId)];
+  }
+
+  createDeployTransaction(publicKey: Uint8Array, privateKey: Uint8Array, contractName: string, processorType: number, ...sources: Uint8Array[]): [Uint8Array, string] {
+    const inputArguments: Argument[] = [
+      argString(contractName),
+      argUint32(processorType)
+    ];
+
+    sources.forEach(s => {
+      inputArguments.push(argBytes(s));
+    });
+
+    return this.createTransaction(publicKey, privateKey, "_Deployments", "deployService", inputArguments);
   }
 
   createQuery(publicKey: Uint8Array, contractName: string, methodName: string, inputArguments: Argument[]): Uint8Array {
