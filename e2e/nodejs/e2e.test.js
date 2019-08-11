@@ -8,6 +8,7 @@
 
 const Orbs = require("../../dist/orbs-client-sdk.js");
 const GammaDriver = require("../gamma-driver");
+const { readFileSync } = require("fs");
 
 const VIRTUAL_CHAIN_ID = 42; // gamma-cli config default
 describe("E2E nodejs", () => {
@@ -100,5 +101,55 @@ describe("E2E nodejs", () => {
       error = e;
     }
     expect(error.toString()).toMatch("http request is not a valid membuffer");
+  });
+
+  test("Deployment", async () => {
+    // create sender account
+    const sender = Orbs.createAccount();
+
+    // create receiver account
+    const receiver = Orbs.createAccount();
+
+    // create client
+    const endpoint = gammeDriver.getEndpoint();
+    const client = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET");
+
+    const sources = [
+      readFileSync(`${__dirname}/../contract/increment_base.go`),
+      readFileSync(`${__dirname}/../contract/increment_functions.go`)
+    ];
+
+    // create transfer transaction
+    const [deploymentTx, deploymentTxId] = client.createDeployTransaction(sender.publicKey, sender.privateKey, "Inc", Orbs.PROCESSOR_TYPE_NATIVE, ...sources);
+
+    // send the transaction
+    const deploymentResponse = await client.sendTransaction(deploymentTx);
+    console.log("Deployment response:");
+    console.log(deploymentResponse);
+    expect(deploymentResponse.requestStatus).toEqual("COMPLETED");
+    expect(deploymentResponse.executionResult).toEqual("SUCCESS");
+    expect(deploymentResponse.transactionStatus).toEqual("COMMITTED");
+
+    // create transfer transaction
+    const [tx, txId] = client.createTransaction(sender.publicKey, sender.privateKey, "BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(receiver.address)]);
+  
+    // send the transaction
+    const transferResponse = await client.sendTransaction(tx);
+    console.log("Transfer response:");
+    console.log(transferResponse);
+    expect(transferResponse.requestStatus).toEqual("COMPLETED");
+    expect(transferResponse.executionResult).toEqual("SUCCESS");
+    expect(transferResponse.transactionStatus).toEqual("COMMITTED");
+  
+    // create balance query
+    const query = client.createQuery(receiver.publicKey, "BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
+  
+    // send the query
+    const balanceResponse = await client.sendQuery(query);
+    console.log("Query response:");
+    console.log(balanceResponse);
+    expect(balanceResponse.requestStatus).toEqual("COMPLETED");
+    expect(balanceResponse.executionResult).toEqual("SUCCESS");
+    expect(balanceResponse.outputArguments[0]).toEqual(Orbs.argUint64(10));
   });
 });
