@@ -51,12 +51,9 @@ export class Client {
   createDeployTransaction(publicKey: Uint8Array, privateKey: Uint8Array, contractName: string, processorType: number, ...sources: Uint8Array[]): [Uint8Array, string] {
     const inputArguments: Argument[] = [
       argString(contractName),
-      argUint32(processorType)
+      argUint32(processorType),
+      ...sources.map(argBytes)
     ];
-
-    sources.forEach(s => {
-      inputArguments.push(argBytes(s));
-    });
 
     return this.createTransaction(publicKey, privateKey, "_Deployments", "deployService", inputArguments);
   }
