@@ -6,7 +6,7 @@
  * The above notice should be included in all copies or substantial portions of the software.
  */
 
-export { createAccount, addressToBytes, bytesToAddress } from "./orbs/Account";
+export { createAccount, addressToBytes, bytesToAddress, Account } from "./orbs/Account";
 export { ExecutionResult } from "./codec/ExecutionResult";
 export { RequestStatus } from "./codec/RequestStatus";
 export { Client, PROCESSOR_TYPE_NATIVE, PROCESSOR_TYPE_JAVASCRIPT } from "./orbs/Client";
