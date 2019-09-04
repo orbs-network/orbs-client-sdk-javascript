@@ -47,3 +47,11 @@ export function extractTxId(txId: Uint8Array): [Uint8Array, bigint] {
 export function calcQueryHash(queryBuf: Uint8Array): Uint8Array {
   return Hash.calcSha256(queryBuf);
 }
+
+export function contractNameToAddressAsBytes(contractName: string): Uint8Array {
+  if (!contractName || contractName === "") {
+    throw new Error("invalid contract name");
+  }
+
+  return calcSha256(new TextEncoder().encode(contractName)).slice(CLIENT_ADDRESS_SHA256_OFFSET);
+}
