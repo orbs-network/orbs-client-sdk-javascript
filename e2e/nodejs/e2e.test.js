@@ -32,13 +32,14 @@ describe("E2E nodejs", () => {
 
     // create client
     const endpoint = gammeDriver.getEndpoint();
-    const client = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET");
+    console.log(Orbs)
+    const senderClient = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET", new Orbs.DefaultSigner(sender));
 
     // create transfer transaction
-    const [tx, txId] = client.createTransaction(sender.publicKey, sender.privateKey, "BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(receiver.address)]);
+    const [tx, txId] = senderClient.createTransaction("BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(receiver.address)]);
 
     // send the transaction
-    const transferResponse = await client.sendTransaction(tx);
+    const transferResponse = await senderClient.sendTransaction(tx);
     console.log("Transfer response:");
     console.log(transferResponse);
     expect(transferResponse.requestStatus).toEqual("COMPLETED");
@@ -46,7 +47,7 @@ describe("E2E nodejs", () => {
     expect(transferResponse.transactionStatus).toEqual("COMMITTED");
 
     // check the transaction status
-    const statusResponse = await client.getTransactionStatus(txId);
+    const statusResponse = await senderClient.getTransactionStatus(txId);
     console.log("Status response:");
     console.log(statusResponse);
     expect(statusResponse.requestStatus).toEqual("COMPLETED");
@@ -54,7 +55,7 @@ describe("E2E nodejs", () => {
     expect(statusResponse.transactionStatus).toEqual("COMMITTED");
 
     // check the transaction receipt proof
-    const txProofResponse = await client.getTransactionReceiptProof(txId);
+    const txProofResponse = await senderClient.getTransactionReceiptProof(txId);
     console.log("Receipt proof response:");
     console.log(txProofResponse);
     expect(txProofResponse.requestStatus).toEqual("COMPLETED");
@@ -64,10 +65,10 @@ describe("E2E nodejs", () => {
     expect(txProofResponse.packedReceipt.byteLength).toBeGreaterThan(10);
 
     // create balance query
-    const query = client.createQuery(receiver.publicKey, "BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
+    const query = senderClient.createQuery("BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
 
     // send the query
-    const balanceResponse = await client.sendQuery(query);
+    const balanceResponse = await senderClient.sendQuery(query);
     console.log("Query response:");
     console.log(balanceResponse);
     expect(balanceResponse.requestStatus).toEqual("COMPLETED");
@@ -75,7 +76,7 @@ describe("E2E nodejs", () => {
     expect(balanceResponse.outputArguments[0]).toEqual(Orbs.argUint64(10));
 
     // get the block which contains the transfer transaction
-    const blockResponse = await client.getBlock(transferResponse.blockHeight);
+    const blockResponse = await senderClient.getBlock(transferResponse.blockHeight);
     expect(blockResponse.blockHeight).toEqual(transferResponse.blockHeight);
     expect(blockResponse.transactionsBlockHeader.blockHeight).toEqual(transferResponse.blockHeight);
     expect(blockResponse.transactionsBlockHeader.numTransactions).toEqual(1);
@@ -91,7 +92,7 @@ describe("E2E nodejs", () => {
   test("TextualError", async () => {
     // create client
     const endpoint = gammeDriver.getEndpoint();
-    const client = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET");
+    const client = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET", new Orbs.DefaultSigner(Orbs.createAccount()));
 
     // send a corrupt transaction
     let error;
@@ -112,7 +113,7 @@ describe("E2E nodejs", () => {
 
     // create client
     const endpoint = gammeDriver.getEndpoint();
-    const client = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET");
+    const client = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET", new Orbs.DefaultSigner(sender));
 
     const sources = [
       readFileSync(`${__dirname}/../contract/increment_base.go`),
@@ -120,7 +121,7 @@ describe("E2E nodejs", () => {
     ];
 
     // create transfer transaction
-    const [deploymentTx, deploymentTxId] = client.createDeployTransaction(sender.publicKey, sender.privateKey, "Inc", Orbs.PROCESSOR_TYPE_NATIVE, ...sources);
+    const [deploymentTx, deploymentTxId] = client.createDeployTransaction("Inc", Orbs.PROCESSOR_TYPE_NATIVE, ...sources);
 
     // send the transaction
     const deploymentResponse = await client.sendTransaction(deploymentTx);
@@ -131,7 +132,7 @@ describe("E2E nodejs", () => {
     expect(deploymentResponse.transactionStatus).toEqual("COMMITTED");
 
     // create transfer transaction
-    const [tx, txId] = client.createTransaction(sender.publicKey, sender.privateKey, "BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(receiver.address)]);
+    const [tx, txId] = client.createTransaction("BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(receiver.address)]);
   
     // send the transaction
     const transferResponse = await client.sendTransaction(tx);
@@ -142,7 +143,7 @@ describe("E2E nodejs", () => {
     expect(transferResponse.transactionStatus).toEqual("COMMITTED");
   
     // create balance query
-    const query = client.createQuery(receiver.publicKey, "BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
+    const query = client.createQuery("BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
   
     // send the query
     const balanceResponse = await client.sendQuery(query);
