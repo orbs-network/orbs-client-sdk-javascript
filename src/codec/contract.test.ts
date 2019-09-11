@@ -14,6 +14,7 @@ import { decodeGetTransactionReceiptProofResponse, encodeGetTransactionReceiptPr
 import { decodeGetTransactionStatusResponse, encodeGetTransactionStatusRequest } from "./OpGetTransactionStatus";
 import { decodeRunQueryResponse, encodeRunQueryRequest } from "./OpRunQuery";
 import { decodeSendTransactionResponse, encodeSendTransactionRequest } from "./OpSendTransaction";
+import { DefaultSigner } from "../crypto/Signature";
 
 describe("Codec contract", () => {
   let contractInput: any;
@@ -33,19 +34,17 @@ describe("Codec contract", () => {
     test(`Test Id: ${inputScenario.Test}`, () => {
       // SendTransactionRequest
       if (inputScenario.SendTransactionRequest) {
+        const signer = new DefaultSigner({publicKey: jsonUnmarshalBase64Bytes(inputScenario.PublicKey), privateKey: jsonUnmarshalBase64Bytes(inputScenario.PrivateKey)});
         const [encoded, txId] = encodeSendTransactionRequest(
           {
             protocolVersion: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.ProtocolVersion),
             virtualChainId: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.VirtualChainId),
             timestamp: new Date(inputScenario.SendTransactionRequest.Timestamp),
             networkType: inputScenario.SendTransactionRequest.NetworkType,
-            publicKey: jsonUnmarshalBase64Bytes(inputScenario.SendTransactionRequest.PublicKey),
             contractName: inputScenario.SendTransactionRequest.ContractName,
             methodName: inputScenario.SendTransactionRequest.MethodName,
             inputArguments: jsonUnmarshalArguments(inputScenario.SendTransactionRequest.InputArguments, inputScenario.SendTransactionRequest.InputArgumentsTypes),
-          },
-          jsonUnmarshalBase64Bytes(inputScenario.PrivateKey),
-        );
+          }, signer);
         const expected = jsonUnmarshalBase64Bytes(outputScenario.SendTransactionRequest);
         expect(encoded).toBeEqualToUint8Array(expected);
         const expectedTxId = jsonUnmarshalBase64Bytes(outputScenario.TxId);
@@ -55,16 +54,17 @@ describe("Codec contract", () => {
 
       // RunQueryRequest
       if (inputScenario.RunQueryRequest) {
+        const signer = new DefaultSigner({publicKey: jsonUnmarshalBase64Bytes(inputScenario.PublicKey), privateKey: jsonUnmarshalBase64Bytes(inputScenario.PrivateKey)});
+
         const encoded = encodeRunQueryRequest({
           protocolVersion: jsonUnmarshalNumber(inputScenario.RunQueryRequest.ProtocolVersion),
           virtualChainId: jsonUnmarshalNumber(inputScenario.RunQueryRequest.VirtualChainId),
           timestamp: new Date(inputScenario.RunQueryRequest.Timestamp),
           networkType: inputScenario.RunQueryRequest.NetworkType,
-          publicKey: jsonUnmarshalBase64Bytes(inputScenario.RunQueryRequest.PublicKey),
           contractName: inputScenario.RunQueryRequest.ContractName,
           methodName: inputScenario.RunQueryRequest.MethodName,
           inputArguments: jsonUnmarshalArguments(inputScenario.RunQueryRequest.InputArguments, inputScenario.RunQueryRequest.InputArgumentsTypes),
-        });
+        }, signer);
         const expected = jsonUnmarshalBase64Bytes(outputScenario.RunQueryRequest);
         expect(encoded).toBeEqualToUint8Array(expected);
         return;

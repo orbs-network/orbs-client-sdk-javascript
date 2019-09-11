@@ -16,13 +16,13 @@ import { RequestStatus, requestStatusDecode } from "./RequestStatus";
 import { ExecutionResult, executionResultDecode } from "./ExecutionResult";
 import { Argument, packedArgumentsDecode, packedArgumentsEncode } from "./Arguments";
 import { Event, packedEventsDecode } from "./Events";
+import { Signer } from "../crypto/Signature";
 
 export interface RunQueryRequest {
   protocolVersion: number;
   virtualChainId: number;
   timestamp: Date;
   networkType: NetworkType;
-  publicKey: Uint8Array;
   contractName: string;
   methodName: string;
   inputArguments: Argument[];
@@ -37,15 +37,11 @@ export interface RunQueryResponse {
   blockTimestamp: Date;
 }
 
-export function encodeRunQueryRequest(req: RunQueryRequest): Uint8Array {
+export function encodeRunQueryRequest(req: RunQueryRequest, signer: Signer): Uint8Array {
   // validate
   if (req.protocolVersion != 1) {
     throw new Error(`expected ProtocolVersion 1, ${req.protocolVersion} given`);
   }
-  if (req.publicKey.byteLength != Keys.ED25519_PUBLIC_KEY_SIZE_BYTES) {
-    throw new Error(`expected PublicKey length ${Keys.ED25519_PUBLIC_KEY_SIZE_BYTES}, ${req.publicKey.byteLength} given`);
-  }
-
   // encode method arguments
   const inputArgumentArray = packedArgumentsEncode(req.inputArguments);
 
@@ -63,7 +59,7 @@ export function encodeRunQueryRequest(req: RunQueryRequest): Uint8Array {
           scheme: 0,
           eddsa: new Protocol.EdDSA01SignerBuilder({
             networkType: networkType,
-            signerPublicKey: req.publicKey,
+            signerPublicKey: signer.getPublicKey(),
           }),
         }),
         contractName: req.contractName,
