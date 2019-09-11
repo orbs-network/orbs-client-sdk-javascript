@@ -32,7 +32,6 @@ describe("E2E nodejs", () => {
 
     // create client
     const endpoint = gammeDriver.getEndpoint();
-    console.log(Orbs)
     const senderClient = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET", new Orbs.DefaultSigner(sender));
 
     // create transfer transaction

@@ -18,8 +18,7 @@
     "types": "tsc -p tsconfig-for-types.json",
     "dev": "webpack-dev-server -w",
     "test": "jest --runInBand",
-    "lint": "tslint -c tslint.json",
-    "prepare": "rimraf ./contract && git clone https://github.com/orbs-network/orbs-client-sdk-go.git ./contract"
+    "lint": "tslint -c tslint.json"
   },
   "prettier": {
     "trailingComma": "all",

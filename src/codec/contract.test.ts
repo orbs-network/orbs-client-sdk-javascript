@@ -20,11 +20,11 @@ describe("Codec contract", () => {
   let contractInput: any;
   let contractOutput: any;
   try {
-    contractInput = require("../../contract/test/codec/input.json");
-    contractOutput = require("../../contract/test/codec/output.json");
+    contractInput = require("./test/input.json");
+    contractOutput = require("./test/output.json");
   } catch (e) {
     throw new Error(
-      `Contract spec input.json and output.json not found in ROOT/contract/test/codec\nThese files are cloned from the reference implementation found at\nhttps://github.com/orbs-network/orbs-client-sdk-go.git during the prepare step of this package`,
+      `Contract spec input.json and output.json not found`,
     );
   }
 
