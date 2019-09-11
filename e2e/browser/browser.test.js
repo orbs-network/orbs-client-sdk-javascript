@@ -57,17 +57,17 @@ describe("E2E browser", () => {
     await gammeDriver.stop();
   });
 
-  it("should create Orbs.Client instance", async () => {
-    await clickOnElement("#create-orbs-client");
-    const orbsClientResult = await getElementText("#orbs-client-result");
-    expect(orbsClientResult).toEqual("Created");
-  });
-
   it("should create the sender account", async () => {
     await clickOnElement("#create-sender-account");
     const senderAccountId = await getElementText("#sender-account-id");
     const accountIdLength = senderAccountId.split(",").length;
     expect(accountIdLength).toEqual(32);
+  });
+
+  it("should create Orbs.Client instance", async () => {
+    await clickOnElement("#create-orbs-client");
+    const orbsClientResult = await getElementText("#orbs-client-result");
+    expect(orbsClientResult).toEqual("Created");
   });
 
   it("should create the receiver account", async () => {

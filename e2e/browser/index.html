@@ -30,7 +30,7 @@
         try {
           const endpoint = document.querySelector("#endpoint").value;
           const virtualChainId = document.querySelector("#virtual-chain-id").value;
-          window.orbsClient = new Orbs.Client(endpoint, virtualChainId, "TEST_NET");
+          window.orbsClient = new Orbs.Client(endpoint, virtualChainId, "TEST_NET", new Orbs.DefaultSigner(window.senderAccount));
           result = "Created";
         } catch (e) {
           result = "Failed";
@@ -49,7 +49,7 @@
       }
 
       function CreateTx() {
-        const [tx, txId] = window.orbsClient.createTransaction(window.senderAccount.publicKey, window.senderAccount.privateKey, "BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(window.receiverAccount.address)]);
+        const [tx, txId] = window.orbsClient.createTransaction("BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(window.receiverAccount.address)]);
         window.tx = tx;
         window.txId = txId;
         document.querySelector("#tx-id").innerText = txId;
@@ -82,7 +82,7 @@
       }
 
       function SendQuery() {
-        const query = window.orbsClient.createQuery(window.receiverAccount.publicKey, "BenchmarkToken", "getBalance", [Orbs.argAddress(window.receiverAccount.address)]);
+        const query = window.orbsClient.createQuery("BenchmarkToken", "getBalance", [Orbs.argAddress(window.receiverAccount.address)]);
         window.orbsClient.sendQuery(query).then(balanceResponse => {
           document.querySelector("#balance-response-request-status").innerText = balanceResponse.requestStatus;
           document.querySelector("#balance-response-execution-result").innerText = balanceResponse.executionResult;
