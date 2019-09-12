@@ -6,7 +6,7 @@
  * The above notice should be included in all copies or substantial portions of the software.
  */
 
-import "../membuffers/matcher-extensions";
+import "../matcher-extensions";
 import * as Encoding from "./Encoding";
 
 const encodeStringTestTable = [

@@ -10,7 +10,7 @@ import * as Client from "../protocol/Client";
 import * as Protocol from "../protocol/Protocol";
 import * as Keys from "../crypto/Keys";
 import * as Signature from "../crypto/Signature";
-import { InternalMessage } from "../membuffers/message";
+import { InternalMessage } from "membuffers";
 import { NetworkType, networkTypeEncode } from "./NetworkType";
 import { RequestStatus, requestStatusDecode } from "./RequestStatus";
 import { ExecutionResult, executionResultDecode } from "./ExecutionResult";

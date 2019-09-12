@@ -6,7 +6,7 @@
  * The above notice should be included in all copies or substantial portions of the software.
  */
 
-import "../membuffers/matcher-extensions";
+import "../matcher-extensions";
 import { argBytes, argString, argUint32, argUint64, Argument } from "./Arguments";
 import { Event } from "./Events";
 import { BlockTransaction, decodeGetBlockResponse, encodeGetBlockRequest } from "./OpGetBlock";

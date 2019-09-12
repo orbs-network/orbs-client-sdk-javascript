@@ -7,7 +7,7 @@
  */
 
 import { addressToBytes } from "..";
-import { InternalMessage } from "../membuffers/message";
+import { InternalMessage } from "membuffers";
 import * as Protocol from "../protocol/Protocol";
 
 export type Argument = ArgUint32 | ArgUint64 | ArgString | ArgBytes;

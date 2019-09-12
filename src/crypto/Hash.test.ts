@@ -6,9 +6,9 @@
  * The above notice should be included in all copies or substantial portions of the software.
  */
 
-import "../membuffers/matcher-extensions";
+import "../matcher-extensions";
 import * as Hash from "./Hash";
-import { getTextEncoder } from "../membuffers/text";
+import { getTextEncoder } from "membuffers";
 
 const someData = getTextEncoder().encode("testing");
 const ExpectedSha256 = Buffer.from("cf80cd8aed482d5d1527d7dc72fceff84e6326592848447d2dc0b0e87dfc9a90", "hex");

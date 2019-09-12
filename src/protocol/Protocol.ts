@@ -7,7 +7,7 @@
  */
 
 import { BaseBuilder } from "./Base";
-import { FieldTypes } from "../membuffers/types";
+import { FieldTypes } from "membuffers";
 
 export function dateToUnixNano(date: Date): bigint {
   return BigInt(date.getTime()) * BigInt(1000000);
