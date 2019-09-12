@@ -7,7 +7,7 @@
  */
 
 import * as Hash from "./Hash";
-import { getTextDecoder } from "../membuffers/text";
+import { getTextDecoder } from "membuffers";
 
 // without 0x
 function simpleHexEncodeAsCharCodeArray(data: Uint8Array): Uint8Array {
