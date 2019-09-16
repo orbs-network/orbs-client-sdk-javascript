@@ -7,7 +7,7 @@
  */
 
 import { Argument, packedArgumentsDecode } from "./Arguments";
-import { InternalMessage } from "../membuffers/message";
+import { InternalMessage } from "membuffers";
 import * as Protocol from "../protocol/Protocol";
 
 export interface Event {

@@ -7,7 +7,7 @@
  */
 
 import * as Signature from "./Signature";
-import { getTextEncoder } from "../membuffers/text";
+import { getTextEncoder } from "membuffers";
 
 const someDataToSign = getTextEncoder().encode("this is what we want to sign");
 const PublicKey1 = Buffer.from("92d469d7c004cc0b24a192d9457836bf38effa27536627ef60718b00b0f33152", "hex");

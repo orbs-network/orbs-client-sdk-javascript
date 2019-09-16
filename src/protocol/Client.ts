@@ -8,8 +8,7 @@
 
 import { BaseBuilder } from "./Base";
 import * as Protocol from "./Protocol";
-import { FieldTypes } from "../membuffers/types";
-import { SignerBuilder } from "./Protocol";
+import { FieldTypes } from "membuffers";
 
 export const RequestResult_Scheme = [FieldTypes.TypeUint16, FieldTypes.TypeUint64, FieldTypes.TypeUint64];
 

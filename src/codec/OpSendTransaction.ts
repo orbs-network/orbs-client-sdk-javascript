@@ -12,7 +12,7 @@ import * as Protocol from "../protocol/Protocol";
 import * as Keys from "../crypto/Keys";
 import * as Signature from "../crypto/Signature";
 import * as Digest from "../crypto/Digest";
-import { InternalMessage } from "../membuffers/message";
+import { InternalMessage } from "membuffers";
 import { Argument, packedArgumentsDecode, packedArgumentsEncode } from "./Arguments";
 import { Event, packedEventsDecode } from "./Events";
 import { RequestStatus, requestStatusDecode } from "./RequestStatus";

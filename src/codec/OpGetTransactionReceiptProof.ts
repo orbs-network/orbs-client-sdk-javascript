@@ -9,7 +9,7 @@
 import * as Digest from "../crypto/Digest";
 import * as Client from "../protocol/Client";
 import * as Protocol from "../protocol/Protocol";
-import { InternalMessage } from "../membuffers/message";
+import { InternalMessage } from "membuffers";
 import { RequestStatus, requestStatusDecode } from "./RequestStatus";
 import { ExecutionResult, executionResultDecode } from "./ExecutionResult";
 import { Argument, packedArgumentsDecode } from "./Arguments";
