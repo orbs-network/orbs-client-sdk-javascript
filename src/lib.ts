@@ -8,3 +8,4 @@
 
 export * from "./index";
 export { Argument, ArgUint32, ArgUint64, ArgString, ArgBytes } from "./codec/Arguments";
+export { Account } from "./orbs/Account";
