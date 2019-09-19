@@ -31,11 +31,11 @@ describe("Codec contract", () => {
   for (let index = 0; index < contractInput.length; index++) {
     const inputScenario = contractInput[index];
     const outputScenario = contractOutput[index];
-    test(`Test Id: ${inputScenario.Test}`, () => {
+    test(`Test Id: ${inputScenario.Test}`, async () => {
       // SendTransactionRequest
       if (inputScenario.SendTransactionRequest) {
         const signer = new DefaultSigner({publicKey: jsonUnmarshalBase64Bytes(inputScenario.PublicKey), privateKey: jsonUnmarshalBase64Bytes(inputScenario.PrivateKey)});
-        const [encoded, txId] = encodeSendTransactionRequest(
+        const [encoded, txId] = await encodeSendTransactionRequest(
           {
             protocolVersion: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.ProtocolVersion),
             virtualChainId: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.VirtualChainId),
@@ -56,7 +56,7 @@ describe("Codec contract", () => {
       if (inputScenario.RunQueryRequest) {
         const signer = new DefaultSigner({publicKey: jsonUnmarshalBase64Bytes(inputScenario.PublicKey), privateKey: jsonUnmarshalBase64Bytes(inputScenario.PrivateKey)});
 
-        const encoded = encodeRunQueryRequest({
+        const encoded = await encodeRunQueryRequest({
           protocolVersion: jsonUnmarshalNumber(inputScenario.RunQueryRequest.ProtocolVersion),
           virtualChainId: jsonUnmarshalNumber(inputScenario.RunQueryRequest.VirtualChainId),
           timestamp: new Date(inputScenario.RunQueryRequest.Timestamp),
@@ -72,7 +72,7 @@ describe("Codec contract", () => {
 
       // GetTransactionStatusRequest
       if (inputScenario.GetTransactionStatusRequest) {
-        const encoded = encodeGetTransactionStatusRequest({
+        const encoded = await encodeGetTransactionStatusRequest({
           protocolVersion: jsonUnmarshalNumber(inputScenario.GetTransactionStatusRequest.ProtocolVersion),
           virtualChainId: jsonUnmarshalNumber(inputScenario.GetTransactionStatusRequest.VirtualChainId),
           txId: jsonUnmarshalBase64Bytes(inputScenario.GetTransactionStatusRequest.TxId),
@@ -84,7 +84,7 @@ describe("Codec contract", () => {
 
       // GetTransactionReceiptProofRequest
       if (inputScenario.GetTransactionReceiptProofRequest) {
-        const encoded = encodeGetTransactionReceiptProofRequest({
+        const encoded = await encodeGetTransactionReceiptProofRequest({
           protocolVersion: jsonUnmarshalNumber(inputScenario.GetTransactionReceiptProofRequest.ProtocolVersion),
           virtualChainId: jsonUnmarshalNumber(inputScenario.GetTransactionReceiptProofRequest.VirtualChainId),
           txId: jsonUnmarshalBase64Bytes(inputScenario.GetTransactionReceiptProofRequest.TxId),
@@ -96,7 +96,7 @@ describe("Codec contract", () => {
 
       // GetBlockRequest
       if (inputScenario.GetBlockRequest) {
-        const encoded = encodeGetBlockRequest({
+        const encoded = await encodeGetBlockRequest({
           protocolVersion: jsonUnmarshalNumber(inputScenario.GetBlockRequest.ProtocolVersion),
           virtualChainId: jsonUnmarshalNumber(inputScenario.GetBlockRequest.VirtualChainId),
           blockHeight: BigInt(inputScenario.GetBlockRequest.BlockHeight),

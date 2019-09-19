@@ -35,7 +35,7 @@ describe("E2E nodejs", () => {
     const senderClient = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET", new Orbs.DefaultSigner(sender));
 
     // create transfer transaction
-    const [tx, txId] = senderClient.createTransaction("BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(receiver.address)]);
+    const [tx, txId] = await senderClient.createTransaction("BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(receiver.address)]);
 
     // send the transaction
     const transferResponse = await senderClient.sendTransaction(tx);
@@ -64,7 +64,7 @@ describe("E2E nodejs", () => {
     expect(txProofResponse.packedReceipt.byteLength).toBeGreaterThan(10);
 
     // create balance query
-    const query = senderClient.createQuery("BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
+    const query = await senderClient.createQuery("BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
 
     // send the query
     const balanceResponse = await senderClient.sendQuery(query);
@@ -120,7 +120,7 @@ describe("E2E nodejs", () => {
     ];
 
     // create transfer transaction
-    const [deploymentTx, deploymentTxId] = client.createDeployTransaction("Inc", Orbs.PROCESSOR_TYPE_NATIVE, ...sources);
+    const [deploymentTx, deploymentTxId] = await client.createDeployTransaction("Inc", Orbs.PROCESSOR_TYPE_NATIVE, ...sources);
 
     // send the transaction
     const deploymentResponse = await client.sendTransaction(deploymentTx);
@@ -131,7 +131,7 @@ describe("E2E nodejs", () => {
     expect(deploymentResponse.transactionStatus).toEqual("COMMITTED");
 
     // create transfer transaction
-    const [tx, txId] = client.createTransaction("BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(receiver.address)]);
+    const [tx, txId] = await client.createTransaction("BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(receiver.address)]);
   
     // send the transaction
     const transferResponse = await client.sendTransaction(tx);
@@ -142,7 +142,7 @@ describe("E2E nodejs", () => {
     expect(transferResponse.transactionStatus).toEqual("COMMITTED");
   
     // create balance query
-    const query = client.createQuery("BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
+    const query = await client.createQuery("BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
   
     // send the query
     const balanceResponse = await client.sendQuery(query);

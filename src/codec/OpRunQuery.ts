@@ -37,7 +37,7 @@ export interface RunQueryResponse {
   blockTimestamp: Date;
 }
 
-export function encodeRunQueryRequest(req: RunQueryRequest, signer: Signer): Uint8Array {
+export async function encodeRunQueryRequest(req: RunQueryRequest, signer: Signer): Promise<Uint8Array> {
   // validate
   if (req.protocolVersion != 1) {
     throw new Error(`expected ProtocolVersion 1, ${req.protocolVersion} given`);
@@ -59,7 +59,7 @@ export function encodeRunQueryRequest(req: RunQueryRequest, signer: Signer): Uin
           scheme: 0,
           eddsa: new Protocol.EdDSA01SignerBuilder({
             networkType: networkType,
-            signerPublicKey: signer.getPublicKey(),
+            signerPublicKey: await signer.getPublicKey(),
           }),
         }),
         contractName: req.contractName,

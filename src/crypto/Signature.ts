@@ -12,8 +12,8 @@ import elliptic from "elliptic";
 export const ED25519_SIGNATURE_SIZE_BYTES = 64;
 
 export interface Signer {
-  getPublicKey(): Uint8Array;
-  signEd25519(data: Uint8Array): Uint8Array;
+  getPublicKey(): Promise<Uint8Array>;
+  signEd25519(data: Uint8Array): Promise<Uint8Array>;
 }
 
 export class DefaultSigner implements Signer {
@@ -32,11 +32,11 @@ export class DefaultSigner implements Signer {
     }
   }
 
-  signEd25519(data: Uint8Array): Uint8Array {
+  async signEd25519(data: Uint8Array): Promise<Uint8Array> {
       return signEd25519(this.fields.privateKey, data);
   }
 
-  getPublicKey(): Uint8Array {
+  async getPublicKey(): Promise<Uint8Array> {
       return this.fields.publicKey;
   }
 }

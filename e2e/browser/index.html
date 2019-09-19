@@ -48,46 +48,42 @@
         document.querySelector("#receiver-account-id").innerText = window.receiverAccount.publicKey;
       }
 
-      function CreateTx() {
-        const [tx, txId] = window.orbsClient.createTransaction("BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(window.receiverAccount.address)]);
+      async function CreateTx() {
+        const [tx, txId] = await window.orbsClient.createTransaction("BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(window.receiverAccount.address)]);
         window.tx = tx;
         window.txId = txId;
         document.querySelector("#tx-id").innerText = txId;
       }
 
-      function SendTx() {
-        window.orbsClient.sendTransaction(window.tx).then(transferResponse => {
-          document.querySelector("#transfer-response-request-status").innerText = transferResponse.requestStatus;
-          document.querySelector("#transfer-response-execution-result").innerText = transferResponse.executionResult;
-          document.querySelector("#transfer-response-transaction-status").innerText = transferResponse.transactionStatus;
-        });
+      async function SendTx() {
+        const transferResponse = await window.orbsClient.sendTransaction(window.tx);
+        document.querySelector("#transfer-response-request-status").innerText = transferResponse.requestStatus;
+        document.querySelector("#transfer-response-execution-result").innerText = transferResponse.executionResult;
+        document.querySelector("#transfer-response-transaction-status").innerText = transferResponse.transactionStatus;
       }
 
-      function GetTxStatus() {
-        window.orbsClient.getTransactionStatus(window.txId).then(statusResponse => {
-          document.querySelector("#status-response-request-status").innerText = statusResponse.requestStatus;
-          document.querySelector("#status-response-execution-result").innerText = statusResponse.executionResult;
-          document.querySelector("#status-response-transaction-status").innerText = statusResponse.transactionStatus;
-        });
+      async function GetTxStatus() {
+        const statusResponse = await window.orbsClient.getTransactionStatus(window.txId);
+        document.querySelector("#status-response-request-status").innerText = statusResponse.requestStatus;
+        document.querySelector("#status-response-execution-result").innerText = statusResponse.executionResult;
+        document.querySelector("#status-response-transaction-status").innerText = statusResponse.transactionStatus;
       }
 
-      function GetTxReceiptProof() {
-        window.orbsClient.getTransactionReceiptProof(window.txId).then(txProofResponse => {
-          document.querySelector("#proof-response-request-status").innerText = txProofResponse.requestStatus;
-          document.querySelector("#proof-response-execution-result").innerText = txProofResponse.executionResult;
-          document.querySelector("#proof-response-transaction-status").innerText = txProofResponse.transactionStatus;
-          document.querySelector("#proof-response-packedproof-bytelength").innerText = txProofResponse.packedProof.byteLength;
-          document.querySelector("#proof-response-packedreceipt-bytelength").innerText = txProofResponse.packedReceipt.byteLength;
-        });
+      async function GetTxReceiptProof() {
+        const txProofResponse = await window.orbsClient.getTransactionReceiptProof(window.txId);
+        document.querySelector("#proof-response-request-status").innerText = txProofResponse.requestStatus;
+        document.querySelector("#proof-response-execution-result").innerText = txProofResponse.executionResult;
+        document.querySelector("#proof-response-transaction-status").innerText = txProofResponse.transactionStatus;
+        document.querySelector("#proof-response-packedproof-bytelength").innerText = txProofResponse.packedProof.byteLength;
+        document.querySelector("#proof-response-packedreceipt-bytelength").innerText = txProofResponse.packedReceipt.byteLength;
       }
 
-      function SendQuery() {
-        const query = window.orbsClient.createQuery("BenchmarkToken", "getBalance", [Orbs.argAddress(window.receiverAccount.address)]);
-        window.orbsClient.sendQuery(query).then(balanceResponse => {
-          document.querySelector("#balance-response-request-status").innerText = balanceResponse.requestStatus;
-          document.querySelector("#balance-response-execution-result").innerText = balanceResponse.executionResult;
-          document.querySelector("#balance-response-value").innerText = balanceResponse.outputArguments[0].value;
-        });
+      async function SendQuery() {
+        const query = await window.orbsClient.createQuery("BenchmarkToken", "getBalance", [Orbs.argAddress(window.receiverAccount.address)]);
+        const balanceResponse = await window.orbsClient.sendQuery(query);
+        document.querySelector("#balance-response-request-status").innerText = balanceResponse.requestStatus;
+        document.querySelector("#balance-response-execution-result").innerText = balanceResponse.executionResult;
+        document.querySelector("#balance-response-value").innerText = balanceResponse.outputArguments[0].value;
       }
     </script>
   </head>

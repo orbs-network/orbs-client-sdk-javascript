@@ -41,7 +41,7 @@ export interface SendTransactionResponse {
   blockTimestamp: Date;
 }
 
-export function encodeSendTransactionRequest(req: SendTransactionRequest, signer: Signer): [Uint8Array, Uint8Array] {
+export async function encodeSendTransactionRequest(req: SendTransactionRequest, signer: Signer): Promise<[Uint8Array, Uint8Array]> {
   // validate
   if (req.protocolVersion != 1) {
     throw new Error(`expected ProtocolVersion 1, ${req.protocolVersion} given`);
@@ -67,7 +67,7 @@ export function encodeSendTransactionRequest(req: SendTransactionRequest, signer
           scheme: 0,
           eddsa: new Protocol.EdDSA01SignerBuilder({
             networkType: networkType,
-            signerPublicKey: signer.getPublicKey(),
+            signerPublicKey: await signer.getPublicKey(),
           }),
         }),
         contractName: req.contractName,
@@ -87,7 +87,7 @@ export function encodeSendTransactionRequest(req: SendTransactionRequest, signer
 
   // sign
   const txHash = Digest.calcTxHash(transactionBuf);
-  const sig = signer.signEd25519(txHash);
+  const sig = await signer.signEd25519(txHash);
   signedTransactionMsg.setBytes(1, sig);
 
   // return

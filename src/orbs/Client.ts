@@ -32,8 +32,8 @@ export const PROCESSOR_TYPE_JAVASCRIPT = 2;
 export class Client {
   constructor(private endpoint: string, private virtualChainId: number, private networkType: NetworkType, private signer: Signer) {}
 
-  createTransaction(contractName: string, methodName: string, inputArguments: Argument[]): [Uint8Array, string] {
-    const [req, rawTxId] = encodeSendTransactionRequest(
+  async createTransaction(contractName: string, methodName: string, inputArguments: Argument[]): Promise<[Uint8Array, string]> {
+    const [req, rawTxId] = await encodeSendTransactionRequest(
       {
         protocolVersion: PROTOCOL_VERSION,
         virtualChainId: this.virtualChainId,
@@ -48,7 +48,7 @@ export class Client {
     return [req, Encoding.encodeHex(rawTxId)];
   }
 
-  createDeployTransaction(contractName: string, processorType: number, ...sources: Uint8Array[]): [Uint8Array, string] {
+  async createDeployTransaction(contractName: string, processorType: number, ...sources: Uint8Array[]): Promise<[Uint8Array, string]> {
     const inputArguments: Argument[] = [
       argString(contractName),
       argUint32(processorType),
@@ -58,7 +58,7 @@ export class Client {
     return this.createTransaction("_Deployments", "deployService", inputArguments);
   }
 
-  createQuery(contractName: string, methodName: string, inputArguments: Argument[]): Uint8Array {
+  async createQuery(contractName: string, methodName: string, inputArguments: Argument[]): Promise<Uint8Array> {
     return encodeRunQueryRequest({
       protocolVersion: PROTOCOL_VERSION,
       virtualChainId: this.virtualChainId,
