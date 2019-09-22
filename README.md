@@ -62,7 +62,25 @@
    const response = await client.getTransactionStatus(txId);
    ```
 
-5. Call a smart contract method:
+5. Deploy a smart contract:
+
+   ```js
+   // Load the content of the contract file(s) that we want to deploy
+   // NOTE : These two file are part of the same contract. 
+   const sources = [
+         readFileSync(`${__dirname}/../contract/increment_base.go`),
+         readFileSync(`${__dirname}/../contract/increment_functions.go`)
+   ];
+   
+   // Build The deployment query
+   // Notice that in this case the contract's name will be "Inc"
+   const [deploymentTx, deploymentTxId] = client.createDeployTransaction(sender.publicKey, sender.privateKey, "Inc", Orbs.PROCESSOR_TYPE_NATIVE, ...sources);
+   
+   // Execute the deployment query
+   const deploymentResponse = await client.sendTransaction(deploymentTx);
+   ```
+
+6. Call a smart contract method:
 
    ```js
    const query = client.createQuery(receiver.publicKey, "BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
