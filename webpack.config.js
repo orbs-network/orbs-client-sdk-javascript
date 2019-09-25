@@ -61,4 +61,29 @@ const nodeConfig = {
   },
 };
 
-module.exports = [webConfig, nodeConfig];
+const customCodecConfig = {
+  target: 'node',
+  mode: production ? "production" : "development",
+  devtool: production ? "" : "inline-source-map",
+  entry: "./src/codec/Arguments.ts",
+  output: {
+    path: path.join(__dirname, "dist"),
+    filename: `arguments.js`,
+    library: libraryName,
+    libraryTarget: "umd",
+    umdNamedDefine: true
+  },
+  resolve: {
+    extensions: [".js", ".ts"],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        loaders: ["babel-loader"],
+      },
+    ],
+  },
+};
+
+module.exports = [webConfig, nodeConfig, customCodecConfig];
