@@ -20,11 +20,11 @@ describe("Codec contract", () => {
   let contractInput: any;
   let contractOutput: any;
   try {
-    contractInput = require("./test/input.json");
-    contractOutput = require("./test/output.json");
+    contractInput = require("../../contract/test/codec/input.json");
+    contractOutput = require("../../contract/test/codec/output.json");
   } catch (e) {
     throw new Error(
-      `Contract spec input.json and output.json not found`,
+      `Contract spec input.json and output.json not found in ROOT/contract/test/codec\nThese files are cloned from the reference implementation found at\nhttps://github.com/orbs-network/orbs-client-sdk-go.git during the prepare step of this package`,
     );
   }
 
@@ -34,7 +34,7 @@ describe("Codec contract", () => {
     test(`Test Id: ${inputScenario.Test}`, async () => {
       // SendTransactionRequest
       if (inputScenario.SendTransactionRequest) {
-        const signer = new DefaultSigner({publicKey: jsonUnmarshalBase64Bytes(inputScenario.PublicKey), privateKey: jsonUnmarshalBase64Bytes(inputScenario.PrivateKey)});
+        const signer = new DefaultSigner({publicKey: jsonUnmarshalBase64Bytes(inputScenario.SendTransactionRequest.PublicKey), privateKey: jsonUnmarshalBase64Bytes(inputScenario.PrivateKey)});
         const [encoded, txId] = await encodeSendTransactionRequest(
           {
             protocolVersion: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.ProtocolVersion),
@@ -54,7 +54,9 @@ describe("Codec contract", () => {
 
       // RunQueryRequest
       if (inputScenario.RunQueryRequest) {
-        const signer = new DefaultSigner({publicKey: jsonUnmarshalBase64Bytes(inputScenario.PublicKey), privateKey: jsonUnmarshalBase64Bytes(inputScenario.PrivateKey)});
+        // we don't have it in the source files but the signer can't be instantiated withouth the key
+        const stubPrivateKey = "k+kZmGoiR3/aAWeJzKMMuEGhNWUJOHFPhfAACmUHa9TfwGxb4kpnre6As1q08Ue7GjXFX/he2mn0Dvgnvd7Bcw==";
+        const signer = new DefaultSigner({publicKey: jsonUnmarshalBase64Bytes(inputScenario.RunQueryRequest.PublicKey), privateKey: jsonUnmarshalBase64Bytes(stubPrivateKey)});
 
         const encoded = await encodeRunQueryRequest({
           protocolVersion: jsonUnmarshalNumber(inputScenario.RunQueryRequest.ProtocolVersion),
