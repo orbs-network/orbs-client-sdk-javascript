@@ -11,6 +11,36 @@ import elliptic from "elliptic";
 
 export const ED25519_SIGNATURE_SIZE_BYTES = 64;
 
+export interface Signer {
+  getPublicKey(): Promise<Uint8Array>;
+  signEd25519(data: Uint8Array): Promise<Uint8Array>;
+}
+
+export class LocalSigner implements Signer {
+  constructor(
+      private fields: {
+          publicKey: Uint8Array;
+          privateKey: Uint8Array;
+      }
+  ) {
+    if (this.fields.publicKey.byteLength != Keys.ED25519_PUBLIC_KEY_SIZE_BYTES) {
+      throw new Error(`expected PublicKey length ${Keys.ED25519_PUBLIC_KEY_SIZE_BYTES}, ${this.fields.publicKey.byteLength} given`);
+    }
+
+    if (this.fields.privateKey.byteLength != Keys.ED25519_PRIVATE_KEY_SIZE_BYTES) {
+      throw new Error(`expected PublicKey length ${Keys.ED25519_PRIVATE_KEY_SIZE_BYTES}, ${this.fields.privateKey.byteLength} given`);
+    }
+  }
+
+  async signEd25519(data: Uint8Array): Promise<Uint8Array> {
+      return signEd25519(this.fields.privateKey, data);
+  }
+
+  async getPublicKey(): Promise<Uint8Array> {
+      return this.fields.publicKey;
+  }
+}
+
 export function signEd25519(privateKey: Uint8Array, data: Uint8Array): Uint8Array {
   if (privateKey.byteLength != Keys.ED25519_PRIVATE_KEY_SIZE_BYTES) {
     throw new Error(`cannot sign with ed25519, private key invalid with length ${privateKey.byteLength}`);
