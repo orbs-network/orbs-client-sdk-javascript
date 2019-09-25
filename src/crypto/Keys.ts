@@ -7,6 +7,7 @@
  */
 
 import elliptic from "elliptic";
+import getRandomValues from "get-random-values";
 
 export const ED25519_PUBLIC_KEY_SIZE_BYTES = 32;
 export const ED25519_PRIVATE_KEY_SIZE_BYTES = 64;
@@ -18,7 +19,6 @@ export interface Ed25519KeyPair {
 
 export function generateEd25519Key(): Ed25519KeyPair {
   // generate secure random
-  const getRandomValues = require("get-random-values");
   const secureRandom = new Uint8Array(ED25519_PRIVATE_KEY_SIZE_BYTES - ED25519_PUBLIC_KEY_SIZE_BYTES);
   getRandomValues(secureRandom);
 

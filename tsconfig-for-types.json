@@ -11,7 +11,7 @@
     "downlevelIteration": true,
     "emitDeclarationOnly": true,
     "lib": ["esnext"],
-    "types": ["node", "jest"]
+    "types": []
   },
   "include": ["src/lib.ts", "src/types/**/*.ts"]
 }
