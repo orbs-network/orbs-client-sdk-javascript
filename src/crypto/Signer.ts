@@ -16,7 +16,7 @@ export interface Signer {
   signEd25519(data: Uint8Array): Promise<Uint8Array>;
 }
 
-export class DefaultSigner implements Signer {
+export class LocalSigner implements Signer {
   constructor(
       private fields: {
           publicKey: Uint8Array;

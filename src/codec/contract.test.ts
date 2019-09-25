@@ -14,7 +14,7 @@ import { decodeGetTransactionReceiptProofResponse, encodeGetTransactionReceiptPr
 import { decodeGetTransactionStatusResponse, encodeGetTransactionStatusRequest } from "./OpGetTransactionStatus";
 import { decodeRunQueryResponse, encodeRunQueryRequest } from "./OpRunQuery";
 import { decodeSendTransactionResponse, encodeSendTransactionRequest } from "./OpSendTransaction";
-import { DefaultSigner } from "../crypto/Signer";
+import { LocalSigner } from "../crypto/Signer";
 
 describe("Codec contract", () => {
   let contractInput: any;
@@ -34,7 +34,7 @@ describe("Codec contract", () => {
     test(`Test Id: ${inputScenario.Test}`, async () => {
       // SendTransactionRequest
       if (inputScenario.SendTransactionRequest) {
-        const signer = new DefaultSigner({publicKey: jsonUnmarshalBase64Bytes(inputScenario.SendTransactionRequest.PublicKey), privateKey: jsonUnmarshalBase64Bytes(inputScenario.PrivateKey)});
+        const signer = new LocalSigner({publicKey: jsonUnmarshalBase64Bytes(inputScenario.SendTransactionRequest.PublicKey), privateKey: jsonUnmarshalBase64Bytes(inputScenario.PrivateKey)});
         const [encoded, txId] = await encodeSendTransactionRequest(
           {
             protocolVersion: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.ProtocolVersion),
@@ -56,7 +56,7 @@ describe("Codec contract", () => {
       if (inputScenario.RunQueryRequest) {
         // we don't have it in the source files but the signer can't be instantiated withouth the key
         const stubPrivateKey = "k+kZmGoiR3/aAWeJzKMMuEGhNWUJOHFPhfAACmUHa9TfwGxb4kpnre6As1q08Ue7GjXFX/he2mn0Dvgnvd7Bcw==";
-        const signer = new DefaultSigner({publicKey: jsonUnmarshalBase64Bytes(inputScenario.RunQueryRequest.PublicKey), privateKey: jsonUnmarshalBase64Bytes(stubPrivateKey)});
+        const signer = new LocalSigner({publicKey: jsonUnmarshalBase64Bytes(inputScenario.RunQueryRequest.PublicKey), privateKey: jsonUnmarshalBase64Bytes(stubPrivateKey)});
 
         const encoded = await encodeRunQueryRequest({
           protocolVersion: jsonUnmarshalNumber(inputScenario.RunQueryRequest.ProtocolVersion),

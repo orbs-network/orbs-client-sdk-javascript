@@ -30,7 +30,7 @@
         try {
           const endpoint = document.querySelector("#endpoint").value;
           const virtualChainId = document.querySelector("#virtual-chain-id").value;
-          window.orbsClient = new Orbs.Client(endpoint, virtualChainId, "TEST_NET", new Orbs.DefaultSigner(window.senderAccount));
+          window.orbsClient = new Orbs.Client(endpoint, virtualChainId, "TEST_NET", new Orbs.LocalSigner(window.senderAccount));
           result = "Created";
         } catch (e) {
           result = "Failed";

@@ -14,4 +14,4 @@ export { calcClientAddressOfEd25519PublicKey, contractNameToAddressAsBytes } fro
 export { encodeHex, decodeHex } from "./crypto/Encoding";
 export { argUint32, argUint64, argString, argBytes, argAddress } from "./codec/Arguments";
 export { NetworkType } from "./codec/NetworkType";
-export { DefaultSigner } from "./crypto/Signer";
+export { LocalSigner } from "./crypto/Signer";

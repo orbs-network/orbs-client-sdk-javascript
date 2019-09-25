@@ -32,7 +32,7 @@ describe("E2E nodejs", () => {
 
     // create client
     const endpoint = gammeDriver.getEndpoint();
-    const senderClient = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET", new Orbs.DefaultSigner(sender));
+    const senderClient = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET", new Orbs.LocalSigner(sender));
 
     // create transfer transaction
     const [tx, txId] = await senderClient.createTransaction("BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(receiver.address)]);
@@ -91,7 +91,7 @@ describe("E2E nodejs", () => {
   test("TextualError", async () => {
     // create client
     const endpoint = gammeDriver.getEndpoint();
-    const client = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET", new Orbs.DefaultSigner(Orbs.createAccount()));
+    const client = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET", new Orbs.LocalSigner(Orbs.createAccount()));
 
     // send a corrupt transaction
     let error;
@@ -112,7 +112,7 @@ describe("E2E nodejs", () => {
 
     // create client
     const endpoint = gammeDriver.getEndpoint();
-    const client = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET", new Orbs.DefaultSigner(sender));
+    const client = new Orbs.Client(endpoint, VIRTUAL_CHAIN_ID, "TEST_NET", new Orbs.LocalSigner(sender));
 
     const sources = [
       readFileSync(`${__dirname}/../contract/increment_base.go`),
