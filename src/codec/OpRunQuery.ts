@@ -8,15 +8,13 @@
 
 import * as Client from "../protocol/Client";
 import * as Protocol from "../protocol/Protocol";
-import * as Keys from "../crypto/Keys";
-import * as Signature from "../crypto/Signature";
 import { InternalMessage } from "membuffers";
 import { NetworkType, networkTypeEncode } from "./NetworkType";
 import { RequestStatus, requestStatusDecode } from "./RequestStatus";
 import { ExecutionResult, executionResultDecode } from "./ExecutionResult";
 import { Argument, packedArgumentsDecode, packedArgumentsEncode } from "./Arguments";
 import { Event, packedEventsDecode } from "./Events";
-import { Signer } from "../crypto/Signature";
+import { Signer } from "../crypto/Signer";
 
 export interface RunQueryRequest {
   protocolVersion: number;

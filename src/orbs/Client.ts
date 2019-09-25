@@ -15,7 +15,7 @@ import { decodeGetTransactionStatusResponse, encodeGetTransactionStatusRequest, 
 import { decodeGetTransactionReceiptProofResponse, encodeGetTransactionReceiptProofRequest, GetTransactionReceiptProofResponse } from "../codec/OpGetTransactionReceiptProof";
 import { decodeGetBlockResponse, encodeGetBlockRequest, GetBlockResponse } from "../codec/OpGetBlock";
 import axios, { AxiosResponse } from "axios";
-import { Signer } from "../crypto/Signature";
+import { Signer } from "../crypto/Signer";
 import { getTextDecoder } from "membuffers";
 
 const PROTOCOL_VERSION = 1;

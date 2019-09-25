@@ -10,7 +10,6 @@ import { NetworkType, networkTypeEncode } from "./NetworkType";
 import * as Client from "../protocol/Client";
 import * as Protocol from "../protocol/Protocol";
 import * as Keys from "../crypto/Keys";
-import * as Signature from "../crypto/Signature";
 import * as Digest from "../crypto/Digest";
 import { InternalMessage } from "membuffers";
 import { Argument, packedArgumentsDecode, packedArgumentsEncode } from "./Arguments";
@@ -18,7 +17,7 @@ import { Event, packedEventsDecode } from "./Events";
 import { RequestStatus, requestStatusDecode } from "./RequestStatus";
 import { ExecutionResult, executionResultDecode } from "./ExecutionResult";
 import { TransactionStatus, transactionStatusDecode } from "./TransactionStatus";
-import { Signer } from "../crypto/Signature";
+import { Signer, ED25519_SIGNATURE_SIZE_BYTES } from "../crypto/Signer";
 
 export interface SendTransactionRequest {
   protocolVersion: number;
@@ -74,7 +73,7 @@ export async function encodeSendTransactionRequest(req: SendTransactionRequest, 
         methodName: req.methodName,
         inputArgumentArray: inputArgumentArray,
       }),
-      signature: new Uint8Array(Signature.ED25519_SIGNATURE_SIZE_BYTES),
+      signature: new Uint8Array(ED25519_SIGNATURE_SIZE_BYTES),
     }),
   });
 

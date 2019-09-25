@@ -14,7 +14,7 @@ import { decodeGetTransactionReceiptProofResponse, encodeGetTransactionReceiptPr
 import { decodeGetTransactionStatusResponse, encodeGetTransactionStatusRequest } from "./OpGetTransactionStatus";
 import { decodeRunQueryResponse, encodeRunQueryRequest } from "./OpRunQuery";
 import { decodeSendTransactionResponse, encodeSendTransactionRequest } from "./OpSendTransaction";
-import { DefaultSigner } from "../crypto/Signature";
+import { DefaultSigner } from "../crypto/Signer";
 
 describe("Codec contract", () => {
   let contractInput: any;
