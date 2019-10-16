@@ -2,7 +2,10 @@
 
 > Client SDK for the Orbs blockchain in JavaScript and TypeScript for Node.js and browsers
 
-## Installation 
+This page describes SDK API `v2.0.0`, for upgrade from `v1.x` please [follow the instructions](https://github.com/orbs-network/orbs-client-sdk-javascript/pull/21).
+
+## Installation
+
 ### Node.js
 
 1. Install the NPM package:
@@ -46,13 +49,13 @@
 
    ```js
    const virtualChainId = 42;
-   const client = new Orbs.Client("http://node-endpoint.com", virtualChainId, "TEST_NET");
+   const client = new Orbs.Client("http://node-endpoint.com", virtualChainId, "TEST_NET", new Orbs.LocalSigner(sender));
    ```
 
 3. Send a transaction:
 
    ```js
-   const [tx, txId] = client.createTransaction(sender.publicKey, sender.privateKey, "BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(receiver.address)]);
+   const [tx, txId] = await client.createTransaction( "BenchmarkToken", "transfer", [Orbs.argUint64(10), Orbs.argAddress(receiver.address)]);
    const response = await client.sendTransaction(tx);
    ```
 
@@ -71,11 +74,11 @@
          readFileSync(`${__dirname}/../contract/increment_base.go`),
          readFileSync(`${__dirname}/../contract/increment_functions.go`)
    ];
-   
+
    // Build The deployment query
    // Notice that in this case the contract's name will be "Inc"
-   const [deploymentTx, deploymentTxId] = client.createDeployTransaction(sender.publicKey, sender.privateKey, "Inc", Orbs.PROCESSOR_TYPE_NATIVE, ...sources);
-   
+   const [deploymentTx, deploymentTxId] = await client.createDeployTransaction("Inc", Orbs.PROCESSOR_TYPE_NATIVE, ...sources);
+
    // Execute the deployment query
    const deploymentResponse = await client.sendTransaction(deploymentTx);
    ```
@@ -83,7 +86,7 @@
 6. Call a smart contract method:
 
    ```js
-   const query = client.createQuery(receiver.publicKey, "BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
+   const query = await client.createQuery("BenchmarkToken", "getBalance", [Orbs.argAddress(receiver.address)]);
    const response = await client.sendQuery(query);
    ```
 
