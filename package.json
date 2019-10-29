@@ -1,6 +1,6 @@
 {
   "name": "orbs-client-sdk",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "orbs-client-sdk",
   "main": "dist/orbs-client-sdk.js",
   "browser": "dist/orbs-client-sdk-web.js",
@@ -60,6 +60,6 @@
     "fast-text-encoding": "^1.0.0",
     "get-random-values": "^1.2.0",
     "hash.js": "^1.1.5",
-    "membuffers": "0.0.2"
+    "membuffers": "0.3.4"
   }
 }
