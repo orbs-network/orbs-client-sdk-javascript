@@ -12,6 +12,6 @@ export { RequestStatus } from "./codec/RequestStatus";
 export { Client, PROCESSOR_TYPE_NATIVE, PROCESSOR_TYPE_JAVASCRIPT } from "./orbs/Client";
 export { calcClientAddressOfEd25519PublicKey, contractNameToAddressAsBytes } from "./crypto/Digest";
 export { encodeHex, decodeHex } from "./crypto/Encoding";
-export { argUint32, argUint64, argString, argBytes, argAddress } from "./codec/Arguments";
+export { argUint32, argUint64, argString, argBytes, argBool, argUint256, argBytes20, argBytes32, argAddress } from "./codec/Arguments";
 export { NetworkType } from "./codec/NetworkType";
 export { LocalSigner } from "./crypto/Signer";

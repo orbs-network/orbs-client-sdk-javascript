@@ -10,7 +10,12 @@ import { addressToBytes } from "..";
 import { InternalMessage } from "membuffers";
 import * as Protocol from "../protocol/Protocol";
 
-export type Argument = ArgUint32 | ArgUint64 | ArgString | ArgBytes;
+export type Argument = ArgBool | ArgUint32 | ArgUint64 | ArgUint256 | ArgString | ArgBytes | ArgBytes20 | ArgBytes32;
+
+export type ArgBool = {
+  type: "bool";
+  value: boolean;
+};
 
 export type ArgUint32 = {
   type: "uint32";
@@ -19,6 +24,11 @@ export type ArgUint32 = {
 
 export type ArgUint64 = {
   type: "uint64";
+  value: bigint;
+};
+
+export type ArgUint256 = {
+  type: "uint256";
   value: bigint;
 };
 
@@ -32,6 +42,21 @@ export type ArgBytes = {
   value: Uint8Array;
 };
 
+export type ArgBytes20 = {
+  type: "bytes20";
+  value: Uint8Array;
+};
+
+export type ArgBytes32 = {
+  type: "bytes32";
+  value: Uint8Array;
+};
+
+export const argBool = (value: boolean): ArgBool => ({
+  type: "bool",
+  value,
+});
+
 export const argUint32 = (value: number): ArgUint32 => ({
   type: "uint32",
   value,
@@ -40,6 +65,11 @@ export const argUint32 = (value: number): ArgUint32 => ({
 export const argUint64 = (value: bigint | number): ArgUint64 => ({
   type: "uint64",
   value: typeof value === "number" ? BigInt(value) : value,
+});
+
+export const argUint256 = (value: bigint): ArgUint256 => ({
+  type: "uint256",
+  value,
 });
 
 export const argString = (value: string): ArgString => ({
@@ -52,28 +82,53 @@ export const argBytes = (value: Uint8Array): ArgBytes => ({
   value,
 });
 
+export const argBytes20 = (value: Uint8Array): ArgBytes20 => ({
+  type: "bytes20",
+  value,
+});
+
+export const argBytes32 = (value: Uint8Array): ArgBytes32 => ({
+  type: "bytes32",
+  value,
+});
+
 export const argAddress = (address: string) => argBytes(addressToBytes(address));
 
 function argumentsBuilders(args: Argument[]): Protocol.ArgumentBuilder[] {
   const res: Protocol.ArgumentBuilder[] = [];
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
+    let type = -1;
     switch (arg.type) {
       case "uint32":
-        res.push(new Protocol.ArgumentBuilder({ type: 0, value: arg.value }));
+        type = Protocol.ARGUMENT_TYPE_UINT_32_VALUE;
         break;
       case "uint64":
-        res.push(new Protocol.ArgumentBuilder({ type: 1, value: arg.value }));
+        type = Protocol.ARGUMENT_TYPE_UINT_64_VALUE;
         break;
       case "string":
-        res.push(new Protocol.ArgumentBuilder({ type: 2, value: arg.value }));
+        type = Protocol.ARGUMENT_TYPE_STRING_VALUE;
         break;
       case "bytes":
-        res.push(new Protocol.ArgumentBuilder({ type: 3, value: arg.value }));
+        type = Protocol.ARGUMENT_TYPE_BYTES_VALUE;
+        break;
+      case "bool":
+        type = Protocol.ARGUMENT_TYPE_BOOL_VALUE;
+        break;
+      case "uint256":
+        type = Protocol.ARGUMENT_TYPE_UINT_256_VALUE;
+        break;
+      case "bytes20":
+        type = Protocol.ARGUMENT_TYPE_BYTES_20_VALUE;
+        break;
+      case "bytes32":
+        type = Protocol.ARGUMENT_TYPE_BYTES_32_VALUE;
         break;
       default:
         throw new Error(`Argument unknown type: ${arg}`);
     }
+    res.push(new Protocol.ArgumentBuilder({ type: type, value: arg.value }));
+
   }
   return res;
 }
@@ -99,21 +154,37 @@ export function packedArgumentsDecode(buf: Uint8Array): Argument[] {
     const argumentMsg = new InternalMessage(argumentBuf, argumentBufLength, Protocol.Argument_Scheme, Protocol.Argument_Unions);
     const type = argumentMsg.getUnionIndex(0, 0);
     switch (type) {
-      case 0:
+      case Protocol.ARGUMENT_TYPE_UINT_32_VALUE:
         const [, uint32Off] = argumentMsg.isUnionIndex(0, 0, 0);
         res.push(argUint32(argumentMsg.getUint32InOffset(uint32Off)));
         break;
-      case 1:
+      case Protocol.ARGUMENT_TYPE_UINT_64_VALUE:
         const [, uint64Off] = argumentMsg.isUnionIndex(0, 0, 1);
         res.push(argUint64(argumentMsg.getUint64InOffset(uint64Off)));
         break;
-      case 2:
+      case Protocol.ARGUMENT_TYPE_STRING_VALUE:
         const [, stringOff] = argumentMsg.isUnionIndex(0, 0, 2);
         res.push(argString(argumentMsg.getStringInOffset(stringOff)));
         break;
-      case 3:
+      case Protocol.ARGUMENT_TYPE_BYTES_VALUE:
         const [, bytesOff] = argumentMsg.isUnionIndex(0, 0, 3);
         res.push(argBytes(argumentMsg.getBytesInOffset(bytesOff)));
+        break;
+      case Protocol.ARGUMENT_TYPE_BOOL_VALUE:
+        const [, boolOff] = argumentMsg.isUnionIndex(0, 0, 4);
+        res.push(argBool(argumentMsg.getBoolInOffset(boolOff)));
+        break;
+      case Protocol.ARGUMENT_TYPE_UINT_256_VALUE:
+        const [, uint256Off] = argumentMsg.isUnionIndex(0, 0, 5);
+        res.push(argUint256(argumentMsg.getUint256InOffset(uint256Off)));
+        break;
+      case Protocol.ARGUMENT_TYPE_BYTES_20_VALUE:
+        const [, bytes20Off] = argumentMsg.isUnionIndex(0, 0, 6);
+        res.push(argBytes20(argumentMsg.getBytes20InOffset(bytes20Off)));
+        break;
+      case Protocol.ARGUMENT_TYPE_BYTES_32_VALUE:
+        const [, bytes32Off] = argumentMsg.isUnionIndex(0, 0, 7);
+        res.push(argBytes32(argumentMsg.getBytes32InOffset(bytes32Off)));
         break;
       default:
         throw new Error(`received argument ${index} has unknown type: ${type}`);

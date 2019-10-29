@@ -7,14 +7,14 @@
  */
 
 import "../matcher-extensions";
-import { argBytes, argString, argUint32, argUint64, Argument } from "./Arguments";
+import { argBytes, argString, argUint32, argUint64, argBool, argUint256, argBytes20, argBytes32, Argument } from "./Arguments";
 import { Event } from "./Events";
 import { BlockTransaction, decodeGetBlockResponse, encodeGetBlockRequest } from "./OpGetBlock";
 import { decodeGetTransactionReceiptProofResponse, encodeGetTransactionReceiptProofRequest } from "./OpGetTransactionReceiptProof";
 import { decodeGetTransactionStatusResponse, encodeGetTransactionStatusRequest } from "./OpGetTransactionStatus";
 import { decodeRunQueryResponse, encodeRunQueryRequest } from "./OpRunQuery";
 import { decodeSendTransactionResponse, encodeSendTransactionRequest } from "./OpSendTransaction";
-import { LocalSigner } from "../crypto/Signer";
+import { LocalSigner } from "..";
 
 describe("Codec contract", () => {
   let contractInput: any;
@@ -35,16 +35,17 @@ describe("Codec contract", () => {
       // SendTransactionRequest
       if (inputScenario.SendTransactionRequest) {
         const signer = new LocalSigner({publicKey: jsonUnmarshalBase64Bytes(inputScenario.SendTransactionRequest.PublicKey), privateKey: jsonUnmarshalBase64Bytes(inputScenario.PrivateKey)});
+        const req = {
+          protocolVersion: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.ProtocolVersion),
+          virtualChainId: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.VirtualChainId),
+          timestamp: new Date(inputScenario.SendTransactionRequest.Timestamp),
+          networkType: inputScenario.SendTransactionRequest.NetworkType,
+          contractName: inputScenario.SendTransactionRequest.ContractName,
+          methodName: inputScenario.SendTransactionRequest.MethodName,
+          inputArguments: jsonUnmarshalArguments(inputScenario.SendTransactionRequest.InputArguments, inputScenario.SendTransactionRequest.InputArgumentsTypes),
+        };
         const [encoded, txId] = await encodeSendTransactionRequest(
-          {
-            protocolVersion: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.ProtocolVersion),
-            virtualChainId: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.VirtualChainId),
-            timestamp: new Date(inputScenario.SendTransactionRequest.Timestamp),
-            networkType: inputScenario.SendTransactionRequest.NetworkType,
-            contractName: inputScenario.SendTransactionRequest.ContractName,
-            methodName: inputScenario.SendTransactionRequest.MethodName,
-            inputArguments: jsonUnmarshalArguments(inputScenario.SendTransactionRequest.InputArguments, inputScenario.SendTransactionRequest.InputArgumentsTypes),
-          }, signer);
+          req, signer);
         const expected = jsonUnmarshalBase64Bytes(outputScenario.SendTransactionRequest);
         expect(encoded).toBeEqualToUint8Array(expected);
         const expectedTxId = jsonUnmarshalBase64Bytes(outputScenario.TxId);
@@ -231,11 +232,36 @@ function jsonUnmarshalNumber(str: string): number {
 }
 
 function jsonUnmarshalBase64Bytes(str: string): Uint8Array {
-  return new Uint8Array(Buffer.from(str, "base64"));
+  const buffer = Buffer.from(str, "base64");
+  return new Uint8Array(buffer);
 }
 
 function jsonMarshalBase64Bytes(buf: Uint8Array): string {
   return Buffer.from(buf).toString("base64");
+}
+
+function jsonUnmarshalHexBytes(str: string): Uint8Array {
+  const buffer = Buffer.from(str, "hex");
+  return new Uint8Array(buffer);
+}
+
+function jsonMarshalHexBytes(buf: Uint8Array): string {
+  return Buffer.from(buf).toString("hex");
+}
+
+function jsonUnmarshalBigInt(hexValue: string): bigint {
+  if (hexValue.substring(0, 2) !== "0x") {
+    hexValue = "0x" + hexValue;
+  }
+  return BigInt(hexValue);
+}
+
+function jsonMarshalBigInt(v: bigint): string {
+  let hex = v.toString(16);
+  if (hex.length % 2 !== 0) {
+    hex = "0" + hex;
+  }
+  return hex;
 }
 
 function jsonUnmarshalArguments(args: string[], argTypes: string[]): Argument[] {
@@ -257,7 +283,19 @@ function jsonUnmarshalArguments(args: string[], argTypes: string[]): Argument[] 
         res.push(argString(arg));
         break;
       case "bytes":
-        res.push(argBytes(jsonUnmarshalBase64Bytes(arg)));
+        res.push(argBytes(jsonUnmarshalHexBytes(arg)));
+        break;
+      case "bool":
+        res.push(argBool(arg === "1"));
+        break;
+      case "uint256":
+        res.push(argUint256(jsonUnmarshalBigInt(arg)));
+        break;
+      case "bytes20":
+        res.push(argBytes20(jsonUnmarshalHexBytes(arg)));
+        break;
+      case "bytes32":
+        res.push(argBytes32(jsonUnmarshalHexBytes(arg)));
         break;
       default:
         throw new Error(`unknown argType ${argType}`);
@@ -285,8 +323,24 @@ function jsonMarshalArguments(args: Argument[]): [string[], string[]] {
         resTypes.push("string");
         break;
       case "bytes":
-        res.push(jsonMarshalBase64Bytes(<Uint8Array>arg.value));
+        res.push(jsonMarshalHexBytes(<Uint8Array>arg.value));
         resTypes.push("bytes");
+        break;
+      case "bool":
+        res.push(arg.value ? "1" : "0");
+        resTypes.push("bool");
+        break;
+      case "uint256":
+        res.push(jsonMarshalBigInt(arg.value));
+        resTypes.push("uint256");
+        break;
+      case "bytes20":
+        res.push(jsonMarshalHexBytes(<Uint8Array>arg.value));
+        resTypes.push("bytes20");
+        break;
+      case "bytes32":
+        res.push(jsonMarshalHexBytes(<Uint8Array>arg.value));
+        resTypes.push("bytes32");
         break;
       default:
         throw new Error(`unsupported type in json marshal of method arguments`);

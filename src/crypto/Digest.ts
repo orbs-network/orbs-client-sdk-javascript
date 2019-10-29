@@ -9,7 +9,7 @@
 import * as Hash from "./Hash";
 import { calcSha256, SHA256_HASH_SIZE_BYTES } from "./Hash";
 import { ED25519_PUBLIC_KEY_SIZE_BYTES } from "./Keys";
-import { getTextEncoder, DataViewWrapper } from 'membuffers';
+import { getTextEncoder, DataViewWrapper } from "membuffers";
 
 export const CLIENT_ADDRESS_SIZE_BYTES = 20;
 export const CLIENT_ADDRESS_SHA256_OFFSET = SHA256_HASH_SIZE_BYTES - CLIENT_ADDRESS_SIZE_BYTES;
