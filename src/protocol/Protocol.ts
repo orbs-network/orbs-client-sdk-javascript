@@ -17,14 +17,24 @@ export function unixNanoToDate(timestamp: bigint): Date {
   return new Date(Number(timestamp / BigInt(1000000)));
 }
 
+// The ordered values for the types is important for backwards compatibility (and cross platform compatibility)
+export const ARGUMENT_TYPE_UINT_32_VALUE  = 0;
+export const ARGUMENT_TYPE_UINT_64_VALUE  = 1;
+export const ARGUMENT_TYPE_STRING_VALUE   = 2;
+export const ARGUMENT_TYPE_BYTES_VALUE    = 3;
+export const ARGUMENT_TYPE_BOOL_VALUE     = 4;
+export const ARGUMENT_TYPE_UINT_256_VALUE = 5;
+export const ARGUMENT_TYPE_BYTES_20_VALUE = 6;
+export const ARGUMENT_TYPE_BYTES_32_VALUE = 7;
+
 export const Argument_Scheme = [FieldTypes.TypeUnion];
-export const Argument_Unions = [[FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeString, FieldTypes.TypeBytes]];
+export const Argument_Unions = [[FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeString, FieldTypes.TypeBytes, FieldTypes.TypeBool, FieldTypes.TypeUint256, FieldTypes.TypeBytes20, FieldTypes.TypeBytes32]];
 
 export class ArgumentBuilder extends BaseBuilder {
   constructor(
     private fields: {
       type: number;
-      value: number | bigint | string | Uint8Array;
+      value: number | bigint | string | Uint8Array | boolean;
     },
   ) {
     super();
@@ -33,17 +43,29 @@ export class ArgumentBuilder extends BaseBuilder {
     this.builder.reset();
     this.builder.writeUnionIndex(buf, this.fields.type);
     switch (this.fields.type) {
-      case 0:
+      case ARGUMENT_TYPE_UINT_32_VALUE:
         this.builder.writeUint32(buf, <number>this.fields.value);
         break;
-      case 1:
+      case ARGUMENT_TYPE_UINT_64_VALUE:
         this.builder.writeUint64(buf, <bigint>this.fields.value);
         break;
-      case 2:
+      case ARGUMENT_TYPE_STRING_VALUE:
         this.builder.writeString(buf, <string>this.fields.value);
         break;
-      case 3:
+      case ARGUMENT_TYPE_BYTES_VALUE:
         this.builder.writeBytes(buf, <Uint8Array>this.fields.value);
+        break;
+      case ARGUMENT_TYPE_BOOL_VALUE:
+        this.builder.writeBool(buf, <boolean>this.fields.value);
+        break;
+      case ARGUMENT_TYPE_UINT_256_VALUE:
+        this.builder.writeUint256(buf, <bigint>this.fields.value);
+        break;
+      case ARGUMENT_TYPE_BYTES_20_VALUE:
+        this.builder.writeBytes20(buf, <Uint8Array>this.fields.value);
+        break;
+      case ARGUMENT_TYPE_BYTES_32_VALUE:
+        this.builder.writeBytes32(buf, <Uint8Array>this.fields.value);
         break;
       default:
         throw new Error(`unknown Argument type ${this.fields.type}`);
