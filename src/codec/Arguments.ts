@@ -6,9 +6,23 @@
  * The above notice should be included in all copies or substantial portions of the software.
  */
 
-import { addressToBytes } from "../orbs/Convert";
-import { InternalMessage } from "membuffers";
+import { addressToBytes, bytesToAddress } from "../orbs/Convert";
+import { InternalMessage, getTextEncoder, getTextDecoder } from "membuffers";
 import * as Protocol from "../protocol/Protocol";
+
+export const hexToBytes = addressToBytes;
+
+export const bytesToHex = (val: Uint8Array): string => {
+  return bytesToAddress(val).slice(2).toLowerCase();
+};
+
+export function stringToBytes(val: string): Uint8Array {
+  return getTextEncoder().encode(val);
+}
+
+export function bytesToString(val: Uint8Array): string {
+  return getTextDecoder().decode(val);
+}
 
 export type Argument = ArgUint32 | ArgUint64 | ArgString | ArgBytes;
 
