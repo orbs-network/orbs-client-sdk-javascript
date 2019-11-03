@@ -8,7 +8,7 @@
 
 import * as Keys from "../crypto/Keys";
 import * as Digest from "../crypto/Digest";
-import * as Encoding from "../crypto/Encoding";
+import { bytesToAddress } from "./Convert";
 
 export interface Account {
   publicKey: Uint8Array;
@@ -24,12 +24,4 @@ export function createAccount(): Account {
     privateKey: keyPair.privateKey,
     address: bytesToAddress(rawAddress),
   };
-}
-
-export function addressToBytes(address: string): Uint8Array {
-  return Encoding.decodeHex(address);
-}
-
-export function bytesToAddress(rawAddress: Uint8Array): string {
-  return Encoding.encodeHex(rawAddress);
 }

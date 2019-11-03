@@ -6,7 +6,7 @@
  * The above notice should be included in all copies or substantial portions of the software.
  */
 
-import { addressToBytes } from "..";
+import { addressToBytes } from "../orbs/Convert";
 import { InternalMessage } from "membuffers";
 import * as Protocol from "../protocol/Protocol";
 
