@@ -14,7 +14,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && npm run build-webpack && npm run types",
-    "build-webpack": "webpack -p",
+    "build-webpack": "cross-env NODE_ENV=production webpack -p",
     "types": "tsc -p tsconfig-for-types.json",
     "dev": "webpack-dev-server -w",
     "test": "jest --runInBand",
@@ -41,6 +41,7 @@
     "babel-jest": "^24.8.0",
     "babel-loader": "^8.0.5",
     "babel-preset-env": "^1.7.0",
+    "cross-env": "^6.0.3",
     "http-server": "^0.11.1",
     "jest": "^24.8.0",
     "jest-puppeteer": "^3.8.0",
