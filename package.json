@@ -61,6 +61,6 @@
     "fast-text-encoding": "^1.0.0",
     "get-random-values": "^1.2.0",
     "hash.js": "^1.1.5",
-    "membuffers": "0.3.4"
+    "membuffers": "^0.3.6"
   }
 }

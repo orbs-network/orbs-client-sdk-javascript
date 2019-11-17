@@ -26,15 +26,28 @@ export const ARGUMENT_TYPE_BOOL_VALUE     = 4;
 export const ARGUMENT_TYPE_UINT_256_VALUE = 5;
 export const ARGUMENT_TYPE_BYTES_20_VALUE = 6;
 export const ARGUMENT_TYPE_BYTES_32_VALUE = 7;
+export const ARGUMENT_TYPE_UINT_32_ARRAY_VALUE  = 8;
+export const ARGUMENT_TYPE_UINT_64_ARRAY_VALUE  = 9;
+export const ARGUMENT_TYPE_STRING_ARRAY_VALUE   = 10;
+export const ARGUMENT_TYPE_BYTES_ARRAY_VALUE    = 11;
+export const ARGUMENT_TYPE_BOOL_ARRAY_VALUE     = 12;
+export const ARGUMENT_TYPE_UINT_256_ARRAY_VALUE = 13;
+export const ARGUMENT_TYPE_BYTES_20_ARRAY_VALUE = 14;
+export const ARGUMENT_TYPE_BYTES_32_ARRAY_VALUE = 15;
 
 export const Argument_Scheme = [FieldTypes.TypeUnion];
-export const Argument_Unions = [[FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeString, FieldTypes.TypeBytes, FieldTypes.TypeBool, FieldTypes.TypeUint256, FieldTypes.TypeBytes20, FieldTypes.TypeBytes32]];
+export const Argument_Unions = [[
+  FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeString, FieldTypes.TypeBytes,
+  FieldTypes.TypeBool, FieldTypes.TypeUint256, FieldTypes.TypeBytes20, FieldTypes.TypeBytes32,
+  FieldTypes.TypeUint32Array, FieldTypes.TypeUint64Array, FieldTypes.TypeStringArray, FieldTypes.TypeBytesArray,
+  FieldTypes.TypeBoolArray, FieldTypes.TypeUint256Array, FieldTypes.TypeBytes20Array, FieldTypes.TypeBytes32Array,
+]];
 
 export class ArgumentBuilder extends BaseBuilder {
   constructor(
     private fields: {
       type: number;
-      value: number | bigint | string | Uint8Array | boolean;
+      value: number | bigint | string | Uint8Array | boolean | Array<number> | Array<bigint> | Array<string> | Array<Uint8Array> | Array<boolean>;
     },
   ) {
     super();
@@ -67,6 +80,30 @@ export class ArgumentBuilder extends BaseBuilder {
       case ARGUMENT_TYPE_BYTES_32_VALUE:
         this.builder.writeBytes32(buf, <Uint8Array>this.fields.value);
         break;
+      case ARGUMENT_TYPE_UINT_32_ARRAY_VALUE:
+        this.builder.writeUint32Array(buf, <Array<number>>this.fields.value);
+        break;
+      case ARGUMENT_TYPE_UINT_64_ARRAY_VALUE:
+        this.builder.writeUint64Array(buf, <Array<bigint>>this.fields.value);
+        break;
+      case ARGUMENT_TYPE_STRING_ARRAY_VALUE:
+        this.builder.writeStringArray(buf, <Array<string>>this.fields.value);
+        break;
+      case ARGUMENT_TYPE_BYTES_ARRAY_VALUE:
+        this.builder.writeBytesArray(buf, <Array<Uint8Array>>this.fields.value);
+        break;
+      case ARGUMENT_TYPE_BOOL_ARRAY_VALUE:
+        this.builder.writeBoolArray(buf, <Array<boolean>>this.fields.value);
+        break;
+      case ARGUMENT_TYPE_UINT_256_ARRAY_VALUE:
+        this.builder.writeUint256Array(buf, <Array<bigint>>this.fields.value);
+        break;
+      case ARGUMENT_TYPE_BYTES_20_ARRAY_VALUE:
+        this.builder.writeBytes20Array(buf, <Array<Uint8Array>>this.fields.value);
+        break;
+      case ARGUMENT_TYPE_BYTES_32_ARRAY_VALUE:
+        this.builder.writeBytes32Array(buf, <Array<Uint8Array>>this.fields.value);
+        break;
       default:
         throw new Error(`unknown Argument type ${this.fields.type}`);
     }
@@ -90,7 +127,6 @@ export class ArgumentArrayBuilder extends BaseBuilder {
 }
 
 export const Event_Scheme = [FieldTypes.TypeString, FieldTypes.TypeString, FieldTypes.TypeBytes];
-
 export const EventsArray_Scheme = [FieldTypes.TypeMessageArray];
 
 export class EdDSA01SignerBuilder extends BaseBuilder {
