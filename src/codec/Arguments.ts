@@ -10,11 +10,17 @@ import { addressToBytes } from "..";
 import { InternalMessage } from "membuffers";
 import * as Protocol from "../protocol/Protocol";
 
-export type Argument = ArgBool | ArgUint32 | ArgUint64 | ArgUint256 | ArgString | ArgBytes | ArgBytes20 | ArgBytes32;
+export type Argument = ArgBool | ArgUint32 | ArgUint64 | ArgUint256 | ArgString | ArgBytes | ArgBytes20 | ArgBytes32 |
+    ArgBoolArray | ArgUint32Array | ArgUint64Array | ArgUint256Array | ArgStringArray | ArgBytesArray | ArgBytes20Array | ArgBytes32Array;
 
 export type ArgBool = {
   type: "bool";
   value: boolean;
+};
+
+export type ArgBoolArray = {
+  type: "boolArray";
+  value: Array<boolean>;
 };
 
 export type ArgUint32 = {
@@ -22,9 +28,19 @@ export type ArgUint32 = {
   value: number;
 };
 
+export type ArgUint32Array = {
+  type: "uint32Array";
+  value: Array<number>;
+};
+
 export type ArgUint64 = {
   type: "uint64";
   value: bigint;
+};
+
+export type ArgUint64Array = {
+  type: "uint64Array";
+  value: Array<bigint>;
 };
 
 export type ArgUint256 = {
@@ -32,9 +48,19 @@ export type ArgUint256 = {
   value: bigint;
 };
 
+export type ArgUint256Array = {
+  type: "uint256Array";
+  value: Array<bigint>;
+};
+
 export type ArgString = {
   type: "string";
   value: string;
+};
+
+export type ArgStringArray = {
+  type: "stringArray";
+  value: Array<string>;
 };
 
 export type ArgBytes = {
@@ -42,9 +68,19 @@ export type ArgBytes = {
   value: Uint8Array;
 };
 
+export type ArgBytesArray = {
+  type: "bytesArray";
+  value: Array<Uint8Array>;
+};
+
 export type ArgBytes20 = {
   type: "bytes20";
   value: Uint8Array;
+};
+
+export type ArgBytes20Array = {
+  type: "bytes20Array";
+  value: Array<Uint8Array>;
 };
 
 export type ArgBytes32 = {
@@ -52,8 +88,18 @@ export type ArgBytes32 = {
   value: Uint8Array;
 };
 
+export type ArgBytes32Array = {
+  type: "bytes32Array";
+  value: Array<Uint8Array>;
+};
+
 export const argBool = (value: boolean): ArgBool => ({
   type: "bool",
+  value,
+});
+
+export const argBoolArray = (value: Array<boolean>): ArgBoolArray => ({
+  type: "boolArray",
   value,
 });
 
@@ -62,13 +108,28 @@ export const argUint32 = (value: number): ArgUint32 => ({
   value,
 });
 
+export const argUint32Array = (value: Array<number>): ArgUint32Array => ({
+  type: "uint32Array",
+  value,
+});
+
 export const argUint64 = (value: bigint | number): ArgUint64 => ({
   type: "uint64",
   value: typeof value === "number" ? BigInt(value) : value,
 });
 
+export const argUint64Array = (value: Array<bigint>): ArgUint64Array => ({
+  type: "uint64Array",
+  value,
+});
+
 export const argUint256 = (value: bigint): ArgUint256 => ({
   type: "uint256",
+  value,
+});
+
+export const argUint256Array = (value: Array<bigint>): ArgUint256Array => ({
+  type: "uint256Array",
   value,
 });
 
@@ -77,8 +138,18 @@ export const argString = (value: string): ArgString => ({
   value,
 });
 
+export const argStringArray = (value: Array<string>): ArgStringArray => ({
+  type: "stringArray",
+  value,
+});
+
 export const argBytes = (value: Uint8Array): ArgBytes => ({
   type: "bytes",
+  value,
+});
+
+export const argBytesArray = (value: Array<Uint8Array>): ArgBytesArray => ({
+  type: "bytesArray",
   value,
 });
 
@@ -87,8 +158,18 @@ export const argBytes20 = (value: Uint8Array): ArgBytes20 => ({
   value,
 });
 
+export const argBytes20Array = (value: Array<Uint8Array>): ArgBytes20Array => ({
+  type: "bytes20Array",
+  value,
+});
+
 export const argBytes32 = (value: Uint8Array): ArgBytes32 => ({
   type: "bytes32",
+  value,
+});
+
+export const argBytes32Array = (value: Array<Uint8Array>): ArgBytes32Array => ({
+  type: "bytes32Array",
   value,
 });
 
@@ -124,11 +205,34 @@ function argumentsBuilders(args: Argument[]): Protocol.ArgumentBuilder[] {
       case "bytes32":
         type = Protocol.ARGUMENT_TYPE_BYTES_32_VALUE;
         break;
+      case "uint32Array":
+        type = Protocol.ARGUMENT_TYPE_UINT_32_ARRAY_VALUE;
+        break;
+      case "uint64Array":
+        type = Protocol.ARGUMENT_TYPE_UINT_64_ARRAY_VALUE;
+        break;
+      case "stringArray":
+        type = Protocol.ARGUMENT_TYPE_STRING_ARRAY_VALUE;
+        break;
+      case "bytesArray":
+        type = Protocol.ARGUMENT_TYPE_BYTES_ARRAY_VALUE;
+        break;
+      case "boolArray":
+        type = Protocol.ARGUMENT_TYPE_BOOL_ARRAY_VALUE;
+        break;
+      case "uint256Array":
+        type = Protocol.ARGUMENT_TYPE_UINT_256_ARRAY_VALUE;
+        break;
+      case "bytes20Array":
+        type = Protocol.ARGUMENT_TYPE_BYTES_20_ARRAY_VALUE;
+        break;
+      case "bytes32Array":
+        type = Protocol.ARGUMENT_TYPE_BYTES_32_ARRAY_VALUE;
+        break;
       default:
         throw new Error(`Argument unknown type: ${arg}`);
     }
     res.push(new Protocol.ArgumentBuilder({ type: type, value: arg.value }));
-
   }
   return res;
 }
@@ -185,6 +289,78 @@ export function packedArgumentsDecode(buf: Uint8Array): Argument[] {
       case Protocol.ARGUMENT_TYPE_BYTES_32_VALUE:
         const [, bytes32Off] = argumentMsg.isUnionIndex(0, 0, 7);
         res.push(argBytes32(argumentMsg.getBytes32InOffset(bytes32Off)));
+        break;
+      case Protocol.ARGUMENT_TYPE_UINT_32_ARRAY_VALUE:
+        const [, uint32ArrayOff] = argumentMsg.isUnionIndex(0, 0, 8);
+        const uint32ArrayItr = argumentMsg.getUint32ArrayIteratorInOffset(uint32ArrayOff);
+        const uint32Array = new Array(0);
+        while (uint32ArrayItr.hasNext()) {
+          uint32Array.push(uint32ArrayItr.nextUint32());
+        }
+        res.push(argUint32Array(uint32Array));
+        break;
+      case Protocol.ARGUMENT_TYPE_UINT_64_ARRAY_VALUE:
+        const [, uint64ArrayOff] = argumentMsg.isUnionIndex(0, 0, 9);
+        const uint64ArrayItr = argumentMsg.getUint64ArrayIteratorInOffset(uint64ArrayOff);
+        const uint64Array = new Array(0);
+        while (uint64ArrayItr.hasNext()) {
+          uint64Array.push(uint64ArrayItr.nextUint64());
+        }
+        res.push(argUint64Array(uint64Array));
+        break;
+      case Protocol.ARGUMENT_TYPE_STRING_ARRAY_VALUE:
+        const [, stringArrayOff] = argumentMsg.isUnionIndex(0, 0, 10);
+        const stringArrayItr = argumentMsg.getStringArrayIteratorInOffset(stringArrayOff);
+        const stringArray = new Array(0);
+        while (stringArrayItr.hasNext()) {
+          stringArray.push(stringArrayItr.nextString());
+        }
+        res.push(argStringArray(stringArray));
+        break;
+      case Protocol.ARGUMENT_TYPE_BYTES_ARRAY_VALUE:
+        const [, bytesArrayOff] = argumentMsg.isUnionIndex(0, 0, 11);
+        const bytesArrayItr = argumentMsg.getBytesArrayIteratorInOffset(bytesArrayOff);
+        const bytesArray = new Array(0);
+        while (bytesArrayItr.hasNext()) {
+          bytesArray.push(bytesArrayItr.nextBytes());
+        }
+        res.push(argBytesArray(bytesArray));
+        break;
+      case Protocol.ARGUMENT_TYPE_BOOL_ARRAY_VALUE:
+        const [, boolArrayOff] = argumentMsg.isUnionIndex(0, 0, 12);
+        const boolArrayItr = argumentMsg.getBoolArrayIteratorInOffset(boolArrayOff);
+        const boolArray = new Array(0);
+        while (boolArrayItr.hasNext()) {
+          boolArray.push(boolArrayItr.nextBool());
+        }
+        res.push(argBoolArray(boolArray));
+        break;
+      case Protocol.ARGUMENT_TYPE_UINT_256_ARRAY_VALUE:
+        const [, uint256ArrayOff] = argumentMsg.isUnionIndex(0, 0, 13);
+        const uint256ArrayItr = argumentMsg.getUint256ArrayIteratorInOffset(uint256ArrayOff);
+        const uint256Array = new Array(0);
+        while (uint256ArrayItr.hasNext()) {
+          uint256Array.push(uint256ArrayItr.nextUint256());
+        }
+        res.push(argUint256Array(uint256Array));
+        break;
+      case Protocol.ARGUMENT_TYPE_BYTES_20_ARRAY_VALUE:
+        const [, bytes20ArrayOff] = argumentMsg.isUnionIndex(0, 0, 14);
+        const bytes20ArrayItr = argumentMsg.getBytes20ArrayIteratorInOffset(bytes20ArrayOff);
+        const bytes20Array = new Array(0);
+        while (bytes20ArrayItr.hasNext()) {
+          bytes20Array.push(bytes20ArrayItr.nextBytes20());
+        }
+        res.push(argBytes20Array(bytes20Array));
+        break;
+      case Protocol.ARGUMENT_TYPE_BYTES_32_ARRAY_VALUE:
+        const [, bytes32ArrayOff] = argumentMsg.isUnionIndex(0, 0, 15);
+        const bytes32ArrayItr = argumentMsg.getBytes32ArrayIteratorInOffset(bytes32ArrayOff);
+        const bytes32Array = new Array(0);
+        while (bytes32ArrayItr.hasNext()) {
+          bytes32Array.push(bytes32ArrayItr.nextBytes32());
+        }
+        res.push(argBytes32Array(bytes32Array));
         break;
       default:
         throw new Error(`received argument ${index} has unknown type: ${type}`);

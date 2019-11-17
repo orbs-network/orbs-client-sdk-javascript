@@ -7,7 +7,9 @@
  */
 
 import "../matcher-extensions";
-import { argBytes, argString, argUint32, argUint64, argBool, argUint256, argBytes20, argBytes32, Argument } from "./Arguments";
+import { Argument,
+  argUint32, argUint64, argString, argBytes, argBool, argUint256, argBytes20, argBytes32,
+  argUint32Array, argUint64Array, argStringArray, argBytesArray, argBoolArray, argUint256Array, argBytes20Array, argBytes32Array } from "./Arguments";
 import { Event } from "./Events";
 import { BlockTransaction, decodeGetBlockResponse, encodeGetBlockRequest } from "./OpGetBlock";
 import { decodeGetTransactionReceiptProofResponse, encodeGetTransactionReceiptProofRequest } from "./OpGetTransactionReceiptProof";
@@ -261,6 +263,9 @@ function jsonMarshalBigInt(v: bigint): string {
   if (hex.length % 2 !== 0) {
     hex = "0" + hex;
   }
+  while (hex.length < 64) {
+    hex = "00" + hex;
+  }
   return hex;
 }
 
@@ -296,6 +301,45 @@ function jsonUnmarshalArguments(args: string[], argTypes: string[]): Argument[] 
         break;
       case "bytes32":
         res.push(argBytes32(jsonUnmarshalHexBytes(arg)));
+        break;
+      case "uint32Array":
+        let arrUint32 = JSON.parse(arg);
+        arrUint32 = arrUint32.map(jsonUnmarshalNumber);
+        res.push(argUint32Array(arrUint32));
+        break;
+      case "uint64Array":
+        let arrUint64 = JSON.parse(arg);
+        arrUint64 = arrUint64.map(BigInt);
+        res.push(argUint64Array(arrUint64));
+        break;
+      case "stringArray":
+        const arrString = JSON.parse(arg);
+        res.push(argStringArray(arrString));
+        break;
+      case "bytesArray":
+        let arrBytes = JSON.parse(arg);
+        arrBytes = arrBytes.map(jsonUnmarshalHexBytes);
+        res.push(argBytesArray(arrBytes));
+        break;
+      case "boolArray":
+        let arrBool = JSON.parse(arg);
+        arrBool = arrBool.map(function(a: string): boolean { return a === "1"; });
+        res.push(argBoolArray(arrBool));
+        break;
+      case "uint256Array":
+        let arrUint256 = JSON.parse(arg);
+        arrUint256 = arrUint256.map(jsonUnmarshalBigInt);
+        res.push(argUint256Array(arrUint256));
+        break;
+      case "bytes20Array":
+        let arrBytes20 = JSON.parse(arg);
+        arrBytes20 = arrBytes20.map(jsonUnmarshalHexBytes);
+        res.push(argBytes20Array(arrBytes20));
+        break;
+      case "bytes32Array":
+        let arrBytes32 = JSON.parse(arg);
+        arrBytes32 = arrBytes32.map(jsonUnmarshalHexBytes);
+        res.push(argBytes32Array(arrBytes32));
         break;
       default:
         throw new Error(`unknown argType ${argType}`);
@@ -341,6 +385,45 @@ function jsonMarshalArguments(args: Argument[]): [string[], string[]] {
       case "bytes32":
         res.push(jsonMarshalHexBytes(<Uint8Array>arg.value));
         resTypes.push("bytes32");
+        break;
+      case "uint32Array":
+        const arrUint32AsString = arg.value.map(function(a: number): string { return a.toString(); });
+        res.push(JSON.stringify(arrUint32AsString));
+        resTypes.push("uint32Array");
+        break;
+      case "uint64Array":
+        const arrUint64AsString = arg.value.map(function(a: bigint): string { return a.toString(); });
+        res.push(JSON.stringify(arrUint64AsString));
+       resTypes.push("uint64Array");
+        break;
+      case "stringArray":
+        res.push(JSON.stringify(arg.value));
+        resTypes.push("stringArray");
+        break;
+      case "bytesArray":
+        const arrBytesAsStrings = arg.value.map(jsonMarshalHexBytes);
+        res.push(JSON.stringify(arrBytesAsStrings));
+        resTypes.push("bytesArray");
+        break;
+      case "boolArray":
+        const arrBoolAsString = arg.value.map(function(a: boolean): string { return a ? "1" : "0"; });
+        res.push(JSON.stringify(arrBoolAsString));
+        resTypes.push("boolArray");
+        break;
+      case "uint256Array":
+        const arrUint256AsStrings = arg.value.map(jsonMarshalBigInt);
+        res.push(JSON.stringify(arrUint256AsStrings));
+        resTypes.push("uint256Array");
+        break;
+      case "bytes20Array":
+        const arrBytes20AsStrings = arg.value.map(jsonMarshalHexBytes);
+        res.push(JSON.stringify(arrBytes20AsStrings));
+        resTypes.push("bytes20Array");
+        break;
+      case "bytes32Array":
+        const arrBytes32AsStrings = arg.value.map(jsonMarshalHexBytes);
+        res.push(JSON.stringify(arrBytes32AsStrings));
+        resTypes.push("bytes32Array");
         break;
       default:
         throw new Error(`unsupported type in json marshal of method arguments`);

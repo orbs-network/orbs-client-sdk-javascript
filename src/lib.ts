@@ -7,6 +7,7 @@
  */
 
 export * from "./index";
-export { Argument, ArgUint32, ArgUint64, ArgString, ArgBytes, ArgBool, ArgUint256, ArgBytes20, ArgBytes32 } from "./codec/Arguments";
+export { Argument, ArgUint32, ArgUint64, ArgString, ArgBytes, ArgBool, ArgUint256, ArgBytes20, ArgBytes32,
+    ArgUint32Array, ArgUint64Array, ArgStringArray, ArgBytesArray, ArgBoolArray, ArgUint256Array, ArgBytes20Array, ArgBytes32Array } from "./codec/Arguments";
 export { Account } from "./orbs/Account";
 export { Signer } from "./crypto/Signer";
