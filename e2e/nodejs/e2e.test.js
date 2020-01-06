@@ -151,5 +151,11 @@ describe("E2E nodejs", () => {
     expect(balanceResponse.requestStatus).toEqual("COMPLETED");
     expect(balanceResponse.executionResult).toEqual("SUCCESS");
     expect(balanceResponse.outputArguments[0]).toEqual(Orbs.argUint64(10));
+
+    const found = await client.getTransactionStatus(txId);
+    expect(found.transactionStatus).toEqual("COMMITTED")
+
+    const notFound = await client.getTransactionStatus("0xC0058950d1Bdde15d06C2d7354C3Cb15Dae02CFC6BF5934b358D43dEf1DFE1a0C420Da72e541bd6e")
+    expect(notFound.transactionStatus).toEqual("NO_RECORD_FOUND");
   });
 });
