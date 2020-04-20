@@ -138,7 +138,7 @@ export class Client {
     // check if we have the content type response we expect
     const contentType = res.headers["content-type"];
     if (contentType != CONTENT_TYPE_MEMBUFFERS) {
-      if (contentType == "text/plain" || contentType == "application/json") {
+      if (contentType == "text/plain" || contentType == "application/json" || contentType == "text/html") {
         throw new Error(`http request failed: ${getTextDecoder().decode(res.data)}`);
       } else {
         throw new Error(`http request failed with unexpected Content-Type '${contentType}'`);
