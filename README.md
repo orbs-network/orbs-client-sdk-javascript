@@ -98,4 +98,4 @@ This page describes SDK API `v2.0.0`, for upgrade from `v1.x` please [follow the
 
 3. To run the end-to-end test, install [`gamma-cli`](https://github.com/orbs-network/gamma-cli)
 
-4. Run all tests with `npm run test`
+4. Run all tests (unit and e2e) with `npm run test`

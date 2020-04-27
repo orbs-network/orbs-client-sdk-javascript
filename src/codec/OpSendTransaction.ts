@@ -23,6 +23,7 @@ export interface SendTransactionRequest {
   protocolVersion: number;
   virtualChainId: number;
   timestamp: Date;
+  nanoNonce: number; // nanoseconds in range 0 - 499,999 (that will still round down to 0 in milliseconds)
   networkType: NetworkType;
   contractName: string;
   methodName: string;
@@ -53,7 +54,7 @@ export async function encodeSendTransactionRequest(req: SendTransactionRequest, 
   const networkType = networkTypeEncode(req.networkType);
 
   // encode timestamp
-  const timestampNano = Protocol.dateToUnixNano(req.timestamp);
+  const timestampNano = Protocol.dateToUnixNano(req.timestamp, req.nanoNonce);
 
   // encode request
   const res = new Client.SendTransactionRequestBuilder({

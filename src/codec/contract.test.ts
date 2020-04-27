@@ -41,6 +41,7 @@ describe("Codec contract", () => {
           protocolVersion: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.ProtocolVersion),
           virtualChainId: jsonUnmarshalNumber(inputScenario.SendTransactionRequest.VirtualChainId),
           timestamp: new Date(inputScenario.SendTransactionRequest.Timestamp),
+          nanoNonce: 0,
           networkType: inputScenario.SendTransactionRequest.NetworkType,
           contractName: inputScenario.SendTransactionRequest.ContractName,
           methodName: inputScenario.SendTransactionRequest.MethodName,

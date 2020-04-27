@@ -9,8 +9,11 @@
 import { BaseBuilder } from "./Base";
 import { FieldTypes } from "membuffers";
 
-export function dateToUnixNano(date: Date): bigint {
-  return BigInt(date.getTime()) * BigInt(1000000);
+// nanoNonce = nanoseconds in range 0 - 499,999 (that will still round down to 0 in milliseconds)
+//  used to give different timestamps to transactions created in the same millisecond 
+export function dateToUnixNano(date: Date, nanoNonce: number): bigint {
+  if (nanoNonce < 0 || nanoNonce > 499999) throw new Error(`nanoNonce is ${nanoNonce} and must be 0 - 499,999`);
+  return (BigInt(date.getTime()) * BigInt(1000000)) + BigInt(nanoNonce);
 }
 
 export function unixNanoToDate(timestamp: bigint): Date {
