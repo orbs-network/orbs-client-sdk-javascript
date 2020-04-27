@@ -30,7 +30,18 @@ export const PROCESSOR_TYPE_NATIVE = 1;
 export const PROCESSOR_TYPE_JAVASCRIPT = 2;
 
 export class Client {
-  constructor(private endpoint: string, private virtualChainId: number, private networkType: NetworkType, private signer: Signer) {}
+  private nextNanoNonce: number;
+
+  constructor(private endpoint: string, private virtualChainId: number, private networkType: NetworkType, private signer: Signer) {
+    this.nextNanoNonce = 0;
+  }
+
+  bumpNanoNonce(): number {
+    const res = this.nextNanoNonce;
+    this.nextNanoNonce++;
+    if (this.nextNanoNonce > 499999) this.nextNanoNonce = 0;
+    return res;
+  }
 
   async createTransaction(contractName: string, methodName: string, inputArguments: Argument[]): Promise<[Uint8Array, string]> {
     const [req, rawTxId] = await encodeSendTransactionRequest(
@@ -38,6 +49,7 @@ export class Client {
         protocolVersion: PROTOCOL_VERSION,
         virtualChainId: this.virtualChainId,
         timestamp: new Date(),
+        nanoNonce: this.bumpNanoNonce(),
         networkType: this.networkType,
         contractName: contractName,
         methodName: methodName,

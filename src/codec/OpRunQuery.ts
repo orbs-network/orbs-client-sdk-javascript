@@ -52,7 +52,7 @@ export async function encodeRunQueryRequest(req: RunQueryRequest, signer: Signer
       query: new Protocol.QueryBuilder({
         protocolVersion: req.protocolVersion,
         virtualChainId: req.virtualChainId,
-        timestamp: Protocol.dateToUnixNano(req.timestamp),
+        timestamp: Protocol.dateToUnixNano(req.timestamp, 0),
         signer: new Protocol.SignerBuilder({
           scheme: 0,
           eddsa: new Protocol.EdDSA01SignerBuilder({
