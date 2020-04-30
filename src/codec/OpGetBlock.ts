@@ -40,6 +40,8 @@ export interface TransactionsBlockHeader {
   prevBlockHash: Uint8Array;
   timestamp: Date;
   numTransactions: number;
+  referenceTime: number;
+  blockProposerAddress: Uint8Array;
 }
 
 export interface ResultsBlockHeader {
@@ -50,6 +52,8 @@ export interface ResultsBlockHeader {
   timestamp: Date;
   transactionsBlockHash: Uint8Array;
   numTransactionReceipts: number;
+  referenceTime: number;
+  blockProposerAddress: Uint8Array;
 }
 
 export interface BlockTransaction {
@@ -182,6 +186,8 @@ export function decodeGetBlockResponse(buf: Uint8Array): GetBlockResponse {
       prevBlockHash: transactionsBlockHeaderMsg.getBytes(3),
       timestamp: Protocol.unixNanoToDate(transactionsBlockHeaderMsg.getUint64(4)),
       numTransactions: transactionsBlockHeaderMsg.getUint32(7),
+      referenceTime: transactionsBlockHeaderMsg.getUint32(9),
+      blockProposerAddress: transactionsBlockHeaderMsg.getBytes(8)
     },
     resultsBlockHash: Hash.calcSha256(resultsBlockHeaderMsg.rawBuffer()),
     resultsBlockHeader: {
@@ -192,6 +198,8 @@ export function decodeGetBlockResponse(buf: Uint8Array): GetBlockResponse {
       timestamp: Protocol.unixNanoToDate(resultsBlockHeaderMsg.getUint64(4)),
       transactionsBlockHash: resultsBlockHeaderMsg.getBytes(7),
       numTransactionReceipts: resultsBlockHeaderMsg.getUint32(9),
+      blockProposerAddress: resultsBlockHeaderMsg.getBytes(11),
+      referenceTime: resultsBlockHeaderMsg.getUint32(12)
     },
     transactions: transactions,
   };
