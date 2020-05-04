@@ -10,7 +10,7 @@ import { BaseBuilder } from "./Base";
 import { FieldTypes } from "membuffers";
 
 // nanoNonce = nanoseconds in range 0 - 499,999 (that will still round down to 0 in milliseconds)
-//  used to give different timestamps to transactions created in the same millisecond 
+//  used to give different timestamps to transactions created in the same millisecond
 export function dateToUnixNano(date: Date, nanoNonce: number): bigint {
   if (nanoNonce < 0 || nanoNonce > 499999) throw new Error(`nanoNonce is ${nanoNonce} and must be 0 - 499,999`);
   return (BigInt(date.getTime()) * BigInt(1000000)) + BigInt(nanoNonce);
@@ -269,7 +269,18 @@ export class SignedQueryBuilder extends BaseBuilder {
 
 export const QueryResult_Scheme = [FieldTypes.TypeUint16, FieldTypes.TypeBytes, FieldTypes.TypeBytes];
 
-export const TransactionsBlockHeader_Scheme = [FieldTypes.TypeUint32, FieldTypes.TypeUint32, FieldTypes.TypeUint64, FieldTypes.TypeBytes, FieldTypes.TypeUint64, FieldTypes.TypeBytes, FieldTypes.TypeBytes, FieldTypes.TypeUint32];
+export const TransactionsBlockHeader_Scheme = [
+  FieldTypes.TypeUint32,
+  FieldTypes.TypeUint32,
+  FieldTypes.TypeUint64,
+  FieldTypes.TypeBytes,
+  FieldTypes.TypeUint64,
+  FieldTypes.TypeBytes,
+  FieldTypes.TypeBytes,
+  FieldTypes.TypeUint32,
+  FieldTypes.TypeBytes,
+  FieldTypes.TypeUint32
+];
 
 export const ResultsBlockHeader_Scheme = [
   FieldTypes.TypeUint32,
@@ -283,4 +294,6 @@ export const ResultsBlockHeader_Scheme = [
   FieldTypes.TypeBytes,
   FieldTypes.TypeUint32,
   FieldTypes.TypeUint32,
+  FieldTypes.TypeBytes,
+  FieldTypes.TypeUint32
 ];

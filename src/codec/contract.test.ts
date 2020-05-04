@@ -207,6 +207,8 @@ describe("Codec contract", () => {
             Timestamp: decoded.transactionsBlockHeader.timestamp.toISOString(),
             NumTransactions: decoded.transactionsBlockHeader.numTransactions.toString(),
             PrevBlockHash: jsonMarshalBase64Bytes(decoded.transactionsBlockHeader.prevBlockHash),
+            ReferenceTime: decoded.transactionsBlockHeader.referenceTime,
+            BlockProposerAddress: jsonMarshalBase64Bytes(decoded.transactionsBlockHeader.blockProposerAddress)
           },
           ResultsBlockHash: jsonMarshalBase64Bytes(decoded.resultsBlockHash),
           ResultsBlockHeader: {
@@ -217,6 +219,8 @@ describe("Codec contract", () => {
             NumTransactionReceipts: decoded.resultsBlockHeader.numTransactionReceipts.toString(),
             PrevBlockHash: jsonMarshalBase64Bytes(decoded.resultsBlockHeader.prevBlockHash),
             TransactionsBlockHash: jsonMarshalBase64Bytes(decoded.resultsBlockHeader.transactionsBlockHash),
+            ReferenceTime: decoded.resultsBlockHeader.referenceTime,
+            BlockProposerAddress: jsonMarshalBase64Bytes(decoded.resultsBlockHeader.blockProposerAddress)
           },
           Transactions: jsonMarshalBlockTransactions(decoded.transactions),
         };
